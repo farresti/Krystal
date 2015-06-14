@@ -119,8 +119,6 @@ void UTIL_FreeEx(void** ppMemory, const char *szFct, size_t iLine, const char *s
     if (*ppMemory != NULL)
     {
       free(*ppMemory);
-      *ppMemory = NULL;
-
       COM_iMallocCounter--;
     }
 
@@ -130,6 +128,7 @@ void UTIL_FreeEx(void** ppMemory, const char *szFct, size_t iLine, const char *s
                   "Freed @ %p\n"
                   "Blocks remaining : %d\n",
                   iLine, szFile, szFct, *ppMemory, COM_iMallocCounter);
+    *ppMemory = NULL;
 }
 
 #else
