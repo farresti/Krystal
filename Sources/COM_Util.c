@@ -125,7 +125,7 @@ void UTIL_FreeEx(void** ppMemory, const char *szFct, size_t iLine, const char *s
     COM_Log_Print(COM_LOG_DEBUG,
                   "\nIn file : l%d %s\n"
                   "Function : %s\n"
-                  "Freed  %p\n"
+                  "Freed @ %p\n"
                   "Blocks remaining : %d\n",
                   iLine, szFile, szFct, *ppMemory, COM_iMallocCounter);
     *ppMemory = NULL;
