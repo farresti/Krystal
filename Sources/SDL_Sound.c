@@ -20,6 +20,7 @@
 
 /*!
  * \brief  Function to load a sound.
+ *
  * \param  szSndName Name of the sound.
  * \return A pointer to the loaded sound, or NULL if error.
  */
@@ -29,14 +30,15 @@ SDL_Sound *SDL_Sound_Alloc(const char *szSndName)
     char      *szSoundPath = NULL;
 
     szSoundPath = UTIL_StrBuild("sounds/", szSndName, ".wav", NULL);
+
     if (szSoundPath)
     {
-        pSound = (SDL_Sound *)UTIL_Malloc(sizeof(SDL_Sound));
+        pSound = (SDL_Sound *) UTIL_Malloc(sizeof(SDL_Sound));
 
         if (pSound)
         {         
             pSound->pMixChunk = UTIL_ChunkLoad(szSoundPath);
-            pSound->szName = UTIL_StrCopy(szSndName);
+            pSound->szName    = UTIL_StrCopy(szSndName);
 
             if (!pSound->pMixChunk || !pSound->szName) // Error: must free...
             {
@@ -45,13 +47,16 @@ SDL_Sound *SDL_Sound_Alloc(const char *szSndName)
                 UTIL_Free(&pSound);
             }
         }
+
+        UTIL_Free(&szSoundPath);
     }
-    UTIL_Free(&szSoundPath);
+
     return pSound;
 }
 
 /*!
  * \brief  Function to play a sound.
+ *
  * \param  pSound   Pointer to a loaded sound.
  * \param  iChannel Channel to play the sound.
  * \param  iVolume  Volume to play the sound.
@@ -60,13 +65,14 @@ SDL_Sound *SDL_Sound_Alloc(const char *szSndName)
  */
 void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops)
 {
-    Mix_VolumeChunk( pSound->pMixChunk, iVolume );
-    Mix_PlayChannel( iChannel, pSound->pMixChunk, iLoops );
+    Mix_VolumeChunk(pSound->pMixChunk, iVolume);
+    Mix_PlayChannel(iChannel, pSound->pMixChunk, iLoops);
 }
 
 /*!
  * \brief  Function to free a sound.
- * \param  ppSound Pointer to pointer of the sound to free.
+ *
+ * \param  ppSound Pointer to pointer to the sound to free.
  * \return None.
  */
 void SDL_Sound_Free(SDL_Sound **ppSound)

@@ -20,6 +20,7 @@
 
 /*!
  * \brief  Function to load a sprite.
+ *
  * \param  szSprName Name of the sprite.
  * \return A pointer to the loaded sprite, or NULL if error.
  */
@@ -118,6 +119,7 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 
 /*!
  * \brief  Function to set a frame for a sprite.
+ *
  * \param  pSprite Pointer to a sprite.
  * \param  iFrame  Number of the frame to set.
  * \return None.
@@ -132,9 +134,21 @@ void SDL_Sprite_SetFrame(SDL_Sprite *pSprite, Uint32 iFrame)
 }
 
 /*!
+ * \brief  Function to get the maximum frame of a sprite.
+ *
+ * \param  pSprite Pointer to a sprite.
+ * \return The maximum frame of a sprite.
+ */
+Uint32 SDL_Sprite_GetMaxFrame(SDL_Sprite *pSprite)
+{
+    return pSprite->iMaxFrame;
+}
+
+/*!
  * \brief  Function to get the frame size of a sprite.
+ *
  * \param  pSprite    Pointer to a sprite.
- * \param  pFrameSize Pointer to a rectangle.
+ * \param  pFrameSize Rectangle to retrieve the frame size.
  * \return None.
  */
 void SDL_Sprite_GetFrameSize(SDL_Sprite *pSprite, SDL_Rect *pFrameSize)
@@ -145,6 +159,7 @@ void SDL_Sprite_GetFrameSize(SDL_Sprite *pSprite, SDL_Rect *pFrameSize)
 
 /*!
  * \brief  Function to draw a sprite.
+ *
  * \param  pSprite Pointer to a sprite.
  * \param  pDest   Rectangle to position the sprite.
  * \param  dAngle  Angle to rotate the sprite.
@@ -161,6 +176,7 @@ void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pDest, double dAngle, SDL_Re
 
 /*!
  * \brief  Function to free a sprite.
+ *
  * \param  ppSprite Pointer to pointer to a sprite.
  * \return None.
  */
