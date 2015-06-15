@@ -18,13 +18,15 @@
 
 void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, Sint32 x, Sint32 y)
 {
-    pTextBox->bActive = SDL_FALSE;
-    pTextBox->bFull = SDL_FALSE;
-    pTextBox->iLastTime = SDL_GetTicks();
+    pTextBox->szText = NULL;
+    pTextBox->bIsActive = SDL_FALSE;
+    pTextBox->bIsFull = SDL_FALSE;
     pTextBox->currentLetter = pTextBox->precedentLetter = '\0';
-   // SDL_Textbox_SetText(pTextBox, "");
+    SDL_Textbox_SetText(pTextBox, "");
+    pTextBox->pText = (SDL_Text*)malloc(sizeof(SDL_Text));
     SDL_Text_Init(pTextBox->pText, pFont, x, y);
     SDL_Text_Set(pTextBox->pText, pTextBox->szText, pColorFont);
+    pTextBox->iLastTime = SDL_GetTicks();
 }
 
 /*!
@@ -34,10 +36,19 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
 * \param szText         The text to set.
 * \return None
 */
-/*void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
+void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
 {
-
-}*/
+    Sint32 iW = 0;
+    TTF_SizeText(pTextBox->pText->pFont, szText, &iW, NULL);
+    if ((Uint32)(iW) <= SDL_Textbox_GetMaxLength(pTextBox))
+    {
+        if (pTextBox->szText)
+        {
+            UTIL_Free(&pTextBox->szText);
+        }
+        pTextBox->szText = UTIL_StrCopy(szText);
+    }
+}
 
 /*!
 * \brief Function to update text from user input.
@@ -64,6 +75,17 @@ Sint32 SDL_Textbox_GetLength(SDL_Textbox *pTextBox)
 }
 
 /*!
+* \brief Function to return the max length of a text of a Textbox.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \return maximum size text in the text box for the choosen font.
+*/
+Uint32 SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox)
+{
+    return pTextBox->iMaxLength;
+}
+
+/*!
 * \brief Function to return the state of a Textbox.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
@@ -71,7 +93,7 @@ Sint32 SDL_Textbox_GetLength(SDL_Textbox *pTextBox)
 */
 SDL_bool SDL_Textbox_IsActive(SDL_Textbox *pTextBox)
 {
-    return pTextBox->bActive;
+    return pTextBox->bIsActive;
 }
 
 /*!
@@ -84,9 +106,9 @@ SDL_bool SDL_Textbox_IsFull(SDL_Textbox *pTextBox)
 {
     if ((Uint32)(SDL_Textbox_GetLength(pTextBox)) > pTextBox->iMaxLength)
     {
-        pTextBox->bFull = SDL_TRUE;
+        pTextBox->bIsFull = SDL_TRUE;
     }
-    return pTextBox->bFull;
+    return pTextBox->bIsFull;
 }
 
 /*!

@@ -25,8 +25,8 @@
     typedef struct
     {
         char *szText;
-        SDL_bool bActive;
-        SDL_bool bFull;
+        SDL_bool bIsActive;
+        SDL_bool bIsFull;
         Uint32 iMaxLength;
         Uint32 iLastTime;
         SDL_Keycode currentLetter;
@@ -39,7 +39,7 @@
     void      SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText);
     void      SDL_Textbox_UpdateBox(SDL_Textbox *pTextBox);
     Sint32    SDL_Textbox_GetLength(SDL_Textbox *pTextBox);
-    Uint32    SDL_Textbox_GetMaxLenght(SDL_Textbox *pTextBox);
+    Uint32    SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox);
     SDL_bool  SDL_Textbox_IsFull(SDL_Textbox *pTextBox);
     SDL_bool  SDL_Textbox_IsActive(SDL_Textbox *pTextBox);
     void      SDL_Textbox_Free(SDL_Textbox *pTextBox);
