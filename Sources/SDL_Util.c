@@ -21,7 +21,7 @@
  * \brief  Function to load a texture from a RWops.
  * \param  szPath       Path of the texture (Only useful for logs).
  * \param  pRWops       Pointer to a RWops.
- * \param  pTextureSize Size of the texture (Can be NULL)
+ * \param  pTextureSize Rectangle to retrieve the size of the texture (Can be NULL).
  * \return A pointer to the loaded texture, or NULL if error.
  */
 SDL_Texture *UTIL_TextureLoadRW(const char *szPath, SDL_RWops *pRWops, SDL_Rect *pTextureSize)
@@ -59,7 +59,7 @@ SDL_Texture *UTIL_TextureLoadRW(const char *szPath, SDL_RWops *pRWops, SDL_Rect 
 /*!
  * \brief  Function to load a texture.
  * \param  szPath       Path of the texture to open.
- * \param  pTextureSize Size of the texture (Can be NULL)
+ * \param  pTextureSize Rectangle to retrieve the size of the texture (Can be NULL).
  * \return A pointer to the loaded texture, or NULL if error.
  */
 SDL_Texture *UTIL_TextureLoad(const char *szPath, SDL_Rect *pTextureSize)

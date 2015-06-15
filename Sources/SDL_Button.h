@@ -24,13 +24,13 @@
      */
     typedef struct
     {
-        SDL_Sprite *pSprite;
+        SDL_Sprite *pSprite;       /*!< Pointer to the sprite button. */
 
-        SDL_Rect    rDest;
-        double      dAngle;
+        SDL_Rect    rDest;         /*!< Rectangle to position the button. */
+        double      dAngle;        /*!< Angle of the button. */
 
-        SDL_bool    bIsRolledOver;
-        SDL_bool    bIsClicked;
+        SDL_bool    bIsRolledOver; /*!< Flag to indicate if the button is rolled over. */
+        SDL_bool    bIsClicked;    /*!< Flag to indicate if the button is clicked. */
     } SDL_Button;
 
     void     SDL_Button_Init(SDL_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y);
