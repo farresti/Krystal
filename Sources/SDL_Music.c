@@ -20,6 +20,7 @@
 
 /*!
  * \brief  Function to load a music.
+ *
  * \param  szMscName Name of the music. 
  * \return A pointer to the loaded music, or NULL if error.
  */
@@ -29,6 +30,7 @@ SDL_Music *SDL_Music_Alloc(const char *szMscName)
     char       *szMusicPath = NULL;
 
     szMusicPath = UTIL_StrBuild("musics/", szMscName, ".mp3", NULL);
+
     if (szMusicPath)
     {
         pMusic = (SDL_Music *)UTIL_Malloc(sizeof(SDL_Music));
@@ -36,7 +38,7 @@ SDL_Music *SDL_Music_Alloc(const char *szMscName)
         if (pMusic)
         {
             pMusic->pMixData = UTIL_MusicLoad(szMusicPath);
-            pMusic->szName = UTIL_StrCopy(szMscName);
+            pMusic->szName   = UTIL_StrCopy(szMscName);
 
             if (!pMusic->pMixData || !pMusic->szName) // Error: must free...
             {
@@ -45,25 +47,28 @@ SDL_Music *SDL_Music_Alloc(const char *szMscName)
                 UTIL_Free(&pMusic);
             }
         }
+
+        UTIL_Free(&szMusicPath);
     }
-    UTIL_Free(&szMusicPath);
 
     return pMusic;
 }
 
 /*!
  * \brief  Function to play a music.
+ *
  * \param  pMusic Pointer to a loaded music.
  * \param  iLoops Number of times the music must be looped.
  * \return None.
  */
 void SDL_Music_Play(SDL_Music *pMusic, Sint32 iLoops)
 {
-    Mix_PlayMusic( pMusic->pMixData, iLoops );
+    Mix_PlayMusic(pMusic->pMixData, iLoops);
 }
 
 /*!
  * \brief  Function to free a music.
+ *
  * \param  ppMusic Pointer to pointer to the music to free.
  * \return None.
  */
