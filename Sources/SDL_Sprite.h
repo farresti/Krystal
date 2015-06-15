@@ -39,6 +39,7 @@
 
     SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName);
     void        SDL_Sprite_SetFrame(SDL_Sprite *pSprite, Uint32 iFrame);
+    Uint32      SDL_Sprite_GetMaxFrame(SDL_Sprite *pSprite);
     void        SDL_Sprite_GetFrameSize(SDL_Sprite *pSprite, SDL_Rect *pFrameSize);
     void        SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pDest, double dAngle, SDL_RendererFlip iFlip);
     void        SDL_Sprite_Free(SDL_Sprite **ppSprite);

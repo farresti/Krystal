@@ -19,6 +19,7 @@
 
 /*!
  * \brief Function to init a button.
+ *
  * \param pButton Pointer to the button.
  * \param pSprite Pointer to a sprite allocated.
  * \param x       Position on x.
@@ -40,6 +41,7 @@ void SDL_Button_Init(SDL_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
 
 /*!
  * \brief Function to set the angle of a button.
+ *
  * \param pButton Pointer to the button.
  * \param dAngle  Angle to rotate the button.
  * \return None.
@@ -51,6 +53,7 @@ void SDL_Button_SetAngle(SDL_Button *pButton, double dAngle)
 
 /*!
  * \brief  Function to get the angle of a button.
+ *
  * \param  pButton Pointer to the button.
  * \return The angle of the button.
  */
@@ -61,6 +64,7 @@ double SDL_Button_GetAngle(SDL_Button *pButton)
 
 /*!
  * \brief  Function to update a button.
+ *
  * \param  pButton Pointer to the button.
  * \param  pInput  Pointer to the inputs.
  * \return None.
@@ -113,6 +117,7 @@ void SDL_Button_Update(SDL_Button *pButton, SDL_Input *pInput)
 
 /*!
  * \brief  Function to draw a button.
+ *
  * \param  pButton Pointer to the button.
  * \return None.
  */
@@ -123,6 +128,7 @@ void SDL_Button_Draw(SDL_Button *pButton)
 
 /*!
  * \brief  Function to get if a button is rolled over.
+ *
  * \param  pButton Pointer to the button.
  * \return SDL_TRUE if the button is rolled over, else SDL_FALSE.
  */
@@ -133,6 +139,7 @@ SDL_bool SDL_Button_IsRolledOver(SDL_Button *pButton)
 
 /*!
  * \brief  Function to get if a button is clicked.
+ *
  * \param  pButton Pointer to the button.
  * \return SDL_TRUE if the button is clicked, else SDL_FALSE.
  */
