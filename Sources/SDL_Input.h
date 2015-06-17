@@ -11,6 +11,7 @@
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
 /* Red     | 10/06/15 | Creation of the SDL_Input structure.                 */
+/* Orlyn   | 17/06/15 | Add some functions + cursors to the structure        */
 /* ========================================================================= */
 
 #ifndef __SDL_INPUT_H__

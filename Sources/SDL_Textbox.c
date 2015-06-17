@@ -10,6 +10,9 @@
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
+/* Orlyn   | 15/06/15 | Add SDL_Textbox functions.                           */
+/* Orlyn   | 16/06/15 | Add SDL_Textbox functions.                           */
+/* Orlyn   | 17/06/15 | Add Cursor functions                                 */
 /* ========================================================================= */
 
 #include "SDL_Textbox.h"
