@@ -98,8 +98,8 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
     {
         if (SDL_Input_IsKeyPressed(pInput, lastKey))
         {
-            if ((pInput->lastKey > SDLK_SPACE && pInput->lastKey <= SDLK_z) ||
-                (pInput->lastKey >= SDLK_KP_DIVIDE && pInput->lastKey <= SDLK_KP_PERIOD))
+            if ((lastKey > SDLK_SPACE && lastKey <= SDLK_z) ||
+                (lastKey >= SDLK_KP_DIVIDE && lastKey <= SDLK_KP_PERIOD))
             {
                 pTextBox->currentLetter = lastKey;
                 if (!SDL_Textbox_IsFull(pTextBox))
