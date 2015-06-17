@@ -102,6 +102,7 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
                 (lastKey >= SDLK_KP_DIVIDE && lastKey <= SDLK_KP_PERIOD))
             {
                 pTextBox->currentLetter = lastKey;
+                SDL_Textbox_CheckSize(pTextBox);
                 if (!SDL_Textbox_IsFull(pTextBox))
                 {
                     if (pTextBox->currentLetter != pTextBox->precedentLetter ||
@@ -324,7 +325,18 @@ SDL_bool SDL_Textbox_IsActive(SDL_Textbox *pTextBox)
 */
 SDL_bool SDL_Textbox_IsFull(SDL_Textbox *pTextBox)
 {
-    if ((Uint32)(SDL_Textbox_GetLength(pTextBox)) > pTextBox->iMaxLength)
+    return pTextBox->bIsFull;
+}
+
+/*!
+* \brief Function to test if a Textbox is full.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \return true if the box is full, false else
+*/
+void SDL_Textbox_CheckSize(SDL_Textbox *pTextBox)
+{
+    if ((Uint32)(SDL_Textbox_GetLength(pTextBox)) >= SDL_Textbox_GetMaxLength(pTextBox))
     {
         pTextBox->bIsFull = SDL_TRUE;
     }
@@ -332,7 +344,6 @@ SDL_bool SDL_Textbox_IsFull(SDL_Textbox *pTextBox)
     {
         pTextBox->bIsFull = SDL_FALSE;
     }
-    return pTextBox->bIsFull;
 }
 
 /*!

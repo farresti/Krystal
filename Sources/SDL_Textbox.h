@@ -57,6 +57,7 @@
     Sint32    SDL_Textbox_GetLength(SDL_Textbox *pTextBox);
     Uint32    SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox);
     SDL_bool  SDL_Textbox_IsFull(SDL_Textbox *pTextBox);
+    void      SDL_Textbox_CheckSize(SDL_Textbox *pTextBox);
     void      SDL_Textbox_SetActive(SDL_Textbox *pTextBox, SDL_Input *pInput);
     SDL_bool  SDL_Textbox_IsActive(SDL_Textbox *pTextBox);
     SDL_bool  SDL_Textbox_IsLocked(SDL_Textbox *pTextBox);
