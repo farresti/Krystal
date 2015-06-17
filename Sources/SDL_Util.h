@@ -25,7 +25,8 @@
     Mix_Chunk   *UTIL_ChunkLoad(const char *szPath);
     void         UTIL_ChunkFree(Mix_Chunk **ppChunk);
 
-    int UTIL_ContainPoint(Sint32 x, Sint32 y, SDL_Rect *pRect);
+    int UTIL_ContainPoint(const SDL_Point *pPt, const SDL_Rect *pRect);
+    int UTIL_CollideRect(const SDL_Rect *pRect1, const SDL_Rect *pRect2);
 
 #endif // __SDL_UTIL_H__
 

@@ -27,9 +27,10 @@
         Mix_Chunk *pMixChunk; /*!< Pointer to the sound */
     } SDL_Sound;
 
-    SDL_Sound *SDL_Sound_Alloc(const char *szSndName);
-    void       SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops);
-    void       SDL_Sound_Free(SDL_Sound **ppSound);
+    SDL_Sound  *SDL_Sound_Alloc(const char *szSndName);
+    const char *SDL_Sound_GetName(const SDL_Sound *pSound);
+    void        SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops);
+    void        SDL_Sound_Free(SDL_Sound **ppSound);
 
 #endif // __SDL_SOUND_H__
 

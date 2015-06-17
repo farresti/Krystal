@@ -284,7 +284,7 @@ Uint32 SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox)
 */
 void SDL_Textbox_SetActive(SDL_Textbox *pTextBox, SDL_Input *pInput)
 {
-    if (UTIL_ContainPoint(pInput->iMouseX, pInput->iMouseY, &pTextBox->rDest))
+    if (UTIL_ContainPoint(&pInput->iMouse, &pTextBox->rDest))
     {
         SDL_SetCursor(pInput->pTxtCursor);
         if (!SDL_Textbox_IsActive(pTextBox))

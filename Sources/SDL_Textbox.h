@@ -43,10 +43,9 @@
         TTF_Font    *pFont;
         SDL_Rect     rDest;
         SDL_Color   *pColorFont;
-        SDL_Point   offsetCursor;
+        SDL_Point    offsetCursor;
     } SDL_Textbox;
 
-    /* Textbox functions */
     void      SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, Sint32 x, Sint32 y, Sint32 w, Sint32 h);
     void      SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText);
     void      SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput);
