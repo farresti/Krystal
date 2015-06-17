@@ -17,6 +17,9 @@ int main(int argc, char* argv[])
     char       *szPath = NULL;
     SDL_Sound  *pSndButterfly = NULL;
     SDL_Music  *pMusic = NULL;
+    SDL_Textbox test;
+    TTF_Font   *pFont = NULL;
+    SDL_Color  colorFont = { 0, 0, 0, 255 };
 
     (void) argc;
     (void) argv;
@@ -39,6 +42,7 @@ int main(int argc, char* argv[])
     // Tests module 'SDL'
     SDL_Init( SDL_INIT_VIDEO );
     IMG_Init( IMG_INIT_PNG );
+    TTF_Init();
 
     /* Initialisation de SDL_mixer*/
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
@@ -59,8 +63,9 @@ int main(int argc, char* argv[])
     // Load a music
     pMusic = SDL_Music_Alloc("forest");
     Mix_VolumeMusic(100);
-    SDL_Music_Play(pMusic, -1);
-
+   // SDL_Music_Play(pMusic, -1);
+    pFont = TTF_OpenFont("fonts/calibri.ttf", 18);
+    SDL_Textbox_Init(&test, pFont, &colorFont, 150, 150, 200, 40);
     while (sInput.bQuit == SDL_FALSE)
     {
         SDL_Input_Update(&sInput);
@@ -68,15 +73,16 @@ int main(int argc, char* argv[])
 
         SDL_Ctx_RenderClear( );
 
-        if (sInput.bKey[SDL_SCANCODE_E])
+        SDL_Textbox_Update(&test, &sInput);
+        if (sInput.bKey[SDLK_e])
         {
-            sInput.bKey[SDL_SCANCODE_E] = SDL_FALSE;
+            sInput.bKey[SDLK_e] = SDL_FALSE;
             COM_Log_Print(COM_LOG_INFO, "Playing a sound");
             SDL_Sound_Play(pSndButterfly, 0, 100, 0);
         }
-        if (sInput.bKey[SDL_SCANCODE_P])
+        if (sInput.bKey[SDLK_p])
         {
-            sInput.bKey[SDL_SCANCODE_P] = SDL_FALSE;
+            sInput.bKey[SDLK_p] = SDL_FALSE;
             COM_Log_Print(COM_LOG_INFO, "Pause/Unpause the music");
             if (Mix_PausedMusic())
             {
@@ -85,15 +91,17 @@ int main(int argc, char* argv[])
             else Mix_PauseMusic();
             
         }
-
         SDL_Button_Draw(&sButton);
         SDL_Ctx_RenderPresent( );
     }
 
+    SDL_Input_Free(&sInput);
+    SDL_Textbox_Free(&test);
     SDL_Sprite_Free(&pSprite);
-
+    TTF_CloseFont(pFont);
     SDL_Ctx_Quit( );
 
+    TTF_Quit();
     IMG_Quit( );
     SDL_Sound_Free(&pSndButterfly);
     SDL_Music_Free(&pMusic);
