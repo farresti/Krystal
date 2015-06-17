@@ -11,6 +11,7 @@
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
 /* Red     | 10/06/15 | Add SDL_Input_ Update and Init                       */
+/* Orlyn   | 17/06/15 | Add some functions                                   */
 /* ========================================================================= */
 
 #include "SDL_Input.h"
@@ -26,6 +27,9 @@
 void SDL_Input_Init(SDL_Input *pInput)
 {
     memset(pInput, 0, sizeof(*pInput));
+
+    pInput->pStdCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    pInput->pTxtCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
 }
 
 /*!
@@ -48,13 +52,14 @@ void SDL_Input_Update(SDL_Input *pInput)
             {
                 if (sEvent.key.repeat == 0) 
                 {
-                    pInput->bKey[sEvent.key.keysym.scancode] = SDL_TRUE;
+                    pInput->bKey[sEvent.key.keysym.sym] = SDL_TRUE;
+                    pInput->lastKey = sEvent.key.keysym.sym;
                 }
                 break;
             }
             case SDL_KEYUP:
             {
-                pInput->bKey[sEvent.key.keysym.scancode] = SDL_FALSE;
+                pInput->bKey[sEvent.key.keysym.sym] = SDL_FALSE;
                 break;
             }
             case SDL_MOUSEMOTION:
@@ -94,4 +99,61 @@ void SDL_Input_Update(SDL_Input *pInput)
     }
 }
 
+/*!
+ * \brief Function to test if a key is pressed.
+ *
+ * \param pInput Pointer to the input.
+ * \return SDL_TRUE if the key is pressed, else SDL_FALSE.
+ */
+SDL_bool SDL_Input_IsKeyPressed(const SDL_Input *pInput, SDL_Keycode iKey)
+{
+    return pInput->bKey[iKey];
+}
+
+/*!
+ * \brief Function to reset a specified key.
+ *
+ * \param pInput Pointer to the input.
+ * \return None.
+ */
+void SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode iKey)
+{
+    pInput->bKey[iKey] = SDL_FALSE;
+}
+
+/*!
+ * \brief Function to get the last pressed key.
+ *
+ * \param pInput Pointer to the input.
+ * \return The key code of the last key pressed.
+ */
+SDL_Keycode SDL_Input_GetLastKey(const SDL_Input *pInput)
+{
+    return pInput->lastKey;
+}
+
+/*!
+* \brief Function to get the position of the mouse.
+*
+* \param pInput Pointer to the input.
+* \param pMouse Pointer to retrieve the mouse position.
+* \return None.
+*/
+void SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse)
+{
+    pMouse->x = pInput->iMouse.x;
+    pMouse->y = pInput->iMouse.y;
+}
+
+/*!
+ * \brief Function to free the input structure.
+ *
+ * \param pInput Pointer to the input.
+ * \return None.
+ */
+void SDL_Input_Free(SDL_Input *pInput)
+{
+    SDL_FreeCursor(pInput->pTxtCursor);
+    SDL_FreeCursor(pInput->pStdCursor);
+}
 /* ========================================================================= */

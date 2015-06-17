@@ -121,12 +121,37 @@ int SDL_Ctx_RenderCopyEx(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest,
 }
 
 /*!
+ * \brief Function to draw a rect.
+ *
+ * \param pRect Pointer to the rect to draw (NULL to outline the entire rendering target).
+ * \return 0 on success, -1 if error.
+ */
+int SDL_Ctx_RenderDrawRect(const SDL_Rect *pRect)
+{
+   return SDL_RenderDrawRect(SDL_context.pRenderer, pRect);
+}
+
+/*!
+ * \brief Function to draw a rect filled with a color.
+ *
+ * \param pRect  Pointer to the rect to draw (NULL for the entire rendering target).
+ * \param pColor Pointer to the color.
+ * \return 0 on success, -1 if error.
+ */
+int SDL_Ctx_RenderFillRect(const SDL_Rect *pRect, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_context.pRenderer, pColor->r, pColor->r, pColor->b, pColor->a);
+    return SDL_RenderFillRect(SDL_context.pRenderer, pRect);
+}
+
+/*!
  * \brief Function to draw the renderer context.
  *
  * \return None
  */
 void SDL_Ctx_RenderPresent(void)
 {
+    SDL_SetRenderDrawColor(SDL_context.pRenderer, 0, 0, 0, 255);
     SDL_RenderPresent(SDL_context.pRenderer);
 }
 

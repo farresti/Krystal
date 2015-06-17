@@ -54,8 +54,14 @@ void SDL_Text_Set(SDL_Text *pText, const char *szText, SDL_Color *pColorFont)
     if (szText)
     {
         TTF_SizeText(pText->pFont, szText, &iW, NULL);
-        pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, szText, *pColorFont, iW);
-
+        if (iW == 0)
+        {
+            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, " ", *pColorFont, iW);
+        }
+        else
+        {
+            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, szText, *pColorFont, iW);
+        }
         if (pSurface == NULL)
         {
             COM_Log_Print(COM_LOG_CRITICAL, "Unable to create a surface for the text \"%s\" !", szText);

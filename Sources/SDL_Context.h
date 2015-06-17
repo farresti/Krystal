@@ -25,6 +25,8 @@
     void SDL_Ctx_RenderClear(void);
     int  SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest);
     int  SDL_Ctx_RenderCopyEx(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip);
+    int  SDL_Ctx_RenderDrawRect(const SDL_Rect *pRect);
+    int  SDL_Ctx_RenderFillRect(const SDL_Rect *pRect, const SDL_Color *pColor);
     void SDL_Ctx_RenderPresent(void);
 
     void SDL_Ctx_Quit(void);
