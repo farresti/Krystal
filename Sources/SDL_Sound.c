@@ -43,15 +43,26 @@ SDL_Sound *SDL_Sound_Alloc(const char *szSndName)
             if (!pSound->pMixChunk || !pSound->szName) // Error: must free...
             {
                 UTIL_ChunkFree(&pSound->pMixChunk);
-                UTIL_Free(&pSound->szName);
-                UTIL_Free(&pSound);
+                UTIL_Free(pSound->szName);
+                UTIL_Free(pSound);
             }
         }
 
-        UTIL_Free(&szSoundPath);
+        UTIL_Free(szSoundPath);
     }
 
     return pSound;
+}
+
+/*!
+ * \brief  Function to get the name of a sound.
+ *
+ * \param  pSound Pointer to the sound.
+ * \return The name of the sound.
+ */
+const char *SDL_Sound_GetName(const SDL_Sound *pSound)
+{
+    return pSound->szName;
 }
 
 /*!
@@ -77,9 +88,9 @@ void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 i
  */
 void SDL_Sound_Free(SDL_Sound **ppSound)
 {
-    UTIL_Free( &( *ppSound )->szName );
+    UTIL_Free((*ppSound)->szName );
     UTIL_ChunkFree( &( *ppSound )->pMixChunk );
-    UTIL_Free( ppSound );
+    UTIL_Free(*ppSound);
 }
 
 /* ========================================================================= */

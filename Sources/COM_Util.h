@@ -23,7 +23,7 @@
     #ifdef _DEBUG
         #define UTIL_Malloc(x)    UTIL_MallocEx(x, __FUNCTION__, __LINE__, __FILE__)
         #define UTIL_Realloc(x,y) UTIL_ReallocEx(x, y, __FUNCTION__, __LINE__, __FILE__)
-        #define UTIL_Free(x)      UTIL_FreeEx(x, __FUNCTION__, __LINE__, __FILE__) 
+        #define UTIL_Free(x)      UTIL_FreeEx((void**)&x, __FUNCTION__, __LINE__, __FILE__) 
 
         void *UTIL_MallocEx(size_t iSize, const char *szFct, size_t iLine, const char *szFile);
         void *UTIL_ReallocEx(void* pOldMemoryBlock, size_t iNewSize, const char *szFct, size_t iLine, const char *szFile);
@@ -31,7 +31,16 @@
     #else
         void *UTIL_Malloc(size_t iSize);
         void *UTIL_Realloc(void* pOldMemoryBlock, size_t iNewSize);
-        void  UTIL_Free(void **ppMemory);
+        #define UTIL_Free(x) \
+                        do\
+                        {\
+                            if(x)\
+                            {\
+                                free(x);\
+                                x = NULL;\
+                            }\
+                        }while(x)
+
     #endif // _DEBUG
 
     FILE *UTIL_Fopen(const char *szPath, const char *szMode);

@@ -79,7 +79,7 @@ void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
     {
         if (pTextBox->szText)
         {
-            UTIL_Free(&pTextBox->szText);
+            UTIL_Free(pTextBox->szText);
         }
         pTextBox->szText = UTIL_StrCopy(szText);
     }
@@ -163,7 +163,7 @@ void SDL_Textbox_AddLetter(SDL_Textbox *pTextBox)
         if (szTemp)
         {
             SDL_Textbox_SetText(pTextBox, szTemp);
-            UTIL_Free(&szTemp);
+            UTIL_Free(szTemp);
         }
     }
 
@@ -183,7 +183,7 @@ void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
     if (szTemp)
     {
         SDL_Textbox_SetText(pTextBox, szTemp);
-        UTIL_Free(&szTemp);
+        UTIL_Free(szTemp);
     }
 }
 
@@ -202,7 +202,7 @@ void SDL_Textbox_DeleteLetter(SDL_Textbox *pTextBox)
     {
         szTemp[iLen - 1] = '\0';
         SDL_Textbox_SetText(pTextBox, szTemp);
-        UTIL_Free(&szTemp);
+        UTIL_Free(szTemp);
     }
 }
 
@@ -284,7 +284,7 @@ Uint32 SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox)
 */
 void SDL_Textbox_SetActive(SDL_Textbox *pTextBox, SDL_Input *pInput)
 {
-    if (UTIL_ContainPoint(pInput->iMouseX, pInput->iMouseY, &pTextBox->rDest))
+    if (UTIL_ContainPoint(&pInput->iMouse, &pTextBox->rDest))
     {
         SDL_SetCursor(pInput->pTxtCursor);
         if (!SDL_Textbox_IsActive(pTextBox))
@@ -399,7 +399,7 @@ Sint32 SDL_Textbox_GetCursorY(SDL_Textbox *pTextBox)
 void SDL_Textbox_Free(SDL_Textbox *pTextBox)
 {
     SDL_Text_Free(pTextBox->pText);
-    UTIL_Free(&pTextBox->pText);
-    UTIL_Free(&pTextBox->szText);
+    UTIL_Free(pTextBox->pText);
+    UTIL_Free(pTextBox->szText);
 }
 /* ========================================================================= */
