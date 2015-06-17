@@ -88,8 +88,7 @@ int main(int argc, char* argv[])
             {
                 Mix_ResumeMusic();
             }
-            else Mix_PauseMusic();
-            
+            else Mix_PauseMusic();            
         }
         SDL_Button_Draw(&sButton);
         SDL_Ctx_RenderPresent( );
