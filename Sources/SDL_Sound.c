@@ -55,6 +55,17 @@ SDL_Sound *SDL_Sound_Alloc(const char *szSndName)
 }
 
 /*!
+ * \brief  Function to get the name of a sound.
+ *
+ * \param  pSound Pointer to the sound.
+ * \return The name of the sound.
+ */
+const char *SDL_Sound_GetName(const SDL_Sound *pSound)
+{
+    return pSound->szName;
+}
+
+/*!
  * \brief  Function to play a sound.
  *
  * \param  pSound   Pointer to a loaded sound.

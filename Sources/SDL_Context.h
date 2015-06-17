@@ -23,13 +23,8 @@
     SDL_Texture *SDL_Ctx_CreateTextureFromSurface(SDL_Surface *pSurface);
 
     void SDL_Ctx_RenderClear(void);
-    int  SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pRectSrc, SDL_Rect *pRectDst);
-    int  SDL_Ctx_RenderCopyEx(SDL_Texture      *pTexture, 
-                              SDL_Rect         *pRectSrc, 
-                              SDL_Rect         *pRectDst, 
-                              double            dAngle, 
-                              const SDL_Point  *pCenter, 
-                              SDL_RendererFlip  iFlip);
+    int  SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest);
+    int  SDL_Ctx_RenderCopyEx(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip);
     void SDL_Ctx_RenderPresent(void);
 
     void SDL_Ctx_Quit(void);

@@ -19,6 +19,7 @@
 
 /*!
  * \brief  Function to load a texture from a RWops.
+ *
  * \param  szPath       Path of the texture (Only useful for logs).
  * \param  pRWops       Pointer to a RWops.
  * \param  pTextureSize Rectangle to retrieve the size of the texture (Can be NULL).
@@ -58,6 +59,7 @@ SDL_Texture *UTIL_TextureLoadRW(const char *szPath, SDL_RWops *pRWops, SDL_Rect 
 
 /*!
  * \brief  Function to load a texture.
+ *
  * \param  szPath       Path of the texture to open.
  * \param  pTextureSize Rectangle to retrieve the size of the texture (Can be NULL).
  * \return A pointer to the loaded texture, or NULL if error.
@@ -83,6 +85,7 @@ SDL_Texture *UTIL_TextureLoad(const char *szPath, SDL_Rect *pTextureSize)
 
 /*!
  * \brief  Function to free a texture.
+ *
  * \param  ppTexture Pointer to pointer to the texture to free.
  * \return None.
  */
@@ -97,6 +100,7 @@ void UTIL_TextureFree(SDL_Texture **ppTexture)
 
 /*!
  * \brief  Function to load a music.
+ *
  * \param  szPath Path of the music to open.
  * \return A pointer to the loaded music, or NULL if error.
  */
@@ -115,6 +119,7 @@ Mix_Music *UTIL_MusicLoad(const char *szPath)
 
 /*!
  * \brief  Function to free a music.
+ *
  * \param  ppMusic Pointer to pointer to the music to free.
  * \return None.
  */
@@ -129,6 +134,7 @@ void UTIL_MusicFree(Mix_Music **ppMusic)
 
 /*!
  * \brief  Function to load a chunk.
+ *
  * \param  szPath Path of the chunk to open.
  * \return A pointer to the loaded chunk, or NULL if error.
 */
@@ -147,6 +153,7 @@ Mix_Chunk *UTIL_ChunkLoad(const char *szPath)
 
 /*!
  * \brief  Function to free a chunk.
+ *
  * \param  ppChunk Pointer to pointer to the chunk to free.
  * \return None.
  */
@@ -161,17 +168,32 @@ void UTIL_ChunkFree(Mix_Chunk **ppChunk)
 
 /*!
  * \brief  Function to check if a point is inside a rectangle.
- * \param  x     Position on x.
- * \param  y     Position on y.
- * \param  pRect Pointer to the rectangle to check.
+ *
+ * \param  pPt   Pointer to the point.
+ * \param  pRect Pointer to the rectangle.
  * \return 1 is success, else 0.
  */
-int UTIL_ContainPoint(Sint32 x, Sint32 y, SDL_Rect *pRect)
+int UTIL_ContainPoint(const SDL_Point *pPt, const SDL_Rect *pRect)
 {
-    return (( x >= pRect->x ) && 
-            ( x < pRect->x + pRect->w ) && 
-            ( y >= pRect->y ) && 
-            ( y < pRect->y + pRect->h ));
+    return (( pPt->x >= pRect->x            ) && 
+            ( pPt->x <  pRect->x + pRect->w ) && 
+            ( pPt->y >= pRect->y            ) && 
+            ( pPt->y <  pRect->y + pRect->h ));
+}
+
+/*!
+ * \brief  Function to check if two rectangles collide.
+ *
+ * \param  pRect1 Pointer to a rectangle.
+ * \param  pRect2 Pointer to another rectangle.
+ * \return 1 is success, else 0.
+ */
+int UTIL_CollideRect(const SDL_Rect *pRect1, const SDL_Rect *pRect2)
+{
+    return (!(( pRect2->x             >= pRect1->x + pRect1->w ) || 
+              ( pRect2->x + pRect2->w <= pRect1->x             ) || 
+              ( pRect2->y             >= pRect1->y + pRect1->h ) || 
+              ( pRect2->y + pRect2->h <= pRect1->y             )));
 }
 
 /* ========================================================================= */

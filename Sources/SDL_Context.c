@@ -97,40 +97,27 @@ void SDL_Ctx_RenderClear(void)
  * \brief Function to copy a texture to the renderer.
  *
  * \param pTexture The texture to copy.
- * \param pRectSrc A pointer to the source rectangle (Can be NULL).
- * \param pRectDst A pointer to the destination rectangle (Can be NULL).
+ * \param pSrc     Rectangle to clip the texture (Can be NULL).
+ * \param pDest    Rectangle to position the texture (Can be NULL).
  * \return 0 on success, else -1 if error.
  */
-int SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pRectSrc, SDL_Rect *pRectDst)
+int SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest)
 {
-    return SDL_RenderCopy(SDL_context.pRenderer, pTexture, pRectSrc, pRectDst);
+    return SDL_RenderCopy(SDL_context.pRenderer, pTexture, pSrc, pDest);
 }
 
 /*!
  * \brief Function to copy a texture to the renderer.
  *
  * \param pTexture The texture to copy.
- * \param pRectSrc A pointer to the source rectangle (Can be NULL).
- * \param pRectDst A pointer to the destination rectangle (Can be NULL).
- * \param dAngle   An angle in degrees to rotate the texture.
- * \param pCenter  Point to rotate the texture (Can be NULL).
+ * \param pSrc     Rectangle to clip the texture (Can be NULL).
+ * \param pDest    Rectangle to position the texture (Can be NULL).
  * \param iFlip    Flag to flip the texture.
- * \return 0 on success, -1 if error
+ * \return 0 on success, else -1 if error.
  */
-int SDL_Ctx_RenderCopyEx(SDL_Texture      *pTexture, 
-                         SDL_Rect         *pRectSrc, 
-                         SDL_Rect         *pRectDst, 
-                         double            dAngle, 
-                         const SDL_Point  *pCenter, 
-                         SDL_RendererFlip  iFlip)
+int SDL_Ctx_RenderCopyEx(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip)
 {
-    return SDL_RenderCopyEx(SDL_context.pRenderer, 
-                            pTexture, 
-                            pRectSrc, 
-                            pRectDst, 
-                            dAngle, 
-                            pCenter, 
-                            iFlip);
+    return SDL_RenderCopyEx(SDL_context.pRenderer, pTexture, pSrc, pDest, 0.0, NULL, iFlip );
 }
 
 /*!

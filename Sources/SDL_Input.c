@@ -60,10 +60,10 @@ void SDL_Input_Update(SDL_Input *pInput)
             case SDL_MOUSEMOTION:
             {
                 pInput->bMotionEvent = SDL_TRUE;
-                pInput->iMouseX      = sEvent.motion.x;
-                pInput->iMouseY      = sEvent.motion.y;
-                pInput->iMouseXRel   = sEvent.motion.xrel;
-                pInput->iMouseYRel   = sEvent.motion.yrel;
+                pInput->iMouse.x     = sEvent.motion.x;
+                pInput->iMouse.y     = sEvent.motion.y;
+                pInput->iMouseRel.x  = sEvent.motion.xrel;
+                pInput->iMouseRel.y  = sEvent.motion.yrel;
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
