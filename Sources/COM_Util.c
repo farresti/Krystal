@@ -86,7 +86,7 @@ void *UTIL_ReallocEx(void *pOldMemoryBlock, size_t iNewSize, const char *szFct, 
                       "\nIn file : l%d %s\n"
                       "Function : %s\n"
                       "Reallocated %u blocks from @ %p\n",
-                      iLine, szFile, szFct, pOldMemoryBlock, iNewSize);
+                      iLine, szFile, szFct, iNewSize, pOldMemoryBlock);
     }
     else
     {

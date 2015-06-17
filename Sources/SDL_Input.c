@@ -26,6 +26,8 @@
 void SDL_Input_Init(SDL_Input *pInput)
 {
     memset(pInput, 0, sizeof(*pInput));
+    pInput->pStdCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    pInput->pTxtCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
 }
 
 /*!
@@ -48,13 +50,14 @@ void SDL_Input_Update(SDL_Input *pInput)
             {
                 if (sEvent.key.repeat == 0) 
                 {
-                    pInput->bKey[sEvent.key.keysym.scancode] = SDL_TRUE;
+                    pInput->bKey[sEvent.key.keysym.sym] = SDL_TRUE;
+                    pInput->lastKey = sEvent.key.keysym.sym;
                 }
                 break;
             }
             case SDL_KEYUP:
             {
-                pInput->bKey[sEvent.key.keysym.scancode] = SDL_FALSE;
+                pInput->bKey[sEvent.key.keysym.sym] = SDL_FALSE;
                 break;
             }
             case SDL_MOUSEMOTION:
@@ -94,4 +97,62 @@ void SDL_Input_Update(SDL_Input *pInput)
     }
 }
 
+/*!
+* \brief Function to test if a key is pressed.
+*
+* \param pInput Pointer to the input.
+* \return true if the key is pressed, false if not.
+*/
+SDL_bool SDL_Input_IsKeyPressed(SDL_Input *pInput, SDL_Keycode key)
+{
+    return pInput->bKey[key];
+}
+
+/*!
+* \brief Function to reset the flag of a specified key².
+*
+* \param pInput Pointer to the input.
+* \return None.
+*/
+void SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode key)
+{
+    pInput->bKey[key] = SDL_FALSE;
+}
+
+/*!
+* \brief Function to get the last pressed key.
+*
+* \param pInput Pointer to the input.
+* \return The SDL_Keycode of the last key pressed.
+*/
+SDL_Keycode  SDL_Input_GetLastKey(SDL_Input *pInput)
+{
+    return pInput->lastKey;
+}
+
+/*!
+* \brief Function to get the position of the mouse.
+*
+* \param pInput         Pointer to the input.
+* \param pMousePosition Pointer to the SDL_Point structure to be filled with
+*                       mouse positions.
+* \return None.
+*/
+void SDL_Input_GetMousePosition(SDL_Input *pInput, SDL_Point *pMousePosition)
+{
+    pMousePosition->x = pInput->iMouseX;
+    pMousePosition->y = pInput->iMouseY;
+}
+
+/*!
+* \brief Function to free the input structure.
+*
+* \param pInput Pointer to the input.
+* \return None.
+*/
+void SDL_Input_Free(SDL_Input *pInput)
+{
+    SDL_FreeCursor(pInput->pTxtCursor);
+    SDL_FreeCursor(pInput->pStdCursor);
+}
 /* ========================================================================= */

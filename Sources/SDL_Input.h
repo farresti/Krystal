@@ -33,10 +33,18 @@
         Sint32   iScrollVertical;         /*!< Amount scrolled vertically, positive away from the user and negative toward the user. */
         SDL_bool bMouseButtons[8];        /*!< Status of each buttons of the mouse */
         SDL_bool bQuit;                   /*!< Flag to indicate if the cross has been pressed. */
+        SDL_Keycode lastKey;              /*!< Last key pressed*/
+        SDL_Cursor *pTxtCursor;           /*!< Pointer to the text cursor*/
+        SDL_Cursor *pStdCursor;           /*!< Pointer to the standard cursor*/
     } SDL_Input;
 
-    void SDL_Input_Init(SDL_Input *pInput);
-    void SDL_Input_Update(SDL_Input *pInput);
+    void         SDL_Input_Init(SDL_Input *pInput);
+    void         SDL_Input_Update(SDL_Input *pInput);
+    SDL_bool     SDL_Input_IsKeyPressed(SDL_Input *pInput, SDL_Keycode key);
+    void         SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode key);
+    SDL_Keycode  SDL_Input_GetLastKey(SDL_Input *pInput);
+    void         SDL_Input_GetMousePosition(SDL_Input *pInput, SDL_Point *pMousePosition);
+    void         SDL_Input_Free(SDL_Input *pInput);
 
 #endif // __SDL_INPUT_H__
 

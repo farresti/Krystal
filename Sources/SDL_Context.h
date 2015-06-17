@@ -30,6 +30,8 @@
                               double            dAngle, 
                               const SDL_Point  *pCenter, 
                               SDL_RendererFlip  iFlip);
+    int  SDL_Ctx_RenderDrawRect(SDL_Rect *pRectDest);
+    int  SDL_Ctx_RenderFillRect(SDL_Rect *pRectDest, SDL_Color *pColor);
     void SDL_Ctx_RenderPresent(void);
 
     void SDL_Ctx_Quit(void);
