@@ -133,19 +133,19 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
             }
             SDL_Input_ResetKey(pInput, lastKey);
         }
+        SDL_Textbox_CheckSize(pTextBox);
+        SDL_Textbox_CheckLock(pTextBox);
+        if (SDL_Textbox_IsKeyLocked(pTextBox))
+        {
+            SDL_Input_EnableKeyRepeat(pInput);
+        }
+        else
+        {
+            SDL_Input_DisableKeyRepeat(pInput);
+        }
+        pTextBox->lastKey = pTextBox->currentKey;
     }
     SDL_Textbox_CheckActive(pTextBox, pInput);
-    SDL_Textbox_CheckSize(pTextBox);
-    SDL_Textbox_CheckLock(pTextBox);
-    if (SDL_Textbox_IsKeyLocked(pTextBox))
-    {
-        SDL_Input_EnableKeyRepeat(pInput);
-    }
-    else
-    {
-        SDL_Input_DisableKeyRepeat(pInput);
-    }
-    pTextBox->lastKey = pTextBox->currentKey;
 }
 
 /*!
