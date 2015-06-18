@@ -13,12 +13,25 @@
 /* Orlyn   | 15/06/15 | Add SDL_Textbox functions.                           */
 /* Orlyn   | 16/06/15 | Add SDL_Textbox functions.                           */
 /* Orlyn   | 17/06/15 | Add Cursor functions                                 */
+/* Orlyn   | 18/06/15 | Clean and add repeat key support                     */
 /* ========================================================================= */
 
 #include "SDL_Textbox.h"
 
 /* ========================================================================= */
 
+/*!
+* \brief Function to init a SDL_Textbox structure.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \param pFont          A pointer to the font to set.
+* \param pColorFont     A pointer to the font color of the text.
+* \param x              The x position of the text box.
+* \param y              The y position of the text box.
+* \param w              The width of the text box.
+* \param h              The height of the text box.
+* \return None
+*/
 void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont,
     Sint32 x, Sint32 y, Sint32 w, Sint32 h)
 {
@@ -36,29 +49,28 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
     pTextBox->bIsLocked = SDL_FALSE;
     /*Init text input*/
     pTextBox->szText = NULL;
-    pTextBox->currentLetter = pTextBox->precedentLetter = '\0';
-    SDL_Textbox_SetText(pTextBox, "\0");
+    pTextBox->currentKey = pTextBox->lastKey = '\0';
+    SDL_Textbox_SetText(pTextBox, "");
     /*Init for cursor*/
     pTextBox->pFont = pFont;
     pTextBox->offsetCursor.x = x + iW;
     pTextBox->offsetCursor.y = y + h / 2 - iH / 2;
     /*Init structure SDL_Text*/
-    pTextBox->pText = (SDL_Text*)malloc(sizeof(SDL_Text));
+    pTextBox->pText = (SDL_Text*)UTIL_Malloc(sizeof(SDL_Text));
     SDL_Text_Init(pTextBox->pText, pTextBox->pFont, pTextBox->offsetCursor.x, pTextBox->offsetCursor.y);
-    SDL_Text_Set(pTextBox->pText, pTextBox->szText, pColorFont);
+    SDL_Text_Set(pTextBox->pText, pTextBox->szText, pColorFont, 0);
     /*Init time*/
     pTextBox->iLastTime = SDL_GetTicks();
+    pTextBox->iCursorTime = SDL_GetTicks();
     /*Init rect*/
     pTextBox->rDest.x = x;
     pTextBox->rDest.y = y;
     pTextBox->rDest.w = w;
     pTextBox->rDest.h = h;
     /*Init max length*/
-    pTextBox->iMaxLength = w - 2 * iW;
+    pTextBox->iMaxLength = w - 3 * iW;
     /*Init colors*/
     pTextBox->pColorFont = pColorFont;
-
-    SDL_Textbox_Draw(pTextBox);
 }
 
 /*!
@@ -70,19 +82,11 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
 */
 void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
 {
-    Sint32 iW = 0;
-    if (strlen(szText) > 1)
+    if (pTextBox->szText)
     {
-        TTF_SizeText(pTextBox->pText->pFont, szText, &iW, NULL);
+        UTIL_Free(pTextBox->szText);
     }
-    if ((Uint32)(iW) <= SDL_Textbox_GetMaxLength(pTextBox))
-    {
-        if (pTextBox->szText)
-        {
-            UTIL_Free(pTextBox->szText);
-        }
-        pTextBox->szText = UTIL_StrCopy(szText);
-    }
+    pTextBox->szText = UTIL_StrCopy(szText);
 }
 
 /*!
@@ -98,42 +102,53 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
     {
         if (SDL_Input_IsKeyPressed(pInput, lastKey))
         {
-            if ((lastKey > SDLK_SPACE && lastKey <= SDLK_z) ||
+            pTextBox->currentKey = lastKey;
+            if ((lastKey >= SDLK_SPACE && lastKey <= SDLK_z) ||
                 (lastKey >= SDLK_KP_DIVIDE && lastKey <= SDLK_KP_PERIOD))
             {
-                pTextBox->currentLetter = lastKey;
-                SDL_Textbox_CheckSize(pTextBox);
                 if (!SDL_Textbox_IsFull(pTextBox))
                 {
-                    if (pTextBox->currentLetter != pTextBox->precedentLetter ||
-                        SDL_Textbox_IsLocked(pTextBox))
+                    if (lastKey == SDLK_SPACE)
                     {
-                        SDL_Textbox_AddLetter(pTextBox);
-                        pTextBox->precedentLetter = pTextBox->currentLetter;
+                        SDL_Textbox_AddSpace(pTextBox);
+                    }
+                    else if (pTextBox->currentKey != pTextBox->lastKey ||
+                        SDL_Textbox_IsKeyLocked(pTextBox))
+                    {
+                        SDL_Textbox_Add(pTextBox);
+                    }
+                    if (!SDL_Textbox_IsKeyLocked(pTextBox))
+                    {
                         pTextBox->iLastTime = SDL_GetTicks();
                     }
                 }
             }
-            else if (pInput->lastKey == SDLK_BACKSPACE)
+            else if (lastKey == SDLK_BACKSPACE)
             {
-                if (SDL_Textbox_GetLength(pTextBox) > 0)
+                if (SDL_Textbox_GetTextLength(pTextBox) > 0)
                 {
-                    SDL_Textbox_DeleteLetter(pTextBox);
+                    SDL_Textbox_Delete(pTextBox);
                 }
             }
-            else if (pInput->lastKey == SDLK_SPACE)
-            {
-                SDL_Textbox_AddSpace(pTextBox);
-            }
-            else if (pInput->lastKey == SDLK_RETURN)
+            else if (lastKey == SDLK_RETURN)
             {
                 pTextBox->bIsActive = SDL_FALSE;
             }
             SDL_Input_ResetKey(pInput, lastKey);
         }
     }
-    SDL_Textbox_SetActive(pTextBox, pInput);
-    SDL_Textbox_Draw(pTextBox);
+    SDL_Textbox_CheckActive(pTextBox, pInput);
+    SDL_Textbox_CheckSize(pTextBox);
+    SDL_Textbox_CheckLock(pTextBox);
+    if (SDL_Textbox_IsKeyLocked(pTextBox))
+    {
+        SDL_Input_EnableKeyRepeat(pInput);
+    }
+    else
+    {
+        SDL_Input_DisableKeyRepeat(pInput);
+    }
+    pTextBox->lastKey = pTextBox->currentKey;
 }
 
 /*!
@@ -142,12 +157,13 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return None
 */
-void SDL_Textbox_AddLetter(SDL_Textbox *pTextBox)
+void SDL_Textbox_Add(SDL_Textbox *pTextBox)
 {
-    char *szTemp = NULL;
-    char *key = (char*)SDL_GetKeyName(pTextBox->currentLetter);
     SDL_Keymod keyMod = SDL_GetModState();
-    if (pTextBox->currentLetter != '\0')
+    SDL_Keycode currKey = SDL_Textbox_GetCurrent(pTextBox);
+    char *szTemp = NULL;
+    char *key = (char*)SDL_GetKeyName(currKey);
+    if (currKey != '\0')
     {
         if (strlen(key) == 1)
         {
@@ -194,7 +210,7 @@ void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return None
 */
-void SDL_Textbox_DeleteLetter(SDL_Textbox *pTextBox)
+void SDL_Textbox_Delete(SDL_Textbox *pTextBox)
 {
     Uint32 iLen = strlen(pTextBox->szText);
     char *szTemp = NULL;
@@ -218,7 +234,7 @@ void SDL_Textbox_Draw(SDL_Textbox *pTextBox)
     SDL_Color colorBox = { 255, 255, 255, 255 };
 
     SDL_Ctx_RenderFillRect(&pTextBox->rDest, &colorBox);
-    SDL_Text_Set(pTextBox->pText, pTextBox->szText, pTextBox->pColorFont);
+    SDL_Text_Set(pTextBox->pText, pTextBox->szText, pTextBox->pColorFont, 0);
     SDL_Text_Draw(pTextBox->pText);
     SDL_Textbox_DrawCursor(pTextBox);
 }
@@ -238,7 +254,7 @@ void SDL_Textbox_DrawCursor(SDL_Textbox *pTextBox)
         if (SDL_GetTicks() - pTextBox->iCursorTime >= 500)
         {
             SDL_Text_Init(&text, pTextBox->pFont, SDL_Textbox_GetCursorX(pTextBox), SDL_Textbox_GetCursorY(pTextBox));
-            SDL_Text_Set(&text, "|", &colorCursor);
+            SDL_Text_Set(&text, "|", &colorCursor, 0);
             SDL_Text_Draw(&text);
             SDL_Text_Free(&text);
             if (SDL_GetTicks() - pTextBox->iCursorTime >= 1000)
@@ -259,10 +275,13 @@ void SDL_Textbox_DrawCursor(SDL_Textbox *pTextBox)
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return size of the text as it is displayed.
 */
-Sint32 SDL_Textbox_GetLength(SDL_Textbox *pTextBox)
+Sint32 SDL_Textbox_GetTextLength(SDL_Textbox *pTextBox)
 {
     Sint32 iW = 0;
-    TTF_SizeText(pTextBox->pText->pFont, pTextBox->szText, &iW, NULL);
+    if (pTextBox->szText)
+    {
+        TTF_SizeText(pTextBox->pText->pFont, pTextBox->szText, &iW, NULL);
+    }
     return iW;
 }
 
@@ -283,7 +302,7 @@ Uint32 SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox)
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return true if the box is active, false else
 */
-void SDL_Textbox_SetActive(SDL_Textbox *pTextBox, SDL_Input *pInput)
+void SDL_Textbox_CheckActive(SDL_Textbox *pTextBox, SDL_Input *pInput)
 {
     if (UTIL_ContainPoint(&pInput->iMouse, &pTextBox->rDest))
     {
@@ -332,11 +351,11 @@ SDL_bool SDL_Textbox_IsFull(SDL_Textbox *pTextBox)
 * \brief Function to test if a Textbox is full.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
-* \return true if the box is full, false else
+* \return None.
 */
 void SDL_Textbox_CheckSize(SDL_Textbox *pTextBox)
 {
-    if ((Uint32)(SDL_Textbox_GetLength(pTextBox)) >= SDL_Textbox_GetMaxLength(pTextBox))
+    if ((Uint32)(SDL_Textbox_GetTextLength(pTextBox)) >= SDL_Textbox_GetMaxLength(pTextBox))
     {
         pTextBox->bIsFull = SDL_TRUE;
     }
@@ -352,11 +371,22 @@ void SDL_Textbox_CheckSize(SDL_Textbox *pTextBox)
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return true if a key is locked, false else
 */
-SDL_bool SDL_Textbox_IsLocked(SDL_Textbox *pTextBox)
+SDL_bool SDL_Textbox_IsKeyLocked(SDL_Textbox *pTextBox)
 {
-    if (pTextBox->currentLetter == pTextBox->precedentLetter)
+    return pTextBox->bIsLocked;
+}
+
+/*!
+* \brief Function to test if key is locked.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \return None.
+*/
+void SDL_Textbox_CheckLock(SDL_Textbox *pTextBox)
+{
+    if (pTextBox->currentKey == pTextBox->lastKey)
     {
-        if (SDL_GetTicks() - pTextBox->iLastTime >= 200)
+        if (SDL_GetTicks() - pTextBox->iLastTime >= 150)
         {
             pTextBox->bIsLocked = SDL_TRUE;
         }
@@ -369,24 +399,22 @@ SDL_bool SDL_Textbox_IsLocked(SDL_Textbox *pTextBox)
     {
         pTextBox->bIsLocked = SDL_FALSE;
     }
-    return pTextBox->bIsLocked;
 }
 
 /*!
 * \brief Function to return the x position of the cursor.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
-* \return true if a key is locked, false else
+* \return X position for the cursor
 */
 Sint32 SDL_Textbox_GetCursorX(SDL_Textbox *pTextBox)
 {
     Sint32 iX = pTextBox->offsetCursor.x, iW = 0;
-    iW = SDL_Textbox_GetLength(pTextBox);
+    iW = SDL_Textbox_GetTextLength(pTextBox);
     if (iW != 0)
     {
-        iX = pTextBox->rDest.x;
+        iX = pTextBox->rDest.x + iW;
     }
-    iX += iW;
     return iX;
 }
 
@@ -394,11 +422,40 @@ Sint32 SDL_Textbox_GetCursorX(SDL_Textbox *pTextBox)
 * \brief Function to return the y position of the cursor.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
-* \return true if a key is locked, false else
+* \return Y position for the cursor
 */
 Sint32 SDL_Textbox_GetCursorY(SDL_Textbox *pTextBox)
 {
     return pTextBox->offsetCursor.y;
+}
+
+/*!
+* \brief Function to return the current key in the text box.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \return an SDL_Keycode value of the current key
+*/
+SDL_Keycode  SDL_Textbox_GetCurrent(SDL_Textbox *pTextBox)
+{
+    return pTextBox->currentKey;
+}
+
+/*!
+* \brief Function to set the color of the text in the text box.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \param iR             The value of the red component.
+* \param iG             The value of the green component.
+* \param iB             The value of the blue component.
+* \param iA             The value of the alpha component.
+* \return None
+*/
+void SDL_Textbox_SetColor(SDL_Textbox *pTextBox, Sint32 iR, Sint32 iG, Sint32 iB, Sint32 iA)
+{
+    pTextBox->pColorFont->r = iR;
+    pTextBox->pColorFont->g = iG;
+    pTextBox->pColorFont->b = iB;
+    pTextBox->pColorFont->a = iA;
 }
 
 /*!

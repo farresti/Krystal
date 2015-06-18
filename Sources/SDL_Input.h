@@ -35,6 +35,7 @@
         SDL_Keycode lastKey;                 /*!< Last key pressed*/
         SDL_Cursor *pTxtCursor;              /*!< Pointer to the text cursor*/
         SDL_Cursor *pStdCursor;              /*!< Pointer to the standard cursor*/
+        SDL_bool    bRepeatKey;              /*!< Flag to enable or disable keyboard repeat*/
     } SDL_Input;
 
     void        SDL_Input_Init(SDL_Input *pInput);
@@ -44,6 +45,8 @@
     SDL_Keycode SDL_Input_GetLastKey(const SDL_Input *pInput);
     void        SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse);
     void        SDL_Input_Free(SDL_Input *pInput);
+    void        SDL_Input_EnableKeyRepeat(SDL_Input *pInput);
+    void        SDL_Input_DisableKeyRepeat(SDL_Input *pInput);
 
 #endif // __SDL_INPUT_H__
 

@@ -30,6 +30,7 @@ void SDL_Input_Init(SDL_Input *pInput)
 
     pInput->pStdCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     pInput->pTxtCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+    SDL_Input_DisableKeyRepeat(pInput);
 }
 
 /*!
@@ -50,7 +51,7 @@ void SDL_Input_Update(SDL_Input *pInput)
         {
             case SDL_KEYDOWN:
             {
-                if (sEvent.key.repeat == 0) 
+                if (sEvent.key.repeat == 0 || pInput->bRepeatKey) 
                 {
                     pInput->bKey[sEvent.key.keysym.sym] = SDL_TRUE;
                     pInput->lastKey = sEvent.key.keysym.sym;
@@ -155,5 +156,27 @@ void SDL_Input_Free(SDL_Input *pInput)
 {
     SDL_FreeCursor(pInput->pTxtCursor);
     SDL_FreeCursor(pInput->pStdCursor);
+}
+
+/*!
+* \brief Function to enable keyboard repeatition.
+*
+* \param pInput Pointer to the input.
+* \return None.
+*/
+void SDL_Input_EnableKeyRepeat(SDL_Input *pInput)
+{
+    pInput->bRepeatKey = SDL_TRUE;
+}
+
+/*!
+* \brief Function to disable keyboard repeatition.
+*
+* \param pInput Pointer to the input.
+* \return None.
+*/
+void SDL_Input_DisableKeyRepeat(SDL_Input *pInput)
+{
+    pInput->bRepeatKey = SDL_FALSE;
 }
 /* ========================================================================= */
