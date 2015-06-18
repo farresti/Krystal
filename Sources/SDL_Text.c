@@ -30,12 +30,12 @@
  */
 void SDL_Text_Init(SDL_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y)
 {
-    pText->pFont = pFont;
+    pText->pFont    = pFont;
     pText->pTexture = NULL;
-    pText->rDest.x = x;
-    pText->rDest.y = y;
-    pText->rDest.w = 0;
-    pText->rDest.h = 0;
+    pText->rDest.x  = x;
+    pText->rDest.y  = y;
+    pText->rDest.w  = 0;
+    pText->rDest.h  = 0;
 }
 
 /*!
@@ -50,7 +50,7 @@ void SDL_Text_Init(SDL_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y)
 void SDL_Text_Set(SDL_Text *pText, const char *szText, SDL_Color *pColorFont, Sint32 iMaxW)
 {
     SDL_Surface *pSurface = NULL;
-    Sint32       iW = 0;
+    Sint32       iW       = 0;
 
     if (szText)
     {

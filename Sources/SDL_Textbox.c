@@ -44,33 +44,33 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
         return;
     }
     /*Init flags*/
-    pTextBox->bIsActive = SDL_FALSE;
-    pTextBox->bIsFull = SDL_FALSE;
-    pTextBox->bIsLocked = SDL_FALSE;
+    pTextBox->bIsActive      = SDL_FALSE;
+    pTextBox->bIsFull        = SDL_FALSE;
+    pTextBox->bIsLocked      = SDL_FALSE;
     /*Init text input*/
-    pTextBox->szText = NULL;
-    pTextBox->currentKey = pTextBox->lastKey = '\0';
+    pTextBox->szText         = NULL;
+    pTextBox->currentKey     = pTextBox->lastKey = '\0';
     SDL_Textbox_SetText(pTextBox, "");
     /*Init for cursor*/
-    pTextBox->pFont = pFont;
+    pTextBox->pFont          = pFont;
     pTextBox->offsetCursor.x = x + iW;
     pTextBox->offsetCursor.y = y + h / 2 - iH / 2;
     /*Init structure SDL_Text*/
-    pTextBox->pText = (SDL_Text*)UTIL_Malloc(sizeof(SDL_Text));
+    pTextBox->pText          = (SDL_Text*)UTIL_Malloc(sizeof(SDL_Text));
     SDL_Text_Init(pTextBox->pText, pTextBox->pFont, pTextBox->offsetCursor.x, pTextBox->offsetCursor.y);
     SDL_Text_Set(pTextBox->pText, pTextBox->szText, pColorFont, 0);
     /*Init time*/
-    pTextBox->iLastTime = SDL_GetTicks();
-    pTextBox->iCursorTime = SDL_GetTicks();
+    pTextBox->iLastTime      = SDL_GetTicks();
+    pTextBox->iCursorTime    = SDL_GetTicks();
     /*Init rect*/
-    pTextBox->rDest.x = x;
-    pTextBox->rDest.y = y;
-    pTextBox->rDest.w = w;
-    pTextBox->rDest.h = h;
+    pTextBox->rDest.x        = x;
+    pTextBox->rDest.y        = y;
+    pTextBox->rDest.w        = w;
+    pTextBox->rDest.h        = h;
     /*Init max length*/
-    pTextBox->iMaxLength = w - 3 * iW;
+    pTextBox->iMaxLength     = w - 3 * iW;
     /*Init colors*/
-    pTextBox->pColorFont = pColorFont;
+    pTextBox->pColorFont     = pColorFont;
 }
 
 /*!
@@ -82,10 +82,7 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
 */
 void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
 {
-    if (pTextBox->szText)
-    {
-        UTIL_Free(pTextBox->szText);
-    }
+    UTIL_Free(pTextBox->szText);
     pTextBox->szText = UTIL_StrCopy(szText);
 }
 
@@ -159,10 +156,10 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
 */
 void SDL_Textbox_Add(SDL_Textbox *pTextBox)
 {
-    SDL_Keymod keyMod = SDL_GetModState();
-    SDL_Keycode currKey = SDL_Textbox_GetCurrent(pTextBox);
-    char *szTemp = NULL;
-    char *key = (char*)SDL_GetKeyName(currKey);
+    SDL_Keymod   keyMod   = SDL_GetModState();
+    SDL_Keycode  currKey  = SDL_Textbox_GetCurrent(pTextBox);
+    char        *szTemp   = NULL;
+    char        *key      = (char*)SDL_GetKeyName(currKey);
     if (currKey != '\0')
     {
         if (strlen(key) == 1)
@@ -171,11 +168,11 @@ void SDL_Textbox_Add(SDL_Textbox *pTextBox)
             {
                 key = strlwr(key);
             }
-            szTemp = UTIL_StrBuild(pTextBox->szText, key, NULL);
+            szTemp  = UTIL_StrBuild(pTextBox->szText, key, NULL);
         }
         else
         {
-            szTemp = UTIL_StrBuild(pTextBox->szText, key + strlen(key) - 1, NULL);
+            szTemp  = UTIL_StrBuild(pTextBox->szText, key + strlen(key) - 1, NULL);
         }
         if (szTemp)
         {
@@ -194,7 +191,7 @@ void SDL_Textbox_Add(SDL_Textbox *pTextBox)
 */
 void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
 {
-    const char *space = " ";
+    const char *space  = " ";
     char       *szTemp = NULL;
     szTemp = UTIL_StrBuild(pTextBox->szText, space, NULL);
     if (szTemp)
@@ -212,7 +209,7 @@ void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
 */
 void SDL_Textbox_Delete(SDL_Textbox *pTextBox)
 {
-    Uint32 iLen = strlen(pTextBox->szText);
+    Uint32 iLen  = strlen(pTextBox->szText);
     char *szTemp = NULL;
     szTemp = UTIL_StrCopy(pTextBox->szText);
     if (szTemp)
@@ -248,15 +245,15 @@ void SDL_Textbox_Draw(SDL_Textbox *pTextBox)
 void SDL_Textbox_DrawCursor(SDL_Textbox *pTextBox)
 {
     SDL_Color colorCursor = { 0, 0, 0, 255 };
-    SDL_Text text;
+    SDL_Text cursor;
     if (SDL_Textbox_IsActive(pTextBox))
     {
         if (SDL_GetTicks() - pTextBox->iCursorTime >= 500)
         {
-            SDL_Text_Init(&text, pTextBox->pFont, SDL_Textbox_GetCursorX(pTextBox), SDL_Textbox_GetCursorY(pTextBox));
-            SDL_Text_Set(&text, "|", &colorCursor, 0);
-            SDL_Text_Draw(&text);
-            SDL_Text_Free(&text);
+            SDL_Text_Init(&cursor, pTextBox->pFont, SDL_Textbox_GetCursorX(pTextBox), SDL_Textbox_GetCursorY(pTextBox));
+            SDL_Text_Set (&cursor, "|", &colorCursor, 0);
+            SDL_Text_Draw(&cursor);
+            SDL_Text_Free(&cursor);
             if (SDL_GetTicks() - pTextBox->iCursorTime >= 1000)
             {
                 pTextBox->iCursorTime = SDL_GetTicks();
