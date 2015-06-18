@@ -145,6 +145,13 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
         }
         pTextBox->lastKey = pTextBox->currentKey;
     }
+    else
+    {
+        if (SDL_Input_IsKeyRepeatEnabled(pInput))
+        {
+            SDL_Input_DisableKeyRepeat(pInput);
+        }
+    }
     SDL_Textbox_CheckActive(pTextBox, pInput);
 }
 

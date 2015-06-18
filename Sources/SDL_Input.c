@@ -147,18 +147,6 @@ void SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse)
 }
 
 /*!
- * \brief Function to free the input structure.
- *
- * \param pInput Pointer to the input.
- * \return None.
- */
-void SDL_Input_Free(SDL_Input *pInput)
-{
-    SDL_FreeCursor(pInput->pTxtCursor);
-    SDL_FreeCursor(pInput->pStdCursor);
-}
-
-/*!
 * \brief Function to enable keyboard repeatition.
 *
 * \param pInput Pointer to the input.
@@ -179,4 +167,28 @@ void SDL_Input_DisableKeyRepeat(SDL_Input *pInput)
 {
     pInput->bRepeatKey = SDL_FALSE;
 }
+
+/*!
+* \brief Function to return the flag of key repeat.
+*
+* \param pInput Pointer to the input.
+* \return True if key repeat is enabled, false else.
+*/
+SDL_bool SDL_Input_IsKeyRepeatEnabled(SDL_Input *pInput)
+{
+    return pInput->bRepeatKey;
+}
+
+/*!
+ * \brief Function to free the input structure.
+ *
+ * \param pInput Pointer to the input.
+ * \return None.
+ */
+void SDL_Input_Free(SDL_Input *pInput)
+{
+    SDL_FreeCursor(pInput->pTxtCursor);
+    SDL_FreeCursor(pInput->pStdCursor);
+}
+
 /* ========================================================================= */
