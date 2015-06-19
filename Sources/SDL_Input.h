@@ -32,7 +32,7 @@
         Sint32      iScrollVertical;         /*!< Amount scrolled vertically, positive away from the user and negative toward the user. */
         SDL_bool    bMouseButtons[8];        /*!< Status of each buttons of the mouse */
         SDL_bool    bQuit;                   /*!< Flag to indicate if the cross has been pressed. */
-        SDL_Keycode lastKey;                 /*!< Last key pressed*/
+        SDL_Keycode iLastKey;                 /*!< Last key pressed*/
         SDL_Cursor *pTxtCursor;              /*!< Pointer to the text cursor*/
         SDL_Cursor *pStdCursor;              /*!< Pointer to the standard cursor*/
         SDL_bool    bRepeatKey;              /*!< Flag to enable or disable keyboard repeat*/
@@ -44,8 +44,7 @@
     void        SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode iKey);
     SDL_Keycode SDL_Input_GetLastKey(const SDL_Input *pInput);
     void        SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse);
-    void        SDL_Input_EnableKeyRepeat(SDL_Input *pInput);
-    void        SDL_Input_DisableKeyRepeat(SDL_Input *pInput);
+    void        SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bSet);
     SDL_bool    SDL_Input_IsKeyRepeatEnabled(SDL_Input *pInput);
     void        SDL_Input_Free(SDL_Input *pInput);
 

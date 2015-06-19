@@ -30,7 +30,7 @@ void SDL_Input_Init(SDL_Input *pInput)
 
     pInput->pStdCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     pInput->pTxtCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-    SDL_Input_DisableKeyRepeat(pInput);
+    SDL_Input_SetKeyRepeat(pInput, SDL_FALSE);
 }
 
 /*!
@@ -54,7 +54,7 @@ void SDL_Input_Update(SDL_Input *pInput)
                 if (sEvent.key.repeat == 0 || pInput->bRepeatKey) 
                 {
                     pInput->bKey[sEvent.key.keysym.sym] = SDL_TRUE;
-                    pInput->lastKey = sEvent.key.keysym.sym;
+                    pInput->iLastKey = sEvent.key.keysym.sym;
                 }
                 break;
             }
@@ -130,7 +130,7 @@ void SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode iKey)
  */
 SDL_Keycode SDL_Input_GetLastKey(const SDL_Input *pInput)
 {
-    return pInput->lastKey;
+    return pInput->iLastKey;
 }
 
 /*!
@@ -147,25 +147,15 @@ void SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse)
 }
 
 /*!
-* \brief Function to enable keyboard repeatition.
+* \brief Function to set keyboard repeatition.
 *
 * \param pInput Pointer to the input.
+* \param bSet   Boolean to set key repeat.
 * \return None.
 */
-void SDL_Input_EnableKeyRepeat(SDL_Input *pInput)
+void SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bSet)
 {
-    pInput->bRepeatKey = SDL_TRUE;
-}
-
-/*!
-* \brief Function to disable keyboard repeatition.
-*
-* \param pInput Pointer to the input.
-* \return None.
-*/
-void SDL_Input_DisableKeyRepeat(SDL_Input *pInput)
-{
-    pInput->bRepeatKey = SDL_FALSE;
+    pInput->bRepeatKey = bSet;
 }
 
 /*!
