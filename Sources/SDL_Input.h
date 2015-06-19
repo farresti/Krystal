@@ -44,7 +44,7 @@
     void        SDL_Input_ResetKey(SDL_Input *pInput, SDL_Keycode iKey);
     SDL_Keycode SDL_Input_GetLastKey(const SDL_Input *pInput);
     void        SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse);
-    void        SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bENabled);
+    void        SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bEnabled);
     SDL_bool    SDL_Input_IsKeyRepeatEnabled(SDL_Input *pInput);
     void        SDL_Input_Free(SDL_Input *pInput);
 

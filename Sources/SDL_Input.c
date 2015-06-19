@@ -150,12 +150,12 @@ void SDL_Input_GetMousePosition(const SDL_Input *pInput, SDL_Point *pMouse)
 * \brief Function to set keyboard repeatition.
 *
 * \param pInput     Pointer to the input.
-* \param bENabled   Boolean to set key repeat.
+* \param bEnabled   Boolean to set key repeat.
 * \return None.
 */
-void SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bENabled)
+void SDL_Input_SetKeyRepeat(SDL_Input *pInput, SDL_bool bEnabled)
 {
-    pInput->bRepeatKey = bENabled;
+    pInput->bRepeatKey = bEnabled;
 }
 
 /*!
