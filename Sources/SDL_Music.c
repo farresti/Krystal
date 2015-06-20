@@ -43,12 +43,12 @@ SDL_Music *SDL_Music_Alloc(const char *szMscName)
             if (!pMusic->pMixData || !pMusic->szName) // Error: must free...
             {
                 UTIL_MusicFree(&pMusic->pMixData);
-                UTIL_Free(&pMusic->szName);
-                UTIL_Free(&pMusic);
+                UTIL_Free(pMusic->szName);
+                UTIL_Free(pMusic);
             }
         }
 
-        UTIL_Free(&szMusicPath);
+        UTIL_Free(szMusicPath);
     }
 
     return pMusic;
@@ -74,9 +74,9 @@ void SDL_Music_Play(SDL_Music *pMusic, Sint32 iLoops)
  */
 void SDL_Music_Free(SDL_Music **ppMusic)
 {
-    UTIL_Free( &( *ppMusic )->szName );
+    UTIL_Free((*ppMusic)->szName );
     UTIL_MusicFree( &( *ppMusic )->pMixData );
-    UTIL_Free( ppMusic );
+    UTIL_Free(*ppMusic);
 }
 
 /* ========================================================================= */

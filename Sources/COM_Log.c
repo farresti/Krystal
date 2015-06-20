@@ -66,7 +66,7 @@ void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath)
             COM_log.iPrintLevel = iPrintLevel;
         }
     }
-    UTIL_Free(&szLogPath);
+    UTIL_Free(szLogPath);
 }
 
 /*!

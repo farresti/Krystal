@@ -160,7 +160,7 @@ void ENG_Precache_Free(void)
         }
        
         ENG_precache.iNbSprites = 0;
-        UTIL_Free((void **) &(ENG_precache.pArrSprites));
+        UTIL_Free((ENG_precache.pArrSprites));
     }
  
     if (ENG_precache.pArrSounds)
@@ -171,7 +171,7 @@ void ENG_Precache_Free(void)
         }
  
         ENG_precache.iNbSounds = 0;
-        UTIL_Free((void **) &(ENG_precache.pArrSounds));
+        UTIL_Free((ENG_precache.pArrSounds));
     }
 }
 
