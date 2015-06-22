@@ -64,7 +64,7 @@
     static void         SDL_Textbox_DrawCursor(SDL_Textbox *pTextbox);
     Sint32              SDL_Textbox_GetTextLength(const SDL_Textbox *pTextBox);
     Uint32              SDL_Textbox_GetMaxLength(const SDL_Textbox *pTextBox);
-    SDL_bool            SDL_Textbox_IsFull(const SDL_Textbox *pTextBox);
+    static SDL_bool     SDL_Textbox_IsFull(const SDL_Textbox *pTextBox);
     static void         SDL_Textbox_CheckSize(SDL_Textbox *pTextBox);
     static void         SDL_Textbox_CheckActive(SDL_Textbox *pTextBox, const SDL_Input *pInput);
     SDL_bool            SDL_Textbox_IsActive(const SDL_Textbox *pTextBox);
