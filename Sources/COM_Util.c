@@ -106,7 +106,7 @@ void *UTIL_ReallocEx(void *pOldMemoryBlock, size_t iNewSize, const char *szFct, 
 }
 
 /*!
- * \brief Function to free a memory block (Debug).
+ * \brief Function to free an allocated memory block (Debug).
  *
  * \param ppMemory Pointer to pointer to the memory block to free.
  * \param szFct    Name of the function calling free.
@@ -185,7 +185,7 @@ void *UTIL_Realloc(void *pOldMemoryBlock, size_t iNewSize)
  * \param szMode Mode used to open the file.
  * \return A pointer to the opened file, or NULL if error.
  */
-FILE *UTIL_Fopen(const char *szPath, const char *szMode)
+FILE *UTIL_FileOpen(const char *szPath, const char *szMode)
 {
     FILE *pFile = fopen(szPath, szMode);
 
@@ -205,9 +205,9 @@ FILE *UTIL_Fopen(const char *szPath, const char *szMode)
  * \param ppFile Pointer to pointer to the file to close.
  * \return None.
  */
-void UTIL_Fclose(FILE **ppFile)
+void UTIL_FileClose(FILE **ppFile)
 {
-    if(*ppFile != NULL)
+    if (*ppFile != NULL)
     {
         fclose(*ppFile);
         *ppFile = NULL;

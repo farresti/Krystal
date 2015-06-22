@@ -19,7 +19,7 @@
 
     #include "COM_Shared.h"
 
-    /* Memory leaks */
+    /* --- Memory management :: Start --- */
     #ifdef _DEBUG
         #define UTIL_Malloc(x)    UTIL_MallocEx(x, __FUNCTION__, __LINE__, __FILE__)
         #define UTIL_Realloc(x,y) UTIL_ReallocEx(x, y, __FUNCTION__, __LINE__, __FILE__)
@@ -31,20 +31,22 @@
     #else
         void *UTIL_Malloc(size_t iSize);
         void *UTIL_Realloc(void* pOldMemoryBlock, size_t iNewSize);
+
+        /*! Macro to free an allocated memory blocks */
         #define UTIL_Free(x) \
-                        do\
-                        {\
-                            if(x)\
-                            {\
-                                free(x);\
-                                x = NULL;\
-                            }\
-                        }while(x)
-
+        do                   \
+        {                    \
+            if(x)            \
+            {                \
+                free(x);     \
+                x = NULL;    \
+            }                \
+        } while(x)
     #endif // _DEBUG
+    /* --- Memory management :: End --- */
 
-    FILE *UTIL_Fopen(const char *szPath, const char *szMode);
-    void  UTIL_Fclose(FILE **ppFile);
+    FILE *UTIL_FileOpen(const char *szPath, const char *szMode);
+    void  UTIL_FileClose(FILE **ppFile);
 
     char *UTIL_StrCopy(const char *szSrc);
     char *UTIL_StrBuild(const char *szStart, ...);

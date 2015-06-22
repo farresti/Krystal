@@ -66,18 +66,13 @@ SDL_Texture *UTIL_TextureLoadRW(const char *szPath, SDL_RWops *pRWops, SDL_Rect 
  */
 SDL_Texture *UTIL_TextureLoad(const char *szPath, SDL_Rect *pTextureSize)
 {
-    SDL_RWops   *pRWops   = SDL_RWFromFile(szPath, "rb");
+    SDL_RWops   *pRWops   = UTIL_RWOpen(szPath, "rb");
     SDL_Texture *pTexture = NULL;
 
-    if (pRWops == NULL)
-    {
-        COM_Log_Print(COM_LOG_ERROR, "Can't open an image !");
-        COM_Log_Print(COM_LOG_ERROR, ">> Path \"%s\".\n", szPath);
-    }
-    else
+    if (pRWops)
     {
         pTexture = UTIL_TextureLoadRW(szPath, pRWops, pTextureSize);
-        SDL_FreeRW(pRWops);
+        UTIL_RWClose(&pRWops);
     }
 
     return pTexture;
@@ -95,6 +90,42 @@ void UTIL_TextureFree(SDL_Texture **ppTexture)
     {
         SDL_DestroyTexture(*ppTexture);
         *ppTexture = NULL;
+    }
+}
+
+/*!
+ * \brief Function to open a file using a RWops.
+ *
+ * \param szPath Path of the file to open.
+ * \param szMode Mode used to open the file.
+ * \return A pointer to the opened file using a RWops, or NULL if error.
+ */
+SDL_RWops *UTIL_RWOpen(const char *szPath, const char *szMode)
+{
+    SDL_RWops *pRw = SDL_RWFromFile(szPath, szMode);
+
+    if (pRw == NULL)
+    {
+        COM_Log_Print(COM_LOG_ERROR, "Can't open a file (Mode : %s) !",
+                                     strchr(szMode, 'r') ? "Read" : "Write");
+        COM_Log_Print(COM_LOG_ERROR, "Path: \"%s\"", szPath);
+    }
+    
+    return pRw;
+}
+
+/*!
+ * \brief Function to close a RWops.
+ *
+ * \param ppRw Pointer to pointer to the RWops to close.
+ * \return None.
+ */
+void UTIL_RWClose(SDL_RWops **ppRw)
+{
+    if (*ppRw != NULL)
+    {
+        SDL_FreeRW(*ppRw);
+        *ppRw = NULL;
     }
 }
 
