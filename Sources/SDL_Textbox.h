@@ -13,6 +13,8 @@
 /* Orlyn   | 15/06/15 | Add SDL_Textbox functions.                           */
 /* Orlyn   | 16/06/15 | Add SDL_Textbox functions.                           */
 /* Orlyn   | 17/06/15 | Add Cursor functions                                 */
+/* Orlyn   | 18/06/15 | Clean and add repeat key support                     */
+/* Orlyn   | 19/06/15 | Clean                                                */
 /* ========================================================================= */
 
 #ifndef __SDL_TEXTBOX_H__
@@ -30,39 +32,49 @@
      */
     typedef struct
     {
-        char        *szText;
-        SDL_bool     bIsActive;
-        SDL_bool     bIsFull;
-        SDL_bool     bIsLocked;
-        Uint32       iMaxLength;
-        Uint32       iLastTime;
-        Uint32       iCursorTime;
-        SDL_Keycode  currentLetter;
-        SDL_Keycode  precedentLetter;
-        SDL_Text    *pText;
-        TTF_Font    *pFont;
-        SDL_Rect     rDest;
-        SDL_Color   *pColorFont;
-        SDL_Point    offsetCursor;
-    } SDL_Textbox;
+        char        *szText;              /*!< String of the text inside the text box. */
 
-    void      SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, Sint32 x, Sint32 y, Sint32 w, Sint32 h);
-    void      SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText);
-    void      SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput);
-    void      SDL_Textbox_AddLetter(SDL_Textbox *pTextbox);
-    void      SDL_Textbox_AddSpace(SDL_Textbox *pTextBox);
-    void      SDL_Textbox_DeleteLetter(SDL_Textbox *pTextBox);
-    void      SDL_Textbox_Draw(SDL_Textbox *pTextbox); 
-    void      SDL_Textbox_DrawCursor(SDL_Textbox *pTextbox);
-    Sint32    SDL_Textbox_GetLength(SDL_Textbox *pTextBox);
-    Uint32    SDL_Textbox_GetMaxLength(SDL_Textbox *pTextBox);
-    SDL_bool  SDL_Textbox_IsFull(SDL_Textbox *pTextBox);
-    void      SDL_Textbox_SetActive(SDL_Textbox *pTextBox, SDL_Input *pInput);
-    SDL_bool  SDL_Textbox_IsActive(SDL_Textbox *pTextBox);
-    SDL_bool  SDL_Textbox_IsLocked(SDL_Textbox *pTextBox);
-    Sint32    SDL_Textbox_GetCursorX(SDL_Textbox *pTextBox);
-    Sint32    SDL_Textbox_GetCursorY(SDL_Textbox *pTextBox);
-    void      SDL_Textbox_Free(SDL_Textbox *pTextBox);
+        SDL_bool     bIsActive;           /*!< Flag to indicate if the text box is active. */
+        SDL_bool     bIsFull;             /*!< Flag to indicate if the text box is full. */
+        SDL_bool     bIsLocked;           /*!< Flag to indicate if a key is locked in the text box. */
+
+        Uint32       iMaxLength;          /*!< Maximum length of the text within the text box. */
+
+        Uint32       iLastTime;           /*!< Time of the last action. */
+        Uint32       iCursorTime;         /*!< Time for the blink of the cursor. */
+
+        SDL_Keycode  iCurrentKey;          /*!< The current key being pressed. */
+        SDL_Keycode  iLastKey;             /*!< The last key that has been pressed. */
+
+        SDL_Point    sPointCursor;        /*!< Offset for the cursor. */
+
+        SDL_Text    *pText;               /*!< Pointer to the text structure. */
+        TTF_Font    *pFont;               /*!< Pointer to the text font. */
+        SDL_Color   *pColorFont;          /*!< Pointer to the color of the font. */
+        SDL_Rect     rDest;               /*!< Rect of the text box. */
+    } SDL_Textbox;
+        
+    void                SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, SDL_Rect *pRectDest);
+    static void         SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText);
+    void                SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput);
+    static void         SDL_Textbox_Add(SDL_Textbox *pTextbox);
+    static void         SDL_Textbox_AddSpace(SDL_Textbox *pTextBox);
+    static void         SDL_Textbox_Delete(SDL_Textbox *pTextBox);
+    void                SDL_Textbox_Draw(SDL_Textbox *pTextbox);
+    static void         SDL_Textbox_DrawCursor(SDL_Textbox *pTextbox);
+    Sint32              SDL_Textbox_GetTextLength(const SDL_Textbox *pTextBox);
+    Uint32              SDL_Textbox_GetMaxLength(const SDL_Textbox *pTextBox);
+    SDL_bool            SDL_Textbox_IsFull(const SDL_Textbox *pTextBox);
+    static void         SDL_Textbox_CheckSize(SDL_Textbox *pTextBox);
+    static void         SDL_Textbox_CheckActive(SDL_Textbox *pTextBox, const SDL_Input *pInput);
+    SDL_bool            SDL_Textbox_IsActive(const SDL_Textbox *pTextBox);
+    static SDL_bool     SDL_Textbox_IsKeyLocked(const SDL_Textbox *pTextBox);
+    static void         SDL_Textbox_CheckLock(SDL_Textbox *pTextBox);
+    static Sint32       SDL_Textbox_GetCursorX(const SDL_Textbox *pTextBox);
+    static Sint32       SDL_Textbox_GetCursorY(const SDL_Textbox *pTextBox);
+    static SDL_Keycode  SDL_Textbox_GetCurrent(const SDL_Textbox *pTextBox);
+    void                SDL_Textbox_SetColor(SDL_Textbox *pTextBox, SDL_Color *pColor);
+    void                SDL_Textbox_Free(SDL_Textbox *pTextBox);
 
 #endif // __SDL_TEXTBOX_H__
 

@@ -106,7 +106,7 @@ void *UTIL_ReallocEx(void *pOldMemoryBlock, size_t iNewSize, const char *szFct, 
 }
 
 /*!
- * \brief Function to free a memory block (Debug).
+ * \brief Function to free an allocated memory block (Debug).
  *
  * \param ppMemory Pointer to pointer to the memory block to free.
  * \param szFct    Name of the function calling free.
@@ -172,21 +172,6 @@ void *UTIL_Realloc(void *pOldMemoryBlock, size_t iNewSize)
     }
 
     return pNewMemoryBlock;
-}
-
-/*!
- * \brief Function to free a memory block.
- *
- * \param ppMemory Pointer to pointer to a memory block.
- * \return None
- */
-void UTIL_Free(void **ppMemory)
-{
-    if(*ppMemory != NULL)
-    {
-        free(*ppMemory);
-        *ppMemory = NULL;
-    }
 }
 
 #endif // _DEBUG

@@ -30,7 +30,7 @@
     } SDL_Text;
 
     void SDL_Text_Init(SDL_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y);
-    void SDL_Text_Set(SDL_Text *pText, const char *szText, SDL_Color *pColorFont);
+    void SDL_Text_Set(SDL_Text *pText, const char *szText, SDL_Color *pColorFont, Sint32 iMaxW);
     void SDL_Text_Draw(SDL_Text* pText);
     void SDL_Text_Move(SDL_Text *pText, Sint32 x, Sint32 y);
     void SDL_Text_Center(SDL_Text *pText, Sint32 cx, Sint32 cy);

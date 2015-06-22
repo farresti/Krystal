@@ -57,9 +57,9 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 
                 if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
                 {
-                    UTIL_Free(&pSprite->szName);
+                    UTIL_Free(pSprite->szName);
                     UTIL_TextureFree(&pSprite->pTexture);
-                    UTIL_Free(&pSprite);
+                    UTIL_Free(pSprite);
                 }
                 else
                 {
@@ -77,7 +77,7 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
             UTIL_RWClose(&pSprRw);
         }
 
-        UTIL_Free(&szSprPath);
+        UTIL_Free(szSprPath);
     }
 
     return pSprite;
@@ -154,9 +154,9 @@ void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_R
  */
 void SDL_Sprite_Free(SDL_Sprite **ppSprite)
 {
-    UTIL_Free(&( *ppSprite )->szName);
+    UTIL_Free((*ppSprite)->szName);
     UTIL_TextureFree(&( *ppSprite )->pTexture);
-    UTIL_Free(ppSprite);
+    UTIL_Free(*ppSprite);
 }
 
 /* ========================================================================= */
