@@ -28,38 +28,18 @@
  */
 void SDL_Button_Init(SDL_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y)
 {
-    pButton->pSprite = pSprite;
+    SDL_Anim_Init(&pButton->sAnim, pSprite);
 
-    SDL_Sprite_GetFrameSize(pSprite, &pButton->rDest);
-    pButton->rDest.x = x;
-    pButton->rDest.y = y;
-    pButton->dAngle  = 0.0;
+    SDL_Anim_SetFlip  (&pButton->sAnim, SDL_FLIP_NONE);
+    SDL_Anim_SetOrigin(&pButton->sAnim, x, y);
+    SDL_Anim_SetFrame (&pButton->sAnim, 0);
+
+    SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
+    pButton->rHitbox.x = x;
+    pButton->rHitbox.y = y;
 
     pButton->bIsRolledOver = SDL_FALSE;
     pButton->bIsClicked    = SDL_FALSE;
-}
-
-/*!
- * \brief Function to set the angle of a button.
- *
- * \param pButton Pointer to the button.
- * \param dAngle  Angle to rotate the button.
- * \return None.
- */
-void SDL_Button_SetAngle(SDL_Button *pButton, double dAngle)
-{
-    pButton->dAngle = dAngle;
-}
-
-/*!
- * \brief  Function to get the angle of a button.
- *
- * \param  pButton Pointer to the button.
- * \return The angle of the button.
- */
-double SDL_Button_GetAngle(SDL_Button *pButton)
-{
-    return pButton->dAngle;
 }
 
 /*!
@@ -69,12 +49,12 @@ double SDL_Button_GetAngle(SDL_Button *pButton)
  * \param  pInput  Pointer to the inputs.
  * \return None.
  */
-void SDL_Button_Update(SDL_Button *pButton, SDL_Input *pInput)
+void SDL_Button_Update(SDL_Button *pButton, const SDL_Input *pInput)
 {
     /* ~~~ Check the position of the mouse.. ~~~ */
     if (pInput->bMotionEvent)
     {
-        if (UTIL_ContainPoint(pInput->iMouseX, pInput->iMouseY, &pButton->rDest))
+        if (UTIL_ContainPoint(&pInput->iMouse, &pButton->rHitbox))
         {
             pButton->bIsRolledOver = SDL_TRUE;
         }
@@ -102,16 +82,16 @@ void SDL_Button_Update(SDL_Button *pButton, SDL_Input *pInput)
 	{
 		if( pButton->bIsClicked == SDL_TRUE )
 		{
-			SDL_Sprite_SetFrame(pButton->pSprite, 2);
+            SDL_Anim_SetFrame(&pButton->sAnim, 2);
 		}
 		else
 		{
-			SDL_Sprite_SetFrame(pButton->pSprite, 1);
+			SDL_Anim_SetFrame(&pButton->sAnim, 1);
 		}
 	}
 	else
 	{
-		SDL_Sprite_SetFrame(pButton->pSprite, 0);
+		SDL_Anim_SetFrame(&pButton->sAnim, 0);
 	}
 }
 
@@ -123,7 +103,7 @@ void SDL_Button_Update(SDL_Button *pButton, SDL_Input *pInput)
  */
 void SDL_Button_Draw(SDL_Button *pButton)
 {
-    SDL_Sprite_Draw(pButton->pSprite, &pButton->rDest, pButton->dAngle, SDL_FLIP_NONE);
+    SDL_Anim_Draw(&pButton->sAnim);
 }
 
 /*!

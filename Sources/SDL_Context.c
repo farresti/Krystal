@@ -97,40 +97,51 @@ void SDL_Ctx_RenderClear(void)
  * \brief Function to copy a texture to the renderer.
  *
  * \param pTexture The texture to copy.
- * \param pRectSrc A pointer to the source rectangle (Can be NULL).
- * \param pRectDst A pointer to the destination rectangle (Can be NULL).
+ * \param pSrc     Rectangle to clip the texture (Can be NULL).
+ * \param pDest    Rectangle to position the texture (Can be NULL).
  * \return 0 on success, else -1 if error.
  */
-int SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pRectSrc, SDL_Rect *pRectDst)
+int SDL_Ctx_RenderCopy(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest)
 {
-    return SDL_RenderCopy(SDL_context.pRenderer, pTexture, pRectSrc, pRectDst);
+    return SDL_RenderCopy(SDL_context.pRenderer, pTexture, pSrc, pDest);
 }
 
 /*!
  * \brief Function to copy a texture to the renderer.
  *
  * \param pTexture The texture to copy.
- * \param pRectSrc A pointer to the source rectangle (Can be NULL).
- * \param pRectDst A pointer to the destination rectangle (Can be NULL).
- * \param dAngle   An angle in degrees to rotate the texture.
- * \param pCenter  Point to rotate the texture (Can be NULL).
+ * \param pSrc     Rectangle to clip the texture (Can be NULL).
+ * \param pDest    Rectangle to position the texture (Can be NULL).
  * \param iFlip    Flag to flip the texture.
- * \return 0 on success, -1 if error
+ * \return 0 on success, else -1 if error.
  */
-int SDL_Ctx_RenderCopyEx(SDL_Texture      *pTexture, 
-                         SDL_Rect         *pRectSrc, 
-                         SDL_Rect         *pRectDst, 
-                         double            dAngle, 
-                         const SDL_Point  *pCenter, 
-                         SDL_RendererFlip  iFlip)
+int SDL_Ctx_RenderCopyEx(SDL_Texture *pTexture, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip)
 {
-    return SDL_RenderCopyEx(SDL_context.pRenderer, 
-                            pTexture, 
-                            pRectSrc, 
-                            pRectDst, 
-                            dAngle, 
-                            pCenter, 
-                            iFlip);
+    return SDL_RenderCopyEx(SDL_context.pRenderer, pTexture, pSrc, pDest, 0.0, NULL, iFlip );
+}
+
+/*!
+ * \brief Function to draw a rect.
+ *
+ * \param pRect Pointer to the rect to draw (NULL to outline the entire rendering target).
+ * \return 0 on success, -1 if error.
+ */
+int SDL_Ctx_RenderDrawRect(const SDL_Rect *pRect)
+{
+   return SDL_RenderDrawRect(SDL_context.pRenderer, pRect);
+}
+
+/*!
+ * \brief Function to draw a rect filled with a color.
+ *
+ * \param pRect  Pointer to the rect to draw (NULL for the entire rendering target).
+ * \param pColor Pointer to the color.
+ * \return 0 on success, -1 if error.
+ */
+int SDL_Ctx_RenderFillRect(const SDL_Rect *pRect, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_context.pRenderer, pColor->r, pColor->r, pColor->b, pColor->a);
+    return SDL_RenderFillRect(SDL_context.pRenderer, pRect);
 }
 
 /*!
@@ -140,6 +151,7 @@ int SDL_Ctx_RenderCopyEx(SDL_Texture      *pTexture,
  */
 void SDL_Ctx_RenderPresent(void)
 {
+    SDL_SetRenderDrawColor(SDL_context.pRenderer, 0, 0, 0, 255);
     SDL_RenderPresent(SDL_context.pRenderer);
 }
 

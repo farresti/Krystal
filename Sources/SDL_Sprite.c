@@ -26,165 +26,137 @@
  */
 SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 {
-    FILE       *pSprFile  = NULL;
-    SDL_RWops  *pSprRwPng = NULL;
-    SDL_Sprite *pSprite   = NULL;
-    char       *szSprPath = NULL;
-    size_t      iFileSize = 0;
-    size_t      iPngSize  = 0;
-    Uint8      *pSprPng   = NULL;
-
-    SDL_Rect    sFrameSize;
-    SDL_Point   sFrameCenter;
+    SDL_RWops  *pSprRw       = NULL;
+    SDL_Sprite *pSprite      = NULL;
+    char       *szSprPath    = NULL;
+    size_t      iFileSize    = 0;
+    size_t      iPngSize     = 0;
+    Uint8      *pSprPng      = NULL;
+    Uint32      iFrameWidth  = 0;
+    Uint32      iFrameHeight = 0;
 
     szSprPath = UTIL_StrBuild("sprites/", szSprName, ".spr", NULL);
 
     if (szSprPath)
     {
-        pSprFile = UTIL_Fopen(szSprPath, "rb");
+        pSprRw = UTIL_RWOpen(szSprPath, "rb");
 
-        if (pSprFile)
+        if (pSprRw)
         {
-            /* ~~~ Get the file size... ~~~ */
-            fseek(pSprFile, 0, SEEK_END);
-            iFileSize = ftell(pSprFile);
-            rewind(pSprFile);
+            pSprite = (SDL_Sprite *) UTIL_Malloc(sizeof(SDL_Sprite));
 
-            /* ~~~ Read the data... ~~~ */
-            fread(&sFrameSize.w,   sizeof( Sint32 ), 1, pSprFile);
-            fread(&sFrameSize.h,   sizeof( Sint32 ), 1, pSprFile);
-            fread(&sFrameCenter.x, sizeof( Sint32 ), 1, pSprFile);
-            fread(&sFrameCenter.y, sizeof( Sint32 ), 1, pSprFile);
-
-            /* ~~~ Read the PNG... ~~~ */
-            iPngSize = iFileSize - ( sizeof( Sint32 ) * 4 );
-            pSprPng  = ( Uint8 * ) UTIL_Malloc( iPngSize );
-
-            if (pSprPng)
+            if (pSprite)
             {
-                fread(pSprPng, sizeof( Uint8 ), iPngSize, pSprFile);
-                pSprRwPng = SDL_RWFromMem(pSprPng, iPngSize);
+                /* ~~~ Read the data... ~~~ */
+                SDL_RWread(pSprRw, &iFrameWidth,  sizeof( Sint32 ), 1);
+                SDL_RWread(pSprRw, &iFrameHeight, sizeof( Sint32 ), 1);
 
-                if (pSprRwPng)
+                /* ~~~ Read the PNG... ~~~ */
+                pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRw, &pSprite->rTexture);
+                pSprite->szName   = UTIL_StrCopy(szSprName);
+
+                if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
                 {
-                    pSprite = (SDL_Sprite *) UTIL_Malloc( sizeof( SDL_Sprite ));
-
-                    if (pSprite)
-                    {
-                        pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRwPng, &pSprite->rTexture);
-                        pSprite->szName   = UTIL_StrCopy(szSprName);
-
-                        if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
-                        {
-                            UTIL_Free( &pSprite->szName );
-                            UTIL_TextureFree( &pSprite->pTexture );
-                            UTIL_Free( &pSprite );
-                        }
-                        else
-                        {
-                            pSprite->rSrc.x = 0;
-                            pSprite->rSrc.y = 0;
-                            pSprite->rSrc.w = sFrameSize.w;
-                            pSprite->rSrc.h = sFrameSize.h;
-
-                            pSprite->rDest.x = 0;
-                            pSprite->rDest.y = 0;
-                            pSprite->rDest.w = sFrameSize.w;
-                            pSprite->rDest.h = sFrameSize.h;
-
-                            pSprite->sFrameCenter.x = sFrameCenter.x;
-                            pSprite->sFrameCenter.y = sFrameCenter.y;
-
-                            pSprite->iNbFrameL = pSprite->rTexture.w / sFrameSize.w;
-                            pSprite->iNbFrameH = pSprite->rTexture.h / sFrameSize.h;
-
-                            pSprite->iMaxFrame = pSprite->iNbFrameL * pSprite->iNbFrameH;
-                        }
-                    }
-
-                    SDL_FreeRW(pSprRwPng);
+                    UTIL_Free(pSprite->szName);
+                    UTIL_TextureFree(&pSprite->pTexture);
+                    UTIL_Free(pSprite);
                 }
+                else
+                {
+                    pSprite->rTexture.x = 0;
+                    pSprite->rTexture.y = 0;
 
-                UTIL_Free(&pSprPng);
+                    pSprite->iFrameWidth  = iFrameWidth;
+                    pSprite->iFrameHeight = iFrameHeight;
+                    pSprite->iNbFrameL    = pSprite->rTexture.w / iFrameWidth;
+                    pSprite->iNbFrameH    = pSprite->rTexture.h / iFrameHeight;
+                    pSprite->iFrameMax    = pSprite->iNbFrameL * pSprite->iNbFrameH;
+                }
             }
 
-            UTIL_Fclose(&pSprFile);
+            UTIL_RWClose(&pSprRw);
         }
 
-        UTIL_Free(&szSprPath);
+        UTIL_Free(szSprPath);
     }
 
     return pSprite;
 }
 
 /*!
- * \brief  Function to set a frame for a sprite.
+ * \brief  Function to get the name of a sprite.
  *
- * \param  pSprite Pointer to a sprite.
- * \param  iFrame  Number of the frame to set.
- * \return None.
+ * \param  pSprite Pointer to the sprite.
+ * \return The name of the sprite.
  */
-void SDL_Sprite_SetFrame(SDL_Sprite *pSprite, Uint32 iFrame)
+const char *SDL_Sprite_GetName(const SDL_Sprite *pSprite)
 {
-    if (iFrame < pSprite->iMaxFrame)
-    {
-        pSprite->rSrc.x = ( iFrame % pSprite->iNbFrameL ) * pSprite->rSrc.w;
-        pSprite->rSrc.y = ( iFrame / pSprite->iNbFrameL ) * pSprite->rSrc.h;
-    }
+    return pSprite->szName;
 }
 
 /*!
  * \brief  Function to get the maximum frame of a sprite.
  *
- * \param  pSprite Pointer to a sprite.
- * \return The maximum frame of a sprite.
+ * \param  pSprite Pointer to the sprite.
+ * \return The maximum frame of the sprite.
  */
-Uint32 SDL_Sprite_GetMaxFrame(SDL_Sprite *pSprite)
+Uint32 SDL_Sprite_GetFrameMax(const SDL_Sprite *pSprite)
 {
-    return pSprite->iMaxFrame;
+    return pSprite->iFrameMax;
 }
 
 /*!
  * \brief  Function to get the frame size of a sprite.
  *
- * \param  pSprite    Pointer to a sprite.
- * \param  pFrameSize Rectangle to retrieve the frame size.
+ * \param  pSprite Pointer to the sprite.
+ * \param  pSrc    Rectangle to retrieve the frame size.
  * \return None.
  */
-void SDL_Sprite_GetFrameSize(SDL_Sprite *pSprite, SDL_Rect *pFrameSize)
+void SDL_Sprite_GetFrameSize(const SDL_Sprite *pSprite, SDL_Rect *pSrc)
 {
-    pFrameSize->w = pSprite->rSrc.w;
-    pFrameSize->h = pSprite->rSrc.h;
+    pSrc->w = pSprite->iFrameWidth;
+    pSrc->h = pSprite->iFrameHeight;
+}
+
+/*!
+ * \brief  Function to get the origin of a frame.
+ *
+ * \param  pSprite Pointer to the sprite.
+ * \param  iFrame  Frame to clip.
+ * \param  pSrc    Rectangle to retrieve the frame clip.
+ * \return None.
+ */
+void SDL_Sprite_GetFrameOrigin(const SDL_Sprite *pSprite, Uint32 iFrame, SDL_Rect *pSrc)
+{
+    pSrc->x = ( iFrame % pSprite->iNbFrameL ) * pSprite->iFrameWidth;
+    pSrc->y = ( iFrame / pSprite->iNbFrameL ) * pSprite->iFrameHeight;
 }
 
 /*!
  * \brief  Function to draw a sprite.
  *
- * \param  pSprite Pointer to a sprite.
+ * \param  pSprite Pointer to the sprite.
  * \param  pDest   Rectangle to position the sprite.
- * \param  dAngle  Angle to rotate the sprite.
+ * \param  pSrc    Rectangle to clip the sprite.
  * \param  iFlip   Flag to flip the sprite.
  * \return None.
  */
-void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pDest, double dAngle, SDL_RendererFlip iFlip)
+void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip)
 {
-    pSprite->rDest.x = pDest->x;
-    pSprite->rDest.y = pDest->y;
-    
-    SDL_Ctx_RenderCopyEx(pSprite->pTexture, &pSprite->rSrc, &pSprite->rDest, dAngle, &pSprite->sFrameCenter, iFlip);
+    SDL_Ctx_RenderCopyEx(pSprite->pTexture, pSrc, pDest, iFlip);
 }
 
 /*!
- * \brief  Function to free a sprite.
+ * \brief  Function to free the sprite.
  *
  * \param  ppSprite Pointer to pointer to a sprite.
  * \return None.
  */
 void SDL_Sprite_Free(SDL_Sprite **ppSprite)
 {
-    UTIL_Free( &( *ppSprite )->szName );
-    UTIL_TextureFree( &( *ppSprite )->pTexture );
-    UTIL_Free( ppSprite );
+    UTIL_Free((*ppSprite)->szName);
+    UTIL_TextureFree(&( *ppSprite )->pTexture);
+    UTIL_Free(*ppSprite);
 }
 
 /* ========================================================================= */

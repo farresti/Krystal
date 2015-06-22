@@ -19,6 +19,7 @@
     #ifdef _MSC_VER
         /*! Constant to remove some useless warnings with MSVC++. */
         #define _CRT_SECURE_NO_WARNINGS
+        #define _CRT_NONSTDC_NO_DEPRECATE
     #else 
         /*! Constant to add for other IDE. */
         #define __FUNCTION__ __func__
@@ -29,7 +30,7 @@
     #include <stdarg.h>
     #include <string.h>
     #include <time.h>
-
+    
 #endif // __COM_SHARED_H__
 
 /* ========================================================================= */
