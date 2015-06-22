@@ -200,7 +200,7 @@ void UTIL_Free(void **ppMemory)
  * \param szMode Mode used to open the file.
  * \return A pointer to the opened file, or NULL if error.
  */
-FILE *UTIL_Fopen(const char *szPath, const char *szMode)
+FILE *UTIL_FileOpen(const char *szPath, const char *szMode)
 {
     FILE *pFile = fopen(szPath, szMode);
 
@@ -220,9 +220,9 @@ FILE *UTIL_Fopen(const char *szPath, const char *szMode)
  * \param ppFile Pointer to pointer to the file to close.
  * \return None.
  */
-void UTIL_Fclose(FILE **ppFile)
+void UTIL_FileClose(FILE **ppFile)
 {
-    if(*ppFile != NULL)
+    if (*ppFile != NULL)
     {
         fclose(*ppFile);
         *ppFile = NULL;

@@ -26,8 +26,7 @@
  */
 SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 {
-    FILE       *pSprFile     = NULL;
-    SDL_RWops  *pSprRwPng    = NULL;
+    SDL_RWops  *pSprRw       = NULL;
     SDL_Sprite *pSprite      = NULL;
     char       *szSprPath    = NULL;
     size_t      iFileSize    = 0;
@@ -40,63 +39,42 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 
     if (szSprPath)
     {
-        pSprFile = UTIL_Fopen(szSprPath, "rb");
+        pSprRw = UTIL_RWOpen(szSprPath, "rb");
 
-        if (pSprFile)
+        if (pSprRw)
         {
-            /* ~~~ Get the file size... ~~~ */
-            fseek(pSprFile, 0, SEEK_END);
-            iFileSize = ftell(pSprFile);
-            rewind(pSprFile);
+            pSprite = (SDL_Sprite *) UTIL_Malloc(sizeof(SDL_Sprite));
 
-            /* ~~~ Read the data... ~~~ */
-            fread(&iFrameWidth,  sizeof( Sint32 ), 1, pSprFile);
-            fread(&iFrameHeight, sizeof( Sint32 ), 1, pSprFile);
-
-            /* ~~~ Read the PNG... ~~~ */
-            iPngSize = iFileSize - (sizeof( Sint32 ) * 4);
-            pSprPng  = (Uint8 *) UTIL_Malloc(iPngSize);
-
-            if (pSprPng)
+            if (pSprite)
             {
-                fread(pSprPng, sizeof( Uint8 ), iPngSize, pSprFile);
-                pSprRwPng = SDL_RWFromMem(pSprPng, iPngSize);
+                /* ~~~ Read the data... ~~~ */
+                SDL_RWread(pSprRw, &iFrameWidth,  sizeof( Sint32 ), 1);
+                SDL_RWread(pSprRw, &iFrameHeight, sizeof( Sint32 ), 1);
 
-                if (pSprRwPng)
+                /* ~~~ Read the PNG... ~~~ */
+                pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRw, &pSprite->rTexture);
+                pSprite->szName   = UTIL_StrCopy(szSprName);
+
+                if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
                 {
-                    pSprite = (SDL_Sprite *) UTIL_Malloc(sizeof(SDL_Sprite));
-
-                    if (pSprite)
-                    {
-                        pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRwPng, &pSprite->rTexture);
-                        pSprite->szName   = UTIL_StrCopy(szSprName);
-
-                        if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
-                        {
-                            UTIL_Free(&pSprite->szName);
-                            UTIL_TextureFree(&pSprite->pTexture);
-                            UTIL_Free(&pSprite);
-                        }
-                        else
-                        {
-                            pSprite->rTexture.x = 0;
-                            pSprite->rTexture.y = 0;
-
-                            pSprite->iFrameWidth  = iFrameWidth;
-                            pSprite->iFrameHeight = iFrameHeight;
-                            pSprite->iNbFrameL    = pSprite->rTexture.w / iFrameWidth;
-                            pSprite->iNbFrameH    = pSprite->rTexture.h / iFrameHeight;
-                            pSprite->iFrameMax    = pSprite->iNbFrameL * pSprite->iNbFrameH;
-                        }
-                    }
-
-                    SDL_FreeRW(pSprRwPng);
+                    UTIL_Free(&pSprite->szName);
+                    UTIL_TextureFree(&pSprite->pTexture);
+                    UTIL_Free(&pSprite);
                 }
+                else
+                {
+                    pSprite->rTexture.x = 0;
+                    pSprite->rTexture.y = 0;
 
-                UTIL_Free(&pSprPng);
+                    pSprite->iFrameWidth  = iFrameWidth;
+                    pSprite->iFrameHeight = iFrameHeight;
+                    pSprite->iNbFrameL    = pSprite->rTexture.w / iFrameWidth;
+                    pSprite->iNbFrameH    = pSprite->rTexture.h / iFrameHeight;
+                    pSprite->iFrameMax    = pSprite->iNbFrameL * pSprite->iNbFrameH;
+                }
             }
 
-            UTIL_Fclose(&pSprFile);
+            UTIL_RWClose(&pSprRw);
         }
 
         UTIL_Free(&szSprPath);

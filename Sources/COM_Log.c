@@ -50,9 +50,11 @@ void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath)
     struct tm *pTimeinfo = NULL;
 
     szLogPath = UTIL_StrBuild("logs/", szPath, ".log", NULL);
+
     if (szLogPath)
     {
         COM_log.pLogFile = fopen(szLogPath, "w+");
+
         if (COM_log.pLogFile)
         {
             time(&sTime);
@@ -65,8 +67,9 @@ void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath)
 
             COM_log.iPrintLevel = iPrintLevel;
         }
+
+        UTIL_Free(&szLogPath);
     }
-    UTIL_Free(&szLogPath);
 }
 
 /*!
@@ -107,10 +110,7 @@ void COM_Log_Print(COM_LogType iPrintLevel, const char *szFormat, ...)
  */
 void COM_Log_Quit(void)
 {
-    if (COM_log.pLogFile)
-    {
-        UTIL_Fclose(&COM_log.pLogFile);
-    }
+    UTIL_FileClose(&COM_log.pLogFile);
 }
 
 /* ========================================================================= */

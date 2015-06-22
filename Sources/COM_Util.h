@@ -34,8 +34,8 @@
         void  UTIL_Free(void **ppMemory);
     #endif // _DEBUG
 
-    FILE *UTIL_Fopen(const char *szPath, const char *szMode);
-    void  UTIL_Fclose(FILE **ppFile);
+    FILE *UTIL_FileOpen(const char *szPath, const char *szMode);
+    void  UTIL_FileClose(FILE **ppFile);
 
     char *UTIL_StrCopy(const char *szSrc);
     char *UTIL_StrBuild(const char *szStart, ...);
