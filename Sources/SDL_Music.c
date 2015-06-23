@@ -26,7 +26,7 @@
  */
 SDL_Music *SDL_Music_Alloc(const char *szMscName)
 {
-    SDL_Music *pMusic       = NULL;
+    SDL_Music  *pMusic       = NULL;
     char       *szMusicPath = NULL;
 
     szMusicPath = UTIL_StrBuild("musics/", szMscName, ".mp3", NULL);
@@ -79,4 +79,28 @@ void SDL_Music_Free(SDL_Music **ppMusic)
     UTIL_Free(*ppMusic);
 }
 
+/*!
+* \brief  Function to set the volume of the music.
+*
+* \param  iVolume the value of the volume (0 - 100%)
+* \return None.
+*/
+void SDL_Music_SetVolume(Uint32 iVolume)
+{
+    if (iVolume > 100) iVolume = 100;
+
+    SDL_Music_Volume = (Uint32)(iVolume * MIX_MAX_VOLUME / 100.0);
+    Mix_VolumeMusic(SDL_Music_Volume);
+    COM_Log_Print(COM_LOG_INFO, "Music Volume is set to %d %%", iVolume);
+}
+
+/*!
+* \brief  Function to get the volume of the music
+*
+* \return the value of the volume (0 - 100%).
+*/
+Uint32 SDL_Music_GetVolume(void)
+{
+    return SDL_Music_Volume;
+}
 /* ========================================================================= */

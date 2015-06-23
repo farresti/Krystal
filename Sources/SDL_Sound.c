@@ -76,6 +76,7 @@ const char *SDL_Sound_GetName(const SDL_Sound *pSound)
  */
 void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops)
 {
+    iVolume =(Uint32)(iVolume * SDL_Sound_Volume / 100.0);
     Mix_VolumeChunk(pSound->pMixChunk, iVolume);
     Mix_PlayChannel(iChannel, pSound->pMixChunk, iLoops);
 }
@@ -91,6 +92,30 @@ void SDL_Sound_Free(SDL_Sound **ppSound)
     UTIL_Free((*ppSound)->szName );
     UTIL_ChunkFree( &( *ppSound )->pMixChunk );
     UTIL_Free(*ppSound);
+}
+
+/*!
+* \brief  Function to set the volume of the sound.
+*
+* \param  iVolume the value of the volume (0 - 100%)
+* \return None.
+*/
+void SDL_Sound_SetVolume(Uint32 iVolume)
+{
+    if (iVolume > 100) iVolume = 100;
+
+    SDL_Sound_Volume = iVolume;
+    COM_Log_Print(COM_LOG_INFO, "Sound volume is set to %d %%", SDL_Sound_GetVolume());
+}
+
+/*!
+* \brief  Function to get the volume of the sound
+*
+* \return the value of the volume (0 - 100%).
+*/
+Uint32 SDL_Sound_GetVolume(void)
+{
+    return SDL_Sound_Volume;
 }
 
 /* ========================================================================= */
