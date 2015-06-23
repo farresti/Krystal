@@ -38,7 +38,9 @@
         SDL_bool     bIsFull;             /*!< Flag to indicate if the text box is full. */
         SDL_bool     bIsLocked;           /*!< Flag to indicate if a key is locked in the text box. */
 
-        Uint32       iMaxLength;          /*!< Maximum length of the text within the text box. */
+        Uint32       iBoxLength;          /*!< Maximum length of the text within the text box in pixels. */
+        Uint16       iTextLength;         /*!< Maximum length of the text within the text box in caracters. */
+        Sint32       iTextIndex;          /*!< Index in the text string. */
 
         Uint32       iLastTime;           /*!< Time of the last action. */
         Uint32       iCursorTime;         /*!< Time for the blink of the cursor. */
@@ -54,7 +56,7 @@
         SDL_Rect     rDest;               /*!< Rect of the text box. */
     } SDL_Textbox;
         
-    void                SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, SDL_Rect *pRectDest);
+    void                SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, SDL_Rect *pRectDest, Uint16 iLength, char* szText);
     static void         SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText);
     void                SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput);
     static void         SDL_Textbox_Add(SDL_Textbox *pTextbox);
@@ -63,7 +65,8 @@
     void                SDL_Textbox_Draw(SDL_Textbox *pTextbox);
     static void         SDL_Textbox_DrawCursor(SDL_Textbox *pTextbox);
     Sint32              SDL_Textbox_GetTextLength(const SDL_Textbox *pTextBox);
-    Uint32              SDL_Textbox_GetMaxLength(const SDL_Textbox *pTextBox);
+    Uint32              SDL_Textbox_GetMaxBoxLength(const SDL_Textbox *pTextBox);
+    Uint16              SDL_Textbox_GetMaxTextLength(const SDL_Textbox *pTextBox);
     static SDL_bool     SDL_Textbox_IsFull(const SDL_Textbox *pTextBox);
     static void         SDL_Textbox_CheckSize(SDL_Textbox *pTextBox);
     static void         SDL_Textbox_CheckActive(SDL_Textbox *pTextBox, const SDL_Input *pInput);
