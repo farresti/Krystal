@@ -17,8 +17,7 @@
 
     #include "SDL_Shared.h"
 
-    /*! Global variable to handle the volume of the music 0 - 100 % */
-    static Uint32 SDL_Sound_Volume = 100;
+
 
     /*!
      * \struct SDL_Sound
@@ -34,8 +33,8 @@
     const char *SDL_Sound_GetName(const SDL_Sound *pSound);
     void        SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops);
     void        SDL_Sound_Free(SDL_Sound **ppSound);
-    void        SDL_Sound_SetVolume(Uint32 iVolume);
-    Uint32      SDL_Sound_GetVolume(void);
+    void        SDL_Sound_SetGlobalVolume(Uint32 iVolume);
+    Uint32      SDL_Sound_GetGlobalVolume(void);
 #endif // __SDL_SOUND_H__
 
 /* ========================================================================= */

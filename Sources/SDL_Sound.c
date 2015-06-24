@@ -18,6 +18,9 @@
 
 /* ========================================================================= */
 
+/*! Global variable to handle the volume of the music 0 - 100 % */
+static Uint32 SDL_Sound_volume = 100;
+
 /*!
  * \brief  Function to load a sound.
  *
@@ -70,13 +73,13 @@ const char *SDL_Sound_GetName(const SDL_Sound *pSound)
  *
  * \param  pSound   Pointer to a loaded sound.
  * \param  iChannel Channel to play the sound.
- * \param  iVolume  Volume to play the sound.
+ * \param  iVolume  Volume to play the sound (0 - 128).
  * \param  iLoops   Number of times the sound must be looped.
  * \return None.
  */
 void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops)
 {
-    iVolume =(Uint32)(iVolume * SDL_Sound_Volume / 100.0);
+    iVolume = ((iVolume * SDL_Sound_volume) / 100);
     Mix_VolumeChunk(pSound->pMixChunk, iVolume);
     Mix_PlayChannel(iChannel, pSound->pMixChunk, iLoops);
 }
@@ -100,12 +103,13 @@ void SDL_Sound_Free(SDL_Sound **ppSound)
 * \param  iVolume the value of the volume (0 - 100%)
 * \return None.
 */
-void SDL_Sound_SetVolume(Uint32 iVolume)
+void SDL_Sound_SetGlobalVolume(Uint32 iVolume)
 {
     if (iVolume > 100) iVolume = 100;
 
-    SDL_Sound_Volume = iVolume;
-    COM_Log_Print(COM_LOG_INFO, "Sound volume is set to %d %%", SDL_Sound_GetVolume());
+    SDL_Sound_volume = iVolume;
+
+    COM_Log_Print(COM_LOG_INFO, "Sound volume is set to %d %%", SDL_Sound_volume);
 }
 
 /*!
@@ -113,9 +117,9 @@ void SDL_Sound_SetVolume(Uint32 iVolume)
 *
 * \return the value of the volume (0 - 100%).
 */
-Uint32 SDL_Sound_GetVolume(void)
+Uint32 SDL_Sound_GetGlobalVolume(void)
 {
-    return SDL_Sound_Volume;
+    return SDL_Sound_volume;
 }
 
 /* ========================================================================= */
