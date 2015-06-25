@@ -27,7 +27,7 @@ unsigned int COM_Math_Sqrt32(unsigned int iValue)
     unsigned int iCompute;
     unsigned int iIndex;
 
-    if( iValue > 1 )
+    if (iValue > 1)
     {
         iCompute = iValue;
 
