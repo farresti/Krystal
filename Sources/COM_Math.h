@@ -1,25 +1,29 @@
 /* ========================================================================= */
 /*!
- * \file    COM_If.h
- * \brief   File to interface with the module 'COM'.
+ * \file    COM_Math.h
+ * \brief   File to interface with mathematical functions.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    09 June 2015
+ * \date    23 June 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 09/06/15 | Creation.                                            */
+/* Nyuu    | 23/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __COM_IF_H__
-#define __COM_IF_H__
+#ifndef __COM_MATH_H__
+#define __COM_MATH_H__
 
-    #include "COM_Log.h"
-    #include "COM_Math.h"
     #include "COM_Shared.h"
-    #include "COM_Util.h"
+    
+    /*! Macro to get the min of two values */
+    #define COM_Math_Min(x,y) ((x) > (y) ? (y) : (x))
+    /*! Macro to get the max of two values */
+    #define COM_Math_Max(x,y) ((x) > (y) ? (x) : (y))
+    
+    unsigned int COM_Math_Sqrt32(unsigned int iValue);
 
-#endif // __COM_IF_H__
+#endif // __COM_MATH_H__
 
 /* ========================================================================= */
