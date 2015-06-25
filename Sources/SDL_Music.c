@@ -18,6 +18,9 @@
 
 /* ========================================================================= */
 
+/*! Global variable to handle the volume of the music 0 - 100 */
+static Uint32 SDL_Music_volume = 100;
+
 /*!
  * \brief  Function to load a music.
  *
@@ -26,7 +29,7 @@
  */
 SDL_Music *SDL_Music_Alloc(const char *szMscName)
 {
-    SDL_Music *pMusic       = NULL;
+    SDL_Music  *pMusic       = NULL;
     char       *szMusicPath = NULL;
 
     szMusicPath = UTIL_StrBuild("musics/", szMscName, ".mp3", NULL);
@@ -57,12 +60,15 @@ SDL_Music *SDL_Music_Alloc(const char *szMscName)
 /*!
  * \brief  Function to play a music.
  *
- * \param  pMusic Pointer to a loaded music.
- * \param  iLoops Number of times the music must be looped.
+ * \param  pMusic  Pointer to a loaded music.
+ * \param  iVolume Volume to play the sound (0 - 128).
+ * \param  iLoops  Number of times the music must be looped.
  * \return None.
  */
-void SDL_Music_Play(SDL_Music *pMusic, Sint32 iLoops)
+void SDL_Music_Play(SDL_Music *pMusic, Uint32 iVolume, Sint32 iLoops)
 {
+    iVolume = ((iVolume * SDL_Music_volume) / 100);
+    Mix_VolumeMusic(iVolume);
     Mix_PlayMusic(pMusic->pMixData, iLoops);
 }
 
@@ -79,4 +85,40 @@ void SDL_Music_Free(SDL_Music **ppMusic)
     UTIL_Free(*ppMusic);
 }
 
+/*!
+* \brief  Function to set the global volume of the music.
+*
+* \param  iVolume the value of the global volume (0 - 100%).
+* \return None.
+*/
+void SDL_Music_SetGlobalVolume(Uint32 iVolume)
+{
+    if (iVolume > 100) iVolume = 100;
+
+    SDL_Music_volume = iVolume;
+
+    COM_Log_Print(COM_LOG_INFO, "Music Volume is set to %d %%", SDL_Music_volume);
+}
+
+/*!
+* \brief  Function to get the volume of the music.
+*
+* \return the value of the volume (0 - 100%).
+*/
+Uint32 SDL_Music_GetGlobalVolume(void)
+{
+    return SDL_Music_volume;
+}
+
+/*!
+* \brief  Function to set the volume of the current music
+*
+* \param  iVolume the value of the volume (0 - 128)
+* \return None.
+*/
+void SDL_Music_SetVolume(Uint32 iVolume)
+{
+    iVolume = ((iVolume * SDL_Music_volume) / 100);
+    Mix_VolumeMusic(iVolume);
+}
 /* ========================================================================= */
