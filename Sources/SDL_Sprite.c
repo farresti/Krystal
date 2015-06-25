@@ -29,9 +29,6 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
     SDL_RWops  *pSprRw       = NULL;
     SDL_Sprite *pSprite      = NULL;
     char       *szSprPath    = NULL;
-    size_t      iFileSize    = 0;
-    size_t      iPngSize     = 0;
-    Uint8      *pSprPng      = NULL;
     Uint32      iFrameWidth  = 0;
     Uint32      iFrameHeight = 0;
 
