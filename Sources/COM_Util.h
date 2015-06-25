@@ -18,12 +18,16 @@
 #define __COM_UTIL_H__
 
     #include "COM_Shared.h"
-
+    #define __FILENAME__ \
+        (strrchr(__FILE__,'\\') \
+        ? strrchr(__FILE__,'\\')+1 \
+        : __FILE__ \
+        )
     /* --- Memory management :: Start --- */
     #ifdef _DEBUG
-        #define UTIL_Malloc(x)    UTIL_MallocEx(x, __FUNCTION__, __LINE__, __FILE__)
-        #define UTIL_Realloc(x,y) UTIL_ReallocEx(x, y, __FUNCTION__, __LINE__, __FILE__)
-        #define UTIL_Free(x)      UTIL_FreeEx((void**)&x, __FUNCTION__, __LINE__, __FILE__) 
+        #define UTIL_Malloc(x)    UTIL_MallocEx(x, __FUNCTION__, __LINE__, __FILENAME__)
+        #define UTIL_Realloc(x,y) UTIL_ReallocEx(x, y, __FUNCTION__, __LINE__, __FILENAME__)
+        #define UTIL_Free(x)      UTIL_FreeEx((void**)&x, __FUNCTION__, __LINE__, __FILENAME__) 
 
         void *UTIL_MallocEx(size_t iSize, const char *szFct, size_t iLine, const char *szFile);
         void *UTIL_ReallocEx(void* pOldMemoryBlock, size_t iNewSize, const char *szFct, size_t iLine, const char *szFile);

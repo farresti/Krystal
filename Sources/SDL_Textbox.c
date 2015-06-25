@@ -28,9 +28,12 @@
 * \param pFont          A pointer to the font to set.
 * \param pColorFont     A pointer to the font color of the text.
 * \param pRectDest      A pointer to a rect filled with position and size of the text box.
+* \param iLength        The maximum length of the string allowed in the text box, != 0.
+* \param szText         A string to inialise the text box, if none, value "" must be passed.
 * \return None
+* \remarks if the length of szText is greater than iLength, the string will be cut to match iLength.
 */
-void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, SDL_Rect *pRectDest)
+void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorFont, SDL_Rect *pRectDest, Uint16 iLength, char* szText)
 {
     Sint32 iW = 0;
     Sint32 iH = 0;
@@ -45,13 +48,21 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
     pTextBox->bIsActive      = SDL_FALSE;
     pTextBox->bIsFull        = SDL_FALSE;
     pTextBox->bIsLocked      = SDL_FALSE;
+    /*Init max length*/
+    pTextBox->iBoxLength     = iLength*iW;
+    if (SDL_Textbox_GetMaxBoxLength(pTextBox) >= (Uint32)pRectDest->w)
+    {
+        pTextBox->iBoxLength = pRectDest->w - iW;
+    }
+    pTextBox->iTextLength    = iLength;
     /*Init text input*/
-    pTextBox->szText         = NULL;
+    pTextBox->szText         = (char*)UTIL_Malloc((iLength + 1)* sizeof(char));
     pTextBox->iCurrentKey    = pTextBox->iLastKey = '\0';
-    SDL_Textbox_SetText(pTextBox, "");
+    pTextBox->iTextIndex     = 0;
+    SDL_Textbox_SetText(pTextBox, szText);
     /*Init for cursor*/
     pTextBox->pFont          = pFont;
-    pTextBox->sPointCursor.x = pRectDest->x + iW;
+    pTextBox->sPointCursor.x = pRectDest->x + iW / 2;
     pTextBox->sPointCursor.y = pRectDest->y + pRectDest->h / 2 - iH / 2;
     /*Init structure SDL_Text*/
     pTextBox->pText          = (SDL_Text*)UTIL_Malloc(sizeof(SDL_Text));
@@ -65,8 +76,6 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
     pTextBox->rDest.y        = pRectDest->y;
     pTextBox->rDest.w        = pRectDest->w;
     pTextBox->rDest.h        = pRectDest->h;
-    /*Init max length*/
-    pTextBox->iMaxLength     = pRectDest->w - 3 * iW;
     /*Init colors*/
     pTextBox->pColorFont     = pColorFont;
 }
@@ -80,8 +89,28 @@ void SDL_Textbox_Init(SDL_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColorF
 */
 static void SDL_Textbox_SetText(SDL_Textbox *pTextBox, const char *szText)
 {
-    UTIL_Free(pTextBox->szText);
-    pTextBox->szText = UTIL_StrCopy(szText);
+    Uint16 iLengthTextbox = SDL_Textbox_GetMaxTextLength(pTextBox);
+    size_t iLengthText = strlen(szText);
+    Uint32 i = 0;
+    if (iLengthText > 0 && iLengthText <= iLengthTextbox)
+    {
+        memcpy(pTextBox->szText, szText, iLengthText + 1);
+        pTextBox->iTextIndex = (Sint32)iLengthText;
+    }
+    else if (iLengthText > iLengthTextbox)
+    {
+        for (i = 0; i < iLengthTextbox; ++i)
+        {
+            *(pTextBox->szText + i) = szText[i];
+        }
+        *(pTextBox->szText + iLengthTextbox) = '\0';
+        pTextBox->iTextIndex                     = iLengthTextbox;
+    }
+    else
+    {
+        *(pTextBox->szText)  = '\0';
+        pTextBox->iTextIndex = 0;
+    }
 }
 
 /*!
@@ -120,10 +149,7 @@ void SDL_Textbox_Update(SDL_Textbox *pTextBox, SDL_Input *pInput)
             }
             else if (iLastKey == SDLK_BACKSPACE)
             {
-                if (SDL_Textbox_GetTextLength(pTextBox) > 0)
-                {
-                    SDL_Textbox_Delete(pTextBox);
-                }
+                SDL_Textbox_Delete(pTextBox);
             }
             else if (iLastKey == SDLK_RETURN)
             {
@@ -160,27 +186,26 @@ static void SDL_Textbox_Add(SDL_Textbox *pTextBox)
 {
     SDL_Keymod   keyMod   = SDL_GetModState();
     SDL_Keycode  currKey  = SDL_Textbox_GetCurrent(pTextBox);
-    char        *szTemp   = NULL;
     char        *key      = (char*)SDL_GetKeyName(currKey);
     size_t       iLen     = strlen(key);
     if (currKey != '\0')
     {
-        if (iLen == 1)      /*Normal keys*/
+        if ((pTextBox->iTextIndex + 1) <= SDL_Textbox_GetMaxTextLength(pTextBox))
         {
-            if (!(keyMod & KMOD_SHIFT))
+            if (iLen == 1)      /*Normal keys*/
             {
-                key = strlwr(key);
+                if (!(keyMod & KMOD_SHIFT))  /*Maj key*/
+                {
+                    key = strlwr(key);
+                }
+                *(pTextBox->szText + pTextBox->iTextIndex) = key[0];
             }
-            szTemp  = UTIL_StrBuild(pTextBox->szText, key, NULL);
-        }
-        else                /*Keypad keys*/
-        {
-            szTemp  = UTIL_StrBuild(pTextBox->szText, key + iLen - 1, NULL);
-        }
-        if (szTemp)
-        {
-            SDL_Textbox_SetText(pTextBox, szTemp);
-            UTIL_Free(szTemp);
+            else                /*Keypad keys*/
+            {
+                *(pTextBox->szText + pTextBox->iTextIndex) = key[iLen - 1];
+            }
+            *(pTextBox->szText + pTextBox->iTextIndex + 1) = '\0';
+            pTextBox->iTextIndex++;
         }
     }
 
@@ -194,12 +219,11 @@ static void SDL_Textbox_Add(SDL_Textbox *pTextBox)
 */
 static void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
 {
-    char       *szTemp = NULL;
-    szTemp = UTIL_StrBuild(pTextBox->szText, " ", NULL);
-    if (szTemp)
+    if ((pTextBox->iTextIndex + 1) <= SDL_Textbox_GetMaxTextLength(pTextBox))
     {
-        SDL_Textbox_SetText(pTextBox, szTemp);
-        UTIL_Free(szTemp);
+        *(pTextBox->szText + pTextBox->iTextIndex)     = ' ';
+        *(pTextBox->szText + pTextBox->iTextIndex + 1) = '\0';
+        pTextBox->iTextIndex++;
     }
 }
 
@@ -211,15 +235,12 @@ static void SDL_Textbox_AddSpace(SDL_Textbox *pTextBox)
 */
 static void SDL_Textbox_Delete(SDL_Textbox *pTextBox)
 {
-    Uint32 iLen  = strlen(pTextBox->szText);
-    char *szTemp = UTIL_StrCopy(pTextBox->szText);
-
-    if (szTemp)
+    pTextBox->iTextIndex--;
+    if (pTextBox->iTextIndex < 0)
     {
-        szTemp[iLen - 1] = '\0';
-        SDL_Textbox_SetText(pTextBox, szTemp);
-        UTIL_Free(szTemp);
+        pTextBox->iTextIndex = 0;
     }
+    *(pTextBox->szText + pTextBox->iTextIndex) = '\0';
 }
 
 /*!
@@ -269,7 +290,7 @@ static void SDL_Textbox_DrawCursor(SDL_Textbox *pTextBox)
 }
 
 /*!
-* \brief Function to return the state of a Textbox.
+* \brief Function to return the length in pixel of the text.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return size of the text as it is displayed.
@@ -285,14 +306,25 @@ Sint32 SDL_Textbox_GetTextLength(const SDL_Textbox *pTextBox)
 }
 
 /*!
+* \brief Function to return the maximum length of the text.
+*
+* \param pTextBox       A pointer to the SDL_Textbox structure.
+* \return number of caracters allowed in the textbox.
+*/
+Uint16 SDL_Textbox_GetMaxTextLength(const SDL_Textbox *pTextBox)
+{
+    return pTextBox->iTextLength;
+}
+
+/*!
 * \brief Function to return the max length of a text of a Textbox.
 *
 * \param pTextBox       A pointer to the SDL_Textbox structure.
 * \return maximum size text in the text box for the choosen font.
 */
-Uint32 SDL_Textbox_GetMaxLength(const SDL_Textbox *pTextBox)
+Uint32 SDL_Textbox_GetMaxBoxLength(const SDL_Textbox *pTextBox)
 {
-    return pTextBox->iMaxLength;
+    return pTextBox->iBoxLength;
 }
 
 /*!
@@ -354,7 +386,8 @@ SDL_bool SDL_Textbox_IsFull(const SDL_Textbox *pTextBox)
 */
 static void SDL_Textbox_CheckSize(SDL_Textbox *pTextBox)
 {
-    if ((Uint32)(SDL_Textbox_GetTextLength(pTextBox)) >= SDL_Textbox_GetMaxLength(pTextBox))
+    if (pTextBox->iTextIndex == SDL_Textbox_GetMaxTextLength(pTextBox) ||
+        (Uint32)SDL_Textbox_GetTextLength(pTextBox) >= SDL_Textbox_GetMaxBoxLength(pTextBox))
     {
         pTextBox->bIsFull = SDL_TRUE;
     }
