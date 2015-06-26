@@ -18,8 +18,10 @@
 
 /* ========================================================================= */
 
-/*! Global variable to handle the volume of the music 0 - 100 % */
+/*! Global variable to handle the volume of the sounds (0 - 100)% */
 static Uint32 SDL_Sound_volume = 100;
+
+/* ========================================================================= */
 
 /*!
  * \brief  Function to load a sound.
@@ -80,6 +82,7 @@ const char *SDL_Sound_GetName(const SDL_Sound *pSound)
 void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 iLoops)
 {
     iVolume = ((iVolume * SDL_Sound_volume) / 100);
+
     Mix_VolumeChunk(pSound->pMixChunk, iVolume);
     Mix_PlayChannel(iChannel, pSound->pMixChunk, iLoops);
 }
@@ -92,31 +95,33 @@ void SDL_Sound_Play(SDL_Sound *pSound, Uint32 iChannel, Uint32 iVolume, Sint32 i
  */
 void SDL_Sound_Free(SDL_Sound **ppSound)
 {
-    UTIL_Free((*ppSound)->szName );
-    UTIL_ChunkFree( &( *ppSound )->pMixChunk );
+    UTIL_Free((*ppSound)->szName);
+    UTIL_ChunkFree(&( *ppSound )->pMixChunk);
     UTIL_Free(*ppSound);
 }
 
+/* ========================================================================= */
+
 /*!
-* \brief  Function to set the volume of the sound.
-*
-* \param  iVolume the value of the volume (0 - 100%)
-* \return None.
-*/
+ * \brief  Function to set the global volume of the sounds.
+ *
+ * \param  iVolume the value of the global volume (0 - 100)%.
+ * \return None.
+ */
 void SDL_Sound_SetGlobalVolume(Uint32 iVolume)
 {
-    if (iVolume > 100) iVolume = 100;
+    iVolume = COM_Math_Min(iVolume, 100);
 
     SDL_Sound_volume = iVolume;
 
-    COM_Log_Print(COM_LOG_INFO, "Sound volume is set to %d %%", SDL_Sound_volume);
+    COM_Log_Print(COM_LOG_INFO, "Sound volume is now: %d%%.", iVolume);
 }
 
 /*!
-* \brief  Function to get the volume of the sound
-*
-* \return the value of the volume (0 - 100%).
-*/
+ * \brief  Function to get the global volume of the sounds.
+ *
+ * \return The value of the global volume (0 - 100)%.
+ */
 Uint32 SDL_Sound_GetGlobalVolume(void)
 {
     return SDL_Sound_volume;

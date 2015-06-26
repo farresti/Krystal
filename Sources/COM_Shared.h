@@ -15,7 +15,7 @@
 
 #ifndef __COM_SHARED_H__
 #define __COM_SHARED_H__
-
+    
     #ifdef _MSC_VER
         /*! Constant to remove some useless warnings with MSVC++. */
         #define _CRT_SECURE_NO_WARNINGS
@@ -24,7 +24,10 @@
         /*! Constant to add for other IDE. */
         #define __FUNCTION__ __func__
     #endif
-
+    
+    /*! Constant to retrieve the filename. */
+    #define __FILENAME__ (strrchr(__FILE__,'\\') ? (strrchr(__FILE__,'\\') + 1) : __FILE__)
+    
     #include <stdio.h>
     #include <stdlib.h>
     #include <stdarg.h>

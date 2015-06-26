@@ -14,11 +14,12 @@
 
 #ifndef __COM_IF_H__
 #define __COM_IF_H__
-
+    
     #include "COM_Log.h"
+    #include "COM_Math.h"
     #include "COM_Shared.h"
     #include "COM_Util.h"
-
+    
 #endif // __COM_IF_H__
 
 /* ========================================================================= */

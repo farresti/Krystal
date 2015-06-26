@@ -1,6 +1,6 @@
 /* ========================================================================= */
 /*!
- * \file    SDL_Text.h
+ * \file    HUI_Text.h
  * \brief   File to interface with the texts.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
@@ -10,16 +10,16 @@
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
-/* Orlyn   | 13/06/15 | Add SDL_Text functions.                              */
+/* Orlyn   | 13/06/15 | Add HUI_Text functions.                              */
 /* ========================================================================= */
 
-#ifndef __SDL_TEXT_H__
-#define __SDL_TEXT_H__
+#ifndef __HUI_TEXT_H__
+#define __HUI_TEXT_H__
 
-    #include "SDL_Shared.h"
+    #include "HUI_Shared.h"
     
     /*!
-     * \struct SDL_Text
+     * \struct HUI_Text
      * \brief  Structure to handle a text.
      */
     typedef struct
@@ -27,15 +27,15 @@
         TTF_Font    *pFont;    /*!< Pointer to the text font. */
         SDL_Texture *pTexture; /*!< Pointer to the text texture. */
         SDL_Rect     rDest;    /*!< Rectangle to position the text. */
-    } SDL_Text;
+    } HUI_Text;
 
-    void SDL_Text_Init(SDL_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y);
-    void SDL_Text_Set(SDL_Text *pText, const char *szText, SDL_Color *pColorFont, Sint32 iMaxW);
-    void SDL_Text_Draw(SDL_Text* pText);
-    void SDL_Text_Move(SDL_Text *pText, Sint32 x, Sint32 y);
-    void SDL_Text_Center(SDL_Text *pText, Sint32 cx, Sint32 cy);
-    void SDL_Text_Free(SDL_Text *pText);
+    void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y);
+    void HUI_Text_Set(HUI_Text *pText, const char *szText, const SDL_Color *pColor, Sint32 iMaxW);
+    void HUI_Text_Draw(HUI_Text* pText);
+    void HUI_Text_Move(HUI_Text *pText, Sint32 x, Sint32 y);
+    void HUI_Text_Center(HUI_Text *pText, Sint32 cx, Sint32 cy);
+    void HUI_Text_Free(HUI_Text *pText);
 
-#endif // __SDL_TEXT_H__
+#endif // __HUI_TEXT_H__
 
 /* ========================================================================= */

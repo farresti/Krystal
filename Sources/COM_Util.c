@@ -39,21 +39,14 @@ void *UTIL_MallocEx(size_t iSize, const char *szFct, size_t iLine, const char *s
 
     if (pAllocatedMemory != NULL)
     {
-        COM_Log_Print(COM_LOG_DEBUG,
-                      "\nIn file : l%d %s\n"
-                      "Function : %s\n"
-                      "Allocated %u blocks @ %p\n",
-                      iLine, szFile, szFct, iSize, pAllocatedMemory);
+        COM_Log_Print(COM_LOG_DEBUG, "File %s (l. %d) - Function %s:", szFile, iLine, szFct);
+        COM_Log_Print(COM_LOG_DEBUG, ">> UTIL_Malloc: %u bytes (@: %p).", iSize, pAllocatedMemory);
 
         COM_iMallocCounter++;
     }
     else
     {
-        COM_Log_Print(COM_LOG_CRITICAL,
-                      "\nIn file : l%d %s\n"
-                      "Function : %s\n"
-                      "Tried to allocate %u blocks, Insuffisient memory.\n",
-                      iLine, szFile, szFct, iSize);
+        COM_Log_Print(COM_LOG_CRITICAL, "Failed to allocated %u bytes, not enough memory!", iSize);
     }
 
     return pAllocatedMemory;
@@ -82,24 +75,17 @@ void *UTIL_ReallocEx(void *pOldMemoryBlock, size_t iNewSize, const char *szFct, 
             COM_iMallocCounter++;
         }
 
-        COM_Log_Print(COM_LOG_DEBUG,
-                      "\nIn file : l%d %s\n"
-                      "Function : %s\n"
-                      "Reallocated %u blocks from @ %p\n",
-                      iLine, szFile, szFct, iNewSize, pOldMemoryBlock);
+        COM_Log_Print(COM_LOG_DEBUG, "File %s (l. %d) - Function %s:", szFile, iLine, szFct);
+        COM_Log_Print(COM_LOG_DEBUG, ">> UTIL_Realloc: %u bytes (@: %p -> %p).", iNewSize, pOldMemoryBlock, pNewMemoryBlock);
     }
     else
     {
-        if(pOldMemoryBlock == NULL)
+        if(pOldMemoryBlock != NULL)
         {
             COM_iMallocCounter--;
         }
 
-        COM_Log_Print(COM_LOG_CRITICAL,
-                      "\nIn file : l%d %s\n"
-                      "Function : %s\n"
-                      "Failed to reallocated %u blocks @ %p\n",
-                      iLine, szFile, szFct, iNewSize, pOldMemoryBlock);
+        COM_Log_Print(COM_LOG_CRITICAL, "Failed to allocated %u bytes, not enough memory!", iNewSize);
     }
 
     return pNewMemoryBlock;
@@ -119,15 +105,13 @@ void UTIL_FreeEx(void** ppMemory, const char *szFct, size_t iLine, const char *s
     if (*ppMemory != NULL)
     {
       free(*ppMemory);
+
       COM_iMallocCounter--;
     }
 
-    COM_Log_Print(COM_LOG_DEBUG,
-                  "\nIn file : l%d %s\n"
-                  "Function : %s\n"
-                  "Freed @ %p\n"
-                  "Blocks remaining : %d\n",
-                  iLine, szFile, szFct, *ppMemory, COM_iMallocCounter);
+    COM_Log_Print(COM_LOG_DEBUG, "File %s (l. %d) - Function %s:", szFile, iLine, szFct);
+    COM_Log_Print(COM_LOG_DEBUG, ">> UTIL_Free: still %u blocks remaining (@: %p).", COM_iMallocCounter, *ppMemory);
+
     *ppMemory = NULL;
 }
 
@@ -145,9 +129,7 @@ void *UTIL_Malloc(size_t iSize)
 
     if (pAllocatedMemory == NULL)
     {
-        COM_Log_Print(COM_LOG_CRITICAL,
-                      "Failed to allocated %u memory blocks, not enough memory !",
-                      iSize);
+        COM_Log_Print(COM_LOG_CRITICAL, "Failed to allocated %u bytes, not enough memory!", iSize);
     }
 
     return pAllocatedMemory;
@@ -166,9 +148,7 @@ void *UTIL_Realloc(void *pOldMemoryBlock, size_t iNewSize)
 
     if (pNewMemoryBlock == NULL)
     {
-        COM_Log_Print(COM_LOG_CRITICAL,
-                      "Failed to allocated %u memory blocks, not enough memory !",
-                      iNewSize);
+        COM_Log_Print(COM_LOG_CRITICAL, "Failed to allocated %u bytes, not enough memory!", iNewSize);
     }
 
     return pNewMemoryBlock;
@@ -193,7 +173,7 @@ FILE *UTIL_FileOpen(const char *szPath, const char *szMode)
     {
         COM_Log_Print(COM_LOG_ERROR, "Can't open a file (Mode : %s) !",
                                      strchr(szMode, 'r') ? "Read" : "Write");
-        COM_Log_Print(COM_LOG_ERROR, "Path: \"%s\"", szPath);
+        COM_Log_Print(COM_LOG_ERROR, ">> Path: \"%s\".", szPath);
     }
 
     return pFile;
@@ -276,28 +256,6 @@ char *UTIL_StrBuild(const char *szStart, ...)
     va_end(ap);
 
     return pDest;
-}
-
-/*!
- * \brief Function to initialize the random number generator.
- *
- * \return None.
- */
-void UTIL_RandInit(void)
-{
-    srand(( unsigned int ) time( NULL ));
-}
-
-/*!
- * \brief Function to get a random number.
- *
- * \param iMin Minimum random number.
- * \param iMax Maximum random number.
- * \return A random number between a min and a max.
- */
-int UTIL_Rand(int iMin, int iMax)
-{
-    return (( rand( ) % ( iMax - iMin + 1 )) + iMin );
 }
 
 /* ========================================================================= */

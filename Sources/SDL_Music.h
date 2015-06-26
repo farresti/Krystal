@@ -27,12 +27,15 @@
         Mix_Music *pMixData; /*!< Pointer to the music data */
     } SDL_Music;
 
-    SDL_Music *SDL_Music_Alloc(const char *szMscName);
-    void       SDL_Music_Play(SDL_Music *pMusic, Uint32 iVolume, Sint32 iLoops);
-    void       SDL_Music_Free(SDL_Music **ppMusic);
-    void       SDL_Music_SetGlobalVolume(Uint32 iVolume);
-    Uint32     SDL_Music_GetGlobalVolume(void);
-    void       SDL_Music_SetVolume(Uint32 iVolume);
+    SDL_Music  *SDL_Music_Alloc(const char *szMscName);
+    const char *SDL_Music_GetName(const SDL_Music *pMusic);
+    void        SDL_Music_Play(SDL_Music *pMusic, Uint32 iVolume, Sint32 iLoops);
+    void        SDL_Music_SetVolume(Uint32 iVolume);
+    void        SDL_Music_Free(SDL_Music **ppMusic);
+
+    void        SDL_Music_SetGlobalVolume(Uint32 iVolume);
+    Uint32      SDL_Music_GetGlobalVolume(void);
+
 #endif // __SDL_MUSIC_H__
 
 /* ========================================================================= */
