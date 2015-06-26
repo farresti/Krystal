@@ -38,18 +38,18 @@ static COM_Log COM_log;
 /*!
  * \brief Function to initialize the logs.
  *
- * \param iPrintLevel Level of print.
- * \param szPath      Path of the logs file.
+ * \param iPrintLevel Level of print (See COM_LogType).
+ * \param szLogName   Name of the logs file.
  * \return None.
  */
-void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath)
+void COM_Log_Init(COM_LogType iPrintLevel, const char *szLogName)
 {
     char       szTimeBuffer[128];
     char      *szLogPath = NULL;
     time_t     sTime;
     struct tm *pTimeinfo = NULL;
 
-    szLogPath = UTIL_StrBuild("logs/", szPath, ".log", NULL);
+    szLogPath = UTIL_StrBuild("logs/", szLogName, ".log", NULL);
 
     if (szLogPath)
     {
@@ -75,17 +75,17 @@ void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath)
 /*!
  * \brief Function to print a log message.
  *
- * \param iPrintLevel Prefix of log message to use ( cf COM_LogType ).
+ * \param iPrintLevel Prefix of log message to use (See COM_LogType).
  * \param szFormat    The formatted message to write.
  * \return None.
  */
 void COM_Log_Print(COM_LogType iPrintLevel, const char *szFormat, ...)
 {
-    static const char *szLogTxt[] = { "Debug   : ", 
-                                      "Info    : ", 
-                                      "Warning : ", 
-                                      "Error   : ", 
-                                      "Critical: " };
+    static const char *szLogTxt[] = {"Debug   : ", 
+                                     "Info    : ", 
+                                     "Warning : ", 
+                                     "Error   : ", 
+                                     "Critical: "};
     va_list            ap;
 
     if (COM_log.pLogFile && COM_log.iPrintLevel <= iPrintLevel)

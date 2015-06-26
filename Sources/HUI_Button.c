@@ -1,6 +1,6 @@
 /* ========================================================================= */
 /*!
- * \file    SDL_Button.c
+ * \file    HUI_Button.c
  * \brief   File to handle the graphic buttons.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
@@ -12,8 +12,7 @@
 /* Nyuu    | 09/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#include "SDL_Util.h"
-#include "SDL_Button.h"
+#include "HUI_Button.h"
 
 /* ========================================================================= */
 
@@ -26,13 +25,14 @@
  * \param y       Position on y.
  * \return None.
  */
-void SDL_Button_Init(SDL_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y)
+void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y)
 {
     SDL_Anim_Init(&pButton->sAnim, pSprite);
 
-    SDL_Anim_SetFlip  (&pButton->sAnim, SDL_FLIP_NONE);
-    SDL_Anim_SetOrigin(&pButton->sAnim, x, y);
-    SDL_Anim_SetFrame (&pButton->sAnim, 0);
+    SDL_Anim_SetPosition(&pButton->sAnim, x, y);
+    SDL_Anim_SetAngle   (&pButton->sAnim, 0.0);
+    SDL_Anim_SetFlip    (&pButton->sAnim, SDL_FLIP_NONE);
+    SDL_Anim_SetFrame   (&pButton->sAnim, 0);
 
     SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
     pButton->rHitbox.x = x;
@@ -49,12 +49,12 @@ void SDL_Button_Init(SDL_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
  * \param  pInput  Pointer to the inputs.
  * \return None.
  */
-void SDL_Button_Update(SDL_Button *pButton, const SDL_Input *pInput)
+void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
 {
     /* ~~~ Check the position of the mouse.. ~~~ */
     if (pInput->bMotionEvent)
     {
-        if (UTIL_ContainPoint(&pInput->iMouse, &pButton->rHitbox))
+        if (UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse))
         {
             pButton->bIsRolledOver = SDL_TRUE;
         }
@@ -101,7 +101,7 @@ void SDL_Button_Update(SDL_Button *pButton, const SDL_Input *pInput)
  * \param  pButton Pointer to the button.
  * \return None.
  */
-void SDL_Button_Draw(SDL_Button *pButton)
+void HUI_Button_Draw(HUI_Button *pButton)
 {
     SDL_Anim_Draw(&pButton->sAnim);
 }
@@ -112,7 +112,7 @@ void SDL_Button_Draw(SDL_Button *pButton)
  * \param  pButton Pointer to the button.
  * \return SDL_TRUE if the button is rolled over, else SDL_FALSE.
  */
-SDL_bool SDL_Button_IsRolledOver(SDL_Button *pButton)
+SDL_bool HUI_Button_IsRolledOver(const HUI_Button *pButton)
 {
 	return pButton->bIsRolledOver;
 }
@@ -123,7 +123,7 @@ SDL_bool SDL_Button_IsRolledOver(SDL_Button *pButton)
  * \param  pButton Pointer to the button.
  * \return SDL_TRUE if the button is clicked, else SDL_FALSE.
  */
-SDL_bool SDL_Button_IsClicked(SDL_Button *pButton)
+SDL_bool HUI_Button_IsClicked(const HUI_Button *pButton)
 {
 	return pButton->bIsClicked;
 }

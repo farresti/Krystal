@@ -12,7 +12,7 @@
 /* Nyuu    | 13/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#include "SDL_Context.h"
+#include "SDL_Render.h"
 #include "SDL_Util.h"
 
 /* ========================================================================= */
@@ -43,7 +43,7 @@ SDL_Texture *UTIL_TextureLoadRW(const char *szPath, SDL_RWops *pRWops, SDL_Rect 
             pTextureSize->h = pSurface->h;
         }
 
-        pTexture = SDL_Ctx_CreateTextureFromSurface(pSurface);
+        pTexture = SDL_Render_CreateTextureFromSurface(pSurface);
 
         if (pTexture == NULL)
         {
@@ -108,7 +108,7 @@ SDL_RWops *UTIL_RWOpen(const char *szPath, const char *szMode)
     {
         COM_Log_Print(COM_LOG_ERROR, "Can't open a file (Mode : %s) !",
                                      strchr(szMode, 'r') ? "Read" : "Write");
-        COM_Log_Print(COM_LOG_ERROR, "Path: \"%s\"", szPath);
+        COM_Log_Print(COM_LOG_ERROR, ">> Path: \"%s\"", szPath);
     }
     
     return pRw;
@@ -197,34 +197,21 @@ void UTIL_ChunkFree(Mix_Chunk **ppChunk)
     }
 }
 
+/* ========================================================================= */
+
 /*!
  * \brief  Function to check if a point is inside a rectangle.
  *
- * \param  pPt   Pointer to the point.
- * \param  pRect Pointer to the rectangle.
+ * \param  pRect  Pointer to the rectangle.
+ * \param  pPoint Pointer to the point.
  * \return 1 is success, else 0.
  */
-int UTIL_ContainPoint(const SDL_Point *pPt, const SDL_Rect *pRect)
+int UTIL_ContainPoint(const SDL_Rect *pRect, const SDL_Point *pPoint)
 {
-    return (( pPt->x >= pRect->x            ) && 
-            ( pPt->x <  pRect->x + pRect->w ) && 
-            ( pPt->y >= pRect->y            ) && 
-            ( pPt->y <  pRect->y + pRect->h ));
-}
-
-/*!
- * \brief  Function to check if two rectangles collide.
- *
- * \param  pRect1 Pointer to a rectangle.
- * \param  pRect2 Pointer to another rectangle.
- * \return 1 is success, else 0.
- */
-int UTIL_CollideRect(const SDL_Rect *pRect1, const SDL_Rect *pRect2)
-{
-    return (!(( pRect2->x             >= pRect1->x + pRect1->w ) || 
-              ( pRect2->x + pRect2->w <= pRect1->x             ) || 
-              ( pRect2->y             >= pRect1->y + pRect1->h ) || 
-              ( pRect2->y + pRect2->h <= pRect1->y             )));
+    return ((pPoint->x >= pRect->x           ) && 
+            (pPoint->x <  pRect->x + pRect->w) && 
+            (pPoint->y >= pRect->y           ) && 
+            (pPoint->y <  pRect->y + pRect->h));
 }
 
 /* ========================================================================= */

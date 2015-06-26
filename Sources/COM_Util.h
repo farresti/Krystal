@@ -51,9 +51,6 @@
     char *UTIL_StrCopy(const char *szSrc);
     char *UTIL_StrBuild(const char *szStart, ...);
 
-    void UTIL_RandInit(void);
-    int  UTIL_Rand(int iMin, int iMax);
-
 #endif // __COM_UTIL_H__
 
 /* ========================================================================= */

@@ -17,6 +17,28 @@
 /* ========================================================================= */
 
 /*!
+ * \brief Function to initialize the random number generator.
+ *
+ * \return None.
+ */
+void COM_Math_Init(void)
+{
+    srand((unsigned int) time(NULL));
+}
+
+/*!
+ * \brief Function to get a random number.
+ *
+ * \param iMin Minimum random number.
+ * \param iMax Maximum random number.
+ * \return A random number between a min and a max.
+ */
+int COM_Math_Rand(int iMin, int iMax)
+{
+    return ((rand() % (iMax - iMin + 1)) + iMin);
+}
+
+/*!
  *  \brief  Function to compute the sqroot of a value.
  *
  *  \param  iValue Value to compute.
