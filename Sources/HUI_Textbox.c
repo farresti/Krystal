@@ -503,7 +503,7 @@ void SDL_Textbox_SetColor(HUI_Textbox *pTextBox, SDL_Color *pColor)
  * \param pTextBox Pointer to the textbox.
  * \return None
  */
-void SDL_Textbox_Free(HUI_Textbox *pTextBox)
+void HUI_Textbox_Free(HUI_Textbox *pTextBox)
 {
     HUI_Text_Free(pTextBox->pText);
     UTIL_Free(pTextBox->pText);
