@@ -15,6 +15,7 @@
 /* Orlyn   | 17/06/15 | Add Cursor functions                                 */
 /* Orlyn   | 18/06/15 | Clean and add repeat key support                     */
 /* Orlyn   | 19/06/15 | Clean                                                */
+/* Red     | 26/06/15 | Updated due to the HUI_Text update                   */
 /* ========================================================================= */
 
 #include "HUI_Textbox.h"
@@ -143,8 +144,8 @@ static void HUI_Textbox_DrawCursor(HUI_Textbox *pTextBox)
     {
         if (SDL_GetTicks() - pTextBox->iCursorTime >= 500)
         {
-            HUI_Text_Init(&cursor, pTextBox->pFont, HUI_Textbox_GetCursorX(pTextBox), HUI_Textbox_GetCursorY(pTextBox));
-            HUI_Text_Set (&cursor, "|", &colorCursor, 0);
+            HUI_Text_Init(&cursor, pTextBox->pFont, &colorCursor, HUI_Textbox_GetCursorX(pTextBox), HUI_Textbox_GetCursorY(pTextBox));
+            HUI_Text_SetText(&cursor, "|", 0);
             HUI_Text_Draw(&cursor);
             HUI_Text_Free(&cursor);
 
@@ -332,8 +333,8 @@ void HUI_Textbox_Init(HUI_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColor,
     pTextBox->sPointCursor.y = pDest->y + pDest->h / 2 - iH / 2;
     /*Init structure SDL_Text*/
     pTextBox->pText          = (HUI_Text*) UTIL_Malloc(sizeof(HUI_Text));
-    HUI_Text_Init(pTextBox->pText, pTextBox->pFont, pTextBox->sPointCursor.x, pTextBox->sPointCursor.y);
-    HUI_Text_Set(pTextBox->pText, pTextBox->szText, pColor, 0);
+    HUI_Text_Init(pTextBox->pText, pTextBox->pFont, pColor,pTextBox->sPointCursor.x, pTextBox->sPointCursor.y);
+    HUI_Text_SetText(pTextBox->pText, pTextBox->szText, 0);
     /*Init time*/
     pTextBox->iLastTime      = SDL_GetTicks();
     pTextBox->iCursorTime    = SDL_GetTicks();
@@ -342,8 +343,6 @@ void HUI_Textbox_Init(HUI_Textbox *pTextBox, TTF_Font *pFont, SDL_Color *pColor,
     pTextBox->rDest.y        = pDest->y;
     pTextBox->rDest.w        = pDest->w;
     pTextBox->rDest.h        = pDest->h;
-    /*Init colors*/
-    pTextBox->pColorFont     = pColor;
 }
 
 /*!
@@ -419,7 +418,7 @@ void HUI_Textbox_Update(HUI_Textbox *pTextBox, HUI_Input *pInput)
  */
 void HUI_Textbox_Draw(HUI_Textbox *pTextBox)
 {
-    HUI_Text_Set(pTextBox->pText, pTextBox->szText, pTextBox->pColorFont, 0);
+    HUI_Text_SetText(pTextBox->pText, pTextBox->szText, 0);
     HUI_Text_Draw(pTextBox->pText);
 
     HUI_Textbox_DrawCursor(pTextBox);
@@ -492,9 +491,12 @@ SDL_bool HUI_Textbox_IsFull(const HUI_Textbox *pTextBox)
  * \param pColor   Pointer to the new color.
  * \return None
  */
-void SDL_Textbox_SetColor(HUI_Textbox *pTextBox, SDL_Color *pColor)
+void HUI_Textbox_SetColor(HUI_Textbox *pTextBox, SDL_Color *pColor)
 {
-    pTextBox->pColorFont = pColor;
+    pTextBox->pText->sColor.a = pColor->a;
+    pTextBox->pText->sColor.r = pColor->r;
+    pTextBox->pText->sColor.g = pColor->g;
+    pTextBox->pText->sColor.b = pColor->b;
 }
 
 /*!

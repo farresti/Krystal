@@ -10,6 +10,9 @@
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
+/* Red     | 27/06/15 | Add SetPosition                                      */
+/*         |          | Fix the update function                              */
+/*         |          | Update all function for the new param SDL_Point      */
 /* ========================================================================= */
 
 #include "HUI_Button.h"
@@ -27,8 +30,7 @@
  */
 void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y)
 {
-    SDL_Anim_Init(&pButton->sAnim, pSprite);
-    SDL_Anim_SetFrame(&pButton->sAnim, 0);
+    pButton->pSprite = pSprite;
 
     SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
     pButton->sPosition.x = x;
@@ -36,8 +38,7 @@ void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
     pButton->rHitbox.x   = x;
     pButton->rHitbox.y   = y;
 
-    pButton->bIsRolledOver = SDL_FALSE;
-    pButton->bIsClicked    = SDL_FALSE;
+    pButton->iState = HUI_BUTTON_INACTIVE;
 }
 
 /*!
@@ -49,48 +50,48 @@ void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
  */
 void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
 {
-    /* ~~~ Check the position of the mouse.. ~~~ */
-    if (pInput->bMotionEvent)
+    switch (pButton->iState)
     {
-        if (UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse))
+        case HUI_BUTTON_INACTIVE:
         {
-            pButton->bIsRolledOver = SDL_TRUE;
+            if ((pInput->bMotionEvent) && (UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse)))
+            {
+                pButton->iState = HUI_BUTTON_ROLLED_OVER;
+            }
+
+            break;
         }
-        else
+        case HUI_BUTTON_ROLLED_OVER:
         {
-            pButton->bIsRolledOver = SDL_FALSE;
+            if ((pInput->bMotionEvent) && (!UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse)))
+            {
+                pButton->iState = HUI_BUTTON_INACTIVE;
+            }
+            else if (pInput->bMouseButtons[SDL_BUTTON_LEFT])
+            {
+                pButton->iState = HUI_BUTTON_ACTIVE;
+            }
+
+            break;
+        }
+        case HUI_BUTTON_ACTIVE:
+        {
+            if ((pInput->bMotionEvent) && (!UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse)))
+            {
+                pButton->iState = HUI_BUTTON_INACTIVE;
+            }
+            else if (!pInput->bMouseButtons[SDL_BUTTON_LEFT])
+            {
+                pButton->iState = HUI_BUTTON_ROLLED_OVER;
+            }
+            break;
+        }
+        default:
+        {
+            COM_Log_Print(COM_LOG_WARNING, "Wrong button state (%d) !", pButton->iState);
+            break;
         }
     }
-
-    /* ~~~ Check left click.. ~~~ */
-    if( pButton->bIsRolledOver == SDL_TRUE )
-	{
-        if (pInput->bMouseButtons[SDL_BUTTON_LEFT])
-        {
-            pButton->bIsClicked = SDL_TRUE;
-        }
-        else
-        {
-            pButton->bIsClicked = SDL_FALSE;
-        }
-    }
-
-    /* ~~~ Update the frame of the sprite.. ~~~ */
-	if( pButton->bIsRolledOver == SDL_TRUE )
-	{
-		if( pButton->bIsClicked == SDL_TRUE )
-		{
-            SDL_Anim_SetFrame(&pButton->sAnim, 2);
-		}
-		else
-		{
-			SDL_Anim_SetFrame(&pButton->sAnim, 1);
-		}
-	}
-	else
-	{
-		SDL_Anim_SetFrame(&pButton->sAnim, 0);
-	}
 }
 
 /*!
@@ -101,29 +102,62 @@ void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
  */
 void HUI_Button_Draw(HUI_Button *pButton)
 {
-    SDL_Anim_Draw(&pButton->sAnim, &pButton->sPosition);
+    SDL_Sprite_Draw(pButton->pSprite, &pButton->sPosition, pButton->iState);
 }
 
 /*!
- * \brief  Function to get if a button is rolled over.
+ * \brief  Function to set the position of a button.
  *
  * \param  pButton Pointer to the button.
- * \return SDL_TRUE if the button is rolled over, else SDL_FALSE.
+ * \param  x       Button position on x.
+ * \param  y       Button position on y.
+ * \return None.
  */
-SDL_bool HUI_Button_IsRolledOver(const HUI_Button *pButton)
+void HUI_Button_SetPosition(HUI_Button *pButton, Sint32 x, Sint32 y)
 {
-	return pButton->bIsRolledOver;
+    pButton->sPosition.x = x;
+    pButton->sPosition.y = y;
+    pButton->rHitbox.x   = x;
+    pButton->rHitbox.y   = y;
 }
 
 /*!
- * \brief  Function to get if a button is clicked.
+ * \brief  Function to get the position of the button.
  *
  * \param  pButton Pointer to the button.
- * \return SDL_TRUE if the button is clicked, else SDL_FALSE.
+ * \param  pPos    Pointer to a point to retrieve the position of the button.
+ * \return None.
  */
-SDL_bool HUI_Button_IsClicked(const HUI_Button *pButton)
+void HUI_Button_GetPosition(const HUI_Button *pButton, SDL_Point *pPos)
 {
-	return pButton->bIsClicked;
+    pPos->x = pButton->sPosition.x;
+    pPos->y = pButton->sPosition.y;
+}
+
+/*!
+ * \brief  Function to get the hitbox of a button.
+ *
+ * \param  pButton Pointer to the button.
+ * \param  pHitbox Pointer to a rectangle to retrieve the hitbox of the button.
+ * \return None.
+ */
+void HUI_Button_GetHitbox(const HUI_Button *pButton, SDL_Rect *pHitbox)
+{
+    pHitbox->x = pButton->rHitbox.x;
+    pHitbox->y = pButton->rHitbox.y;
+    pHitbox->w = pButton->rHitbox.w;
+    pHitbox->h = pButton->rHitbox.h;
+}
+
+/*!
+ * \brief  Function to get the state of a button.
+ *
+ * \param  pButton Pointer to the button.
+ * \return The state of the button.
+ */
+HUI_ButtonState HUI_Button_GetState(const HUI_Button *pButton)
+{
+    return pButton->iState;
 }
 
 /* ========================================================================= */
