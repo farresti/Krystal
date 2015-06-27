@@ -30,9 +30,7 @@ void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
     SDL_Anim_Init(&pButton->sAnim, pSprite);
 
     SDL_Anim_SetPosition(&pButton->sAnim, x, y);
-    SDL_Anim_SetAngle   (&pButton->sAnim, 0.0);
-    SDL_Anim_SetFlip    (&pButton->sAnim, SDL_FLIP_NONE);
-    SDL_Anim_SetFrame   (&pButton->sAnim, 0);
+    SDL_Anim_SetFrame(&pButton->sAnim, 0);
 
     SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
     pButton->rHitbox.x = x;
