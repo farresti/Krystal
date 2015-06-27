@@ -15,6 +15,7 @@
 /* Orlyn   | 17/06/15 | Add Cursor functions                                 */
 /* Orlyn   | 18/06/15 | Clean and add repeat key support                     */
 /* Orlyn   | 19/06/15 | Clean                                                */
+/* Red     | 27/06/15 | Remove the param pColorFont from the structure       */
 /* ========================================================================= */
 
 #ifndef __HUI_TEXTBOX_H__
@@ -49,7 +50,6 @@
 
         HUI_Text    *pText;               /*!< Pointer to the text structure. */
         TTF_Font    *pFont;               /*!< Pointer to the text font. */
-        SDL_Color   *pColorFont;          /*!< Pointer to the color of the font. */
         SDL_Rect     rDest;               /*!< Rect of the text box. */
     } HUI_Textbox;
     
