@@ -13,7 +13,7 @@
 /* ========================================================================= */
 
 #include "SDL_Util.h"
-#include "SDL_Context.h"
+#include "SDL_Render.h"
 #include "SDL_Sprite.h"
 
 /* ========================================================================= */
@@ -26,14 +26,12 @@
  */
 SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
 {
-    SDL_RWops  *pSprRw       = NULL;
-    SDL_Sprite *pSprite      = NULL;
-    char       *szSprPath    = NULL;
-    size_t      iFileSize    = 0;
-    size_t      iPngSize     = 0;
-    Uint8      *pSprPng      = NULL;
-    Uint32      iFrameWidth  = 0;
-    Uint32      iFrameHeight = 0;
+    SDL_RWops  *pSprRw    = NULL;
+    SDL_Sprite *pSprite   = NULL;
+    char       *szSprPath = NULL;
+    SDL_Rect    rTextureSize;
+    Uint32      iFrameWidth;
+    Uint32      iFrameHeight;
 
     szSprPath = UTIL_StrBuild("sprites/", szSprName, ".spr", NULL);
 
@@ -52,7 +50,7 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
                 SDL_RWread(pSprRw, &iFrameHeight, sizeof( Sint32 ), 1);
 
                 /* ~~~ Read the PNG... ~~~ */
-                pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRw, &pSprite->rTexture);
+                pSprite->pTexture = UTIL_TextureLoadRW(szSprPath, pSprRw, &rTextureSize);
                 pSprite->szName   = UTIL_StrCopy(szSprName);
 
                 if (!pSprite->pTexture || !pSprite->szName) // Error: must free...
@@ -63,13 +61,16 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
                 }
                 else
                 {
-                    pSprite->rTexture.x = 0;
-                    pSprite->rTexture.y = 0;
+                    if ((!iFrameWidth) || (!iFrameHeight))
+                    {
+                        iFrameWidth  = rTextureSize.w;
+                        iFrameHeight = rTextureSize.h;
+                    }
 
                     pSprite->iFrameWidth  = iFrameWidth;
                     pSprite->iFrameHeight = iFrameHeight;
-                    pSprite->iNbFrameL    = pSprite->rTexture.w / iFrameWidth;
-                    pSprite->iNbFrameH    = pSprite->rTexture.h / iFrameHeight;
+                    pSprite->iNbFrameL    = rTextureSize.w / iFrameWidth;
+                    pSprite->iNbFrameH    = rTextureSize.h / iFrameHeight;
                     pSprite->iFrameMax    = pSprite->iNbFrameL * pSprite->iNbFrameH;
                 }
             }
@@ -109,41 +110,56 @@ Uint32 SDL_Sprite_GetFrameMax(const SDL_Sprite *pSprite)
  * \brief  Function to get the frame size of a sprite.
  *
  * \param  pSprite Pointer to the sprite.
- * \param  pSrc    Rectangle to retrieve the frame size.
+ * \param  pSize   Rectangle to retrieve the frame size.
  * \return None.
  */
-void SDL_Sprite_GetFrameSize(const SDL_Sprite *pSprite, SDL_Rect *pSrc)
+void SDL_Sprite_GetFrameSize(const SDL_Sprite *pSprite, SDL_Rect *pSize)
 {
-    pSrc->w = pSprite->iFrameWidth;
-    pSrc->h = pSprite->iFrameHeight;
+    pSize->w = pSprite->iFrameWidth;
+    pSize->h = pSprite->iFrameHeight;
 }
 
 /*!
- * \brief  Function to get the origin of a frame.
+ * \brief  Function to get the position of a frame.
  *
  * \param  pSprite Pointer to the sprite.
- * \param  iFrame  Frame to clip.
- * \param  pSrc    Rectangle to retrieve the frame clip.
+ * \param  iFrame  Index of the frame to get the position.
+ * \param  pPos    Pointer to a rectangle to get the frame position.
  * \return None.
  */
-void SDL_Sprite_GetFrameOrigin(const SDL_Sprite *pSprite, Uint32 iFrame, SDL_Rect *pSrc)
+void SDL_Sprite_GetFramePosition(const SDL_Sprite *pSprite, Uint32 iFrame, SDL_Rect *pPos)
 {
-    pSrc->x = ( iFrame % pSprite->iNbFrameL ) * pSprite->iFrameWidth;
-    pSrc->y = ( iFrame / pSprite->iNbFrameL ) * pSprite->iFrameHeight;
+    pPos->x = (iFrame % pSprite->iNbFrameL) * pSprite->iFrameWidth;
+    pPos->y = (iFrame / pSprite->iNbFrameL) * pSprite->iFrameHeight;
 }
 
 /*!
  * \brief  Function to draw a sprite.
  *
  * \param  pSprite Pointer to the sprite.
- * \param  pDest   Rectangle to position the sprite.
- * \param  pSrc    Rectangle to clip the sprite.
- * \param  iFlip   Flag to flip the sprite.
+ * \param  pClip   Pointer to a rectangle to clip the sprite.
+ * \param  pPos    Pointer to a rectangle to position the sprite.
  * \return None.
  */
-void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_RendererFlip iFlip)
+void SDL_Sprite_Draw(SDL_Sprite *pSprite, const SDL_Rect *pClip, const SDL_Rect *pPos)
 {
-    SDL_Ctx_RenderCopyEx(pSprite->pTexture, pSrc, pDest, iFlip);
+    SDL_Render_DrawTexture(pSprite->pTexture, pClip, pPos);
+}
+
+/*!
+ * \brief Function to draw a sprite.
+ *
+ * \param pSprite Pointer to the sprite.
+ * \param pClip   Pointer to a rectangle to clip the sprite.
+ * \param pPos    Pointer to a rectangle to position the sprite.
+ * \param dAngle  Angle to rotate the sprite.
+ * \param pCenter Pointer to the center of the rotation.
+ * \param iFlip   Flag to flip the sprite.
+ * \return None.
+ */
+void SDL_Sprite_DrawEx(SDL_Sprite *pSprite, const SDL_Rect *pClip, const SDL_Rect *pPos, double dAngle, const SDL_Point *pCenter, SDL_RendererFlip iFlip)
+{
+    SDL_Render_DrawTextureEx(pSprite->pTexture, pClip, pPos, dAngle, pCenter, iFlip);
 }
 
 /*!
@@ -155,7 +171,7 @@ void SDL_Sprite_Draw(SDL_Sprite *pSprite, SDL_Rect *pSrc, SDL_Rect *pDest, SDL_R
 void SDL_Sprite_Free(SDL_Sprite **ppSprite)
 {
     UTIL_Free((*ppSprite)->szName);
-    UTIL_TextureFree(&( *ppSprite )->pTexture);
+    UTIL_TextureFree(&(*ppSprite)->pTexture);
     UTIL_Free(*ppSprite);
 }
 

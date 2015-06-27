@@ -1,23 +1,22 @@
 /* ========================================================================= */
 /*!
- * \file    ENG_If.h
- * \brief   File to interface with the module 'ENG'.
+ * \file    HUI_Shared.h
+ * \brief   File to interface with the 'HUI' includes & constants.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    15 June 2015
+ * \date    26 June 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 15/06/15 | Creation.                                            */
+/* Nyuu    | 26/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __ENG_IF_H__
-#define __ENG_IF_H__
+#ifndef __HUI_SHARED_H__
+#define __HUI_SHARED_H__
 
-    #include "ENG_Effect.h"
-    #include "ENG_Shared.h"
-
-#endif // __ENG_IF_H__
+    #include "SDL_If.h"
+    
+#endif // __HUI_SHARED_H__
 
 /* ========================================================================= */

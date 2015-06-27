@@ -34,31 +34,30 @@
      */
     typedef struct
     {
-        SDL_Sprite      *pSprite;         /*!< Pointer to a sprite. */
-        SDL_AnimType     iAnimType;       /*!< Type of the animation (looped..). */
+        SDL_Sprite   *pSprite;         /*!< Pointer to a sprite. */
+        SDL_AnimType  iAnimType;       /*!< Type of the animation (looped..). */
 
-        SDL_Rect         rSrc;            /*!< Rectangle to clip the sprite. */
-        SDL_Rect         rDest;           /*!< Rectangle to position the sprite. */
+        SDL_Rect      rFrameClip;      /*!< Rectangle to clip a frame. */
+        SDL_Rect      rFramePos;       /*!< Rectangle to position a frame. */
+        SDL_Point     sFrameCenter;    /*!< Center of the frame. */
 
-        Uint32           iFrameMax;       /*!< Maximum frame of the sprite. */
-        Uint32           iFrameCurr;      /*!< Current frame of the sprite. */
-        Uint32           iTimeBeforeNext; /*!< Time before the next frame. */
-        Uint32           iFrameRate;      /*!< Frame rate of the sprite. */
-
-        SDL_RendererFlip iFlip;           /*!< Flag to flip the sprite. */
+        Uint32        iFrameMax;       /*!< Maximum frame of the sprite. */
+        Uint32        iFrameCurr;      /*!< Current frame of the sprite. */
+        Uint32        iTimeBeforeNext; /*!< Time before the next frame. */
+        Uint32        iFrameRate;      /*!< Frame rate of the sprite. */
     } SDL_Anim;
 
     void SDL_Anim_Init(SDL_Anim *pAnim, SDL_Sprite *pSprite);
 
-    void SDL_Anim_SetFlip  (SDL_Anim *pAnim, SDL_RendererFlip iFlip);
-    void SDL_Anim_SetOrigin(SDL_Anim *pAnim, Sint32 x, Sint32 y);
-    void SDL_Anim_SetFrame (SDL_Anim *pAnim, Uint32 iFrame);
+    void SDL_Anim_SetPosition(SDL_Anim *pAnim, Sint32 x, Sint32 y);
+    void SDL_Anim_SetFrame(SDL_Anim *pAnim, Uint32 iFrame);
 
     void SDL_Anim_Start(SDL_Anim *pAnim, SDL_AnimType iAnimType, Uint32 iFrameRate);
     void SDL_Anim_Stop(SDL_Anim *pAnim);
 
     void SDL_Anim_Update(SDL_Anim *pAnim);
     void SDL_Anim_Draw(SDL_Anim *pAnim);
+    void SDL_Anim_DrawEx(SDL_Anim *pAnim, double dAngle, SDL_RendererFlip iFlip);
 
 #endif // __SDL_ANIM_H__
 

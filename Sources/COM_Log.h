@@ -32,7 +32,7 @@
         COM_LOG_CRITICAL = 4, /*!< Value 'critical' log. */
     } COM_LogType;
 
-    void COM_Log_Init(COM_LogType iPrintLevel, const char *szPath);
+    void COM_Log_Init(COM_LogType iPrintLevel, const char *szLogName);
     void COM_Log_Print(COM_LogType iPrintLevel, const char *szFormat, ...);
     void COM_Log_Quit(void);
 

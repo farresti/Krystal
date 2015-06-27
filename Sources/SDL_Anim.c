@@ -12,6 +12,7 @@
 /* Nyuu    | 15/06/15 | Creation.                                            */
 /* ========================================================================= */
 
+#include "SDL_Util.h"
 #include "SDL_Anim.h"
 
 /* ========================================================================= */
@@ -19,8 +20,8 @@
 /*!
  * \brief  Function to init an animation.
  *
- * \param  pAnim   Pointer to an animation.
- * \param  pSprite Pointer to a sprite.
+ * \param  pAnim   Pointer to the animation.
+ * \param  pSprite Pointer to a sprite allocated.
  * \return None.
  */
 void SDL_Anim_Init(SDL_Anim *pAnim, SDL_Sprite *pSprite)
@@ -28,52 +29,41 @@ void SDL_Anim_Init(SDL_Anim *pAnim, SDL_Sprite *pSprite)
     pAnim->pSprite   = pSprite;
     pAnim->iAnimType = SDL_ANIM_NONE;
 
-    SDL_Sprite_GetFrameSize  (pSprite, &pAnim->rSrc);
-    SDL_Sprite_GetFrameOrigin(pSprite, 0, &pAnim->rSrc);
+    SDL_Sprite_GetFrameSize(pAnim->pSprite, &pAnim->rFrameClip);
+    SDL_Sprite_GetFramePosition(pAnim->pSprite, 0, &pAnim->rFrameClip);
+    
+    pAnim->rFramePos.x = 0;
+    pAnim->rFramePos.y = 0;
+    pAnim->rFramePos.w = pAnim->rFrameClip.w;
+    pAnim->rFramePos.h = pAnim->rFrameClip.h;
 
-    pAnim->rDest.x = 0;
-    pAnim->rDest.y = 0;
-    pAnim->rDest.w = pAnim->rSrc.w;
-    pAnim->rDest.h = pAnim->rSrc.h;
+    pAnim->sFrameCenter.x = (pAnim->rFrameClip.w >> 1);
+    pAnim->sFrameCenter.y = (pAnim->rFrameClip.h >> 1);
 
     pAnim->iFrameMax       = SDL_Sprite_GetFrameMax(pSprite);
     pAnim->iFrameCurr      = 0;
     pAnim->iTimeBeforeNext = 0;
     pAnim->iFrameRate      = 0;
-
-    pAnim->iFlip = SDL_FLIP_NONE;
 }
 
 /*!
- * \brief  Function to set the flip flag of an animation.
+ * \brief  Function to set the position of an animation.
  *
- * \param  pAnim Pointer to an animation.
- * \param  iFlip Flag to flip the sprite.
- * \return None.
- */
-void SDL_Anim_SetFlip(SDL_Anim *pAnim, SDL_RendererFlip iFlip)
-{
-    pAnim->iFlip = iFlip;
-}
-
-/*!
- * \brief  Function to set the origin of an animation.
- *
- * \param  pAnim Pointer to an animation.
+ * \param  pAnim Pointer to the animation.
  * \param  x     Position on x.
  * \param  y     Position on y.
  * \return None.
  */
-void SDL_Anim_SetOrigin(SDL_Anim *pAnim, Sint32 x, Sint32 y)
+void SDL_Anim_SetPosition(SDL_Anim *pAnim, Sint32 x, Sint32 y)
 {
-    pAnim->rDest.x = x;
-    pAnim->rDest.y = y;
+    pAnim->rFramePos.x = x;
+    pAnim->rFramePos.y = y;
 }
 
 /*!
  * \brief  Function to set a frame of an animation.
  *
- * \param  pAnim  Pointer to an animation.
+ * \param  pAnim  Pointer to the animation.
  * \param  iFrame Frame to set.
  * \return None.
  */
@@ -81,15 +71,16 @@ void SDL_Anim_SetFrame(SDL_Anim *pAnim, Uint32 iFrame)
 {
     if(iFrame < pAnim->iFrameMax)
     {
+        SDL_Sprite_GetFramePosition(pAnim->pSprite, iFrame, &pAnim->rFrameClip);
+
         pAnim->iFrameCurr = iFrame;
-        SDL_Sprite_GetFrameOrigin(pAnim->pSprite, iFrame, &pAnim->rSrc);
     }
 }
 
 /*!
  * \brief  Function to start an animation.
  *
- * \param  pAnim      Pointer to an animation.
+ * \param  pAnim      Pointer to the animation.
  * \param  iAnimType  Type of the animation (looped..).
  * \param  iFrameRate Frame rate of the animation.
  * \return None.
@@ -104,7 +95,7 @@ void SDL_Anim_Start(SDL_Anim *pAnim, SDL_AnimType iAnimType, Uint32 iFrameRate)
 /*!
  * \brief  Function to stop an animation.
  *
- * \param  pAnim Pointer to an animation.
+ * \param  pAnim Pointer to the animation.
  * \return None.
  */
 void SDL_Anim_Stop(SDL_Anim *pAnim)
@@ -117,7 +108,7 @@ void SDL_Anim_Stop(SDL_Anim *pAnim)
 /*!
  * \brief  Function to update an animation.
  *
- * \param  pAnim Pointer to an animation.
+ * \param  pAnim Pointer to the animation.
  * \return None.
  */
 void SDL_Anim_Update(SDL_Anim *pAnim)
@@ -140,7 +131,7 @@ void SDL_Anim_Update(SDL_Anim *pAnim)
                 pAnim->iFrameCurr      = pAnim->iFrameCurr + 1;
                 pAnim->iFrameCurr      = pAnim->iFrameCurr % pAnim->iFrameMax;
 
-                SDL_Sprite_GetFrameOrigin(pAnim->pSprite, pAnim->iFrameCurr, &pAnim->rSrc);
+                SDL_Sprite_GetFramePosition(pAnim->pSprite, pAnim->iFrameCurr, &pAnim->rFrameClip);
             }
             else // SDL_ANIM_ONCE && LAST_FRAME
             {
@@ -154,12 +145,25 @@ void SDL_Anim_Update(SDL_Anim *pAnim)
 /*!
  * \brief  Function to draw an animation.
  *
- * \param  pAnim Pointer to an animation.
+ * \param  pAnim Pointer to the animation.
  * \return None.
  */
 void SDL_Anim_Draw(SDL_Anim *pAnim)
 {
-    SDL_Sprite_Draw(pAnim->pSprite, &pAnim->rSrc, &pAnim->rDest, pAnim->iFlip);
+    SDL_Sprite_Draw(pAnim->pSprite, &pAnim->rFrameClip, &pAnim->rFramePos);
+}
+
+/*!
+ * \brief  Function to draw an animation.
+ *
+ * \param  pAnim  Pointer to the animation.
+ * \param  dAngle Angle to rotate the animation.
+ * \param  iFlip  Flag to flip the animation.
+ * \return None.
+ */
+void SDL_Anim_DrawEx(SDL_Anim *pAnim, double dAngle, SDL_RendererFlip iFlip)
+{
+    SDL_Sprite_DrawEx(pAnim->pSprite, &pAnim->rFrameClip, &pAnim->rFramePos, dAngle, &pAnim->sFrameCenter, iFlip);
 }
 
 /* ========================================================================= */
