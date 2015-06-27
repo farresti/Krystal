@@ -34,7 +34,7 @@ void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, Si
     pText->rDest.x  = x;
     pText->rDest.y  = y;
     pText->rDest.w  = 0;
-    pText->rDest.h = 0;
+    pText->rDest.h  = 0;
     pText->sColor.r = pColor->r;
     pText->sColor.g = pColor->g;
     pText->sColor.b = pColor->b;
