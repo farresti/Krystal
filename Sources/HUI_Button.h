@@ -24,7 +24,9 @@
     typedef struct
     {
         SDL_Anim sAnim;         /*!< Structure to animate the button. */
-        SDL_Rect rHitbox;       /*!< Hitbox of the button. */
+
+        SDL_Point sPosition;    /*!< Position of the button. */
+        SDL_Rect  rHitbox;      /*!< Hitbox of the button. */
 
         SDL_bool bIsRolledOver; /*!< Flag to indicate if the button is rolled over. */
         SDL_bool bIsClicked;    /*!< Flag to indicate if the button is clicked. */

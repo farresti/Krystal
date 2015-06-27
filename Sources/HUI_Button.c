@@ -28,13 +28,13 @@
 void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 y)
 {
     SDL_Anim_Init(&pButton->sAnim, pSprite);
-
-    SDL_Anim_SetPosition(&pButton->sAnim, x, y);
     SDL_Anim_SetFrame(&pButton->sAnim, 0);
 
     SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
-    pButton->rHitbox.x = x;
-    pButton->rHitbox.y = y;
+    pButton->sPosition.x = x;
+    pButton->sPosition.y = y;
+    pButton->rHitbox.x   = x;
+    pButton->rHitbox.y   = y;
 
     pButton->bIsRolledOver = SDL_FALSE;
     pButton->bIsClicked    = SDL_FALSE;
@@ -101,7 +101,7 @@ void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
  */
 void HUI_Button_Draw(HUI_Button *pButton)
 {
-    SDL_Anim_Draw(&pButton->sAnim);
+    SDL_Anim_Draw(&pButton->sAnim, &pButton->sPosition);
 }
 
 /*!

@@ -67,11 +67,20 @@ SDL_Sprite *SDL_Sprite_Alloc(const char *szSprName)
                         iFrameHeight = rTextureSize.h;
                     }
 
-                    pSprite->iFrameWidth  = iFrameWidth;
-                    pSprite->iFrameHeight = iFrameHeight;
-                    pSprite->iNbFrameL    = rTextureSize.w / iFrameWidth;
-                    pSprite->iNbFrameH    = rTextureSize.h / iFrameHeight;
-                    pSprite->iFrameMax    = pSprite->iNbFrameL * pSprite->iNbFrameH;
+                    pSprite->iNbFrameW = rTextureSize.w / iFrameWidth;
+                    pSprite->iNbFrameH = rTextureSize.h / iFrameHeight;
+                    pSprite->iFrameMax = pSprite->iNbFrameW * pSprite->iNbFrameH;
+
+                    pSprite->sFrameClip.x     = 0;
+                    pSprite->sFrameClip.y     = 0;
+                    pSprite->sFrameClip.w     = iFrameWidth;
+                    pSprite->sFrameClip.h     = iFrameHeight;
+                    pSprite->sFramePosition.x = 0;
+                    pSprite->sFramePosition.y = 0;
+                    pSprite->sFramePosition.w = iFrameWidth;
+                    pSprite->sFramePosition.h = iFrameHeight;
+                    pSprite->sFrameCenter.x   = (iFrameWidth >> 1);
+                    pSprite->sFrameCenter.y   = (iFrameHeight >> 1);
                 }
             }
 
@@ -115,51 +124,52 @@ Uint32 SDL_Sprite_GetFrameMax(const SDL_Sprite *pSprite)
  */
 void SDL_Sprite_GetFrameSize(const SDL_Sprite *pSprite, SDL_Rect *pSize)
 {
-    pSize->w = pSprite->iFrameWidth;
-    pSize->h = pSprite->iFrameHeight;
-}
-
-/*!
- * \brief  Function to get the position of a frame.
- *
- * \param  pSprite Pointer to the sprite.
- * \param  iFrame  Index of the frame to get the position.
- * \param  pPos    Pointer to a rectangle to get the frame position.
- * \return None.
- */
-void SDL_Sprite_GetFramePosition(const SDL_Sprite *pSprite, Uint32 iFrame, SDL_Rect *pPos)
-{
-    pPos->x = (iFrame % pSprite->iNbFrameL) * pSprite->iFrameWidth;
-    pPos->y = (iFrame / pSprite->iNbFrameL) * pSprite->iFrameHeight;
+    pSize->w = pSprite->sFrameClip.w;
+    pSize->h = pSprite->sFrameClip.h;
 }
 
 /*!
  * \brief  Function to draw a sprite.
  *
  * \param  pSprite Pointer to the sprite.
- * \param  pClip   Pointer to a rectangle to clip the sprite.
- * \param  pPos    Pointer to a rectangle to position the sprite.
+ * \param  pPos    Pointer to a point to position the sprite.
+ * \param  iFrame  Index of the frame of the sprite to draw.
  * \return None.
  */
-void SDL_Sprite_Draw(SDL_Sprite *pSprite, const SDL_Rect *pClip, const SDL_Rect *pPos)
+void SDL_Sprite_Draw(SDL_Sprite *pSprite, const SDL_Point *pPos, Uint32 iFrame)
 {
-    SDL_Render_DrawTexture(pSprite->pTexture, pClip, pPos);
+    if(iFrame < pSprite->iFrameMax)
+    {
+        pSprite->sFrameClip.x     = ((iFrame % pSprite->iNbFrameW) * pSprite->sFrameClip.w);
+        pSprite->sFrameClip.y     = ((iFrame / pSprite->iNbFrameW) * pSprite->sFrameClip.h);
+        pSprite->sFramePosition.x = pPos->x;
+        pSprite->sFramePosition.y = pPos->y;
+
+        SDL_Render_DrawTexture(pSprite->pTexture, &pSprite->sFrameClip, &pSprite->sFramePosition);
+    }
 }
 
 /*!
  * \brief Function to draw a sprite.
  *
  * \param pSprite Pointer to the sprite.
- * \param pClip   Pointer to a rectangle to clip the sprite.
- * \param pPos    Pointer to a rectangle to position the sprite.
+ * \param pPos    Pointer to a point to position the sprite.
+ * \param iFrame  Index of the frame of the sprite to draw.
  * \param dAngle  Angle to rotate the sprite.
- * \param pCenter Pointer to the center of the rotation.
  * \param iFlip   Flag to flip the sprite.
  * \return None.
  */
-void SDL_Sprite_DrawEx(SDL_Sprite *pSprite, const SDL_Rect *pClip, const SDL_Rect *pPos, double dAngle, const SDL_Point *pCenter, SDL_RendererFlip iFlip)
+void SDL_Sprite_DrawEx(SDL_Sprite *pSprite, const SDL_Point *pPos, Uint32 iFrame, double dAngle, SDL_RendererFlip iFlip)
 {
-    SDL_Render_DrawTextureEx(pSprite->pTexture, pClip, pPos, dAngle, pCenter, iFlip);
+    if(iFrame < pSprite->iFrameMax)
+    {
+        pSprite->sFrameClip.x     = ((iFrame % pSprite->iNbFrameW) * pSprite->sFrameClip.w);
+        pSprite->sFrameClip.y     = ((iFrame / pSprite->iNbFrameW) * pSprite->sFrameClip.h);
+        pSprite->sFramePosition.x = pPos->x;
+        pSprite->sFramePosition.y = pPos->y;
+
+        SDL_Render_DrawTextureEx(pSprite->pTexture, &pSprite->sFrameClip, &pSprite->sFramePosition, dAngle, &pSprite->sFrameCenter, iFlip);
+    }
 }
 
 /*!
