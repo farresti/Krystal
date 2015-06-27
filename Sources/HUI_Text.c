@@ -20,20 +20,25 @@
 /*!
  * \brief Function to initialize a text.
  *
- * \param pText Pointer to the text.
- * \param pFont Pointer to the font to use.
- * \param x     Text position on x.
- * \param y     Text position on y.
+ * \param pText  Pointer to the text.
+ * \param pFont  Pointer to the font to use.
+ * \param pColor Pointer to the desired color of the text.
+ * \param x      Text position on x.
+ * \param y      Text position on y.
  * \return None.
  */
-void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y)
+void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, Sint32 x, Sint32 y)
 {
     pText->pFont    = pFont;
     pText->pTexture = NULL;
     pText->rDest.x  = x;
     pText->rDest.y  = y;
     pText->rDest.w  = 0;
-    pText->rDest.h  = 0;
+    pText->rDest.h = 0;
+    pText->sColor.r = pColor->r;
+    pText->sColor.g = pColor->g;
+    pText->sColor.b = pColor->b;
+    pText->sColor.a = pColor->a;
 }
 
 /*!
@@ -41,11 +46,10 @@ void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, Sint32 x, Sint32 y)
  *
  * \param pText  Pointer to the text.
  * \param szText String to use for the text.
- * \param pColor Pointer to the desired color of the text.
  * \param iMaxW  Maximum width for a line of the text, 0 will do return every '\n'.
  * \return None.
  */
-void HUI_Text_Set(HUI_Text *pText, const char *szText, const SDL_Color *pColor, Sint32 iMaxW)
+void HUI_Text_SetText(HUI_Text *pText, const char *szText, Sint32 iMaxW)
 {
     SDL_Surface *pSurface = NULL;
     Sint32       iW       = 0;
@@ -63,11 +67,11 @@ void HUI_Text_Set(HUI_Text *pText, const char *szText, const SDL_Color *pColor, 
 
         if (iW == 0)
         {
-            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, " ", *pColor, iW);
+            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, " ", pText->sColor, iW);
         }
         else
         {
-            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, szText, *pColor, iW);
+            pSurface = TTF_RenderText_Blended_Wrapped(pText->pFont, szText, pText->sColor, iW);
         }
 
         if (pSurface == NULL)
@@ -111,7 +115,7 @@ void HUI_Text_Draw(HUI_Text* pText)
  * \param y     New position on y.
  * \return None.
  */
-void HUI_Text_Move(HUI_Text *pText, Sint32 x, Sint32 y)
+void HUI_Text_SetPosition(HUI_Text *pText, Sint32 x, Sint32 y)
 {
     pText->rDest.x = x;
     pText->rDest.y = y;
@@ -142,4 +146,18 @@ void HUI_Text_Free(HUI_Text *pText)
     UTIL_TextureFree(&pText->pTexture);
 }
 
+/*!
+* \brief Function to set the color of the text
+*
+* \param pText  Pointer to the text.
+* \param pColor Pointer to the desired color of the text.
+* \return None.
+*/
+void HUI_Text_SetColor(HUI_Text *pText, const SDL_Color *pColor)
+{
+    pText->sColor.r = pColor->r;
+    pText->sColor.g = pColor->g;
+    pText->sColor.b = pColor->b;
+    pText->sColor.a = pColor->a;
+}
 /* ========================================================================= */
