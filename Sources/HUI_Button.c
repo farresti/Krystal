@@ -11,6 +11,8 @@
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
 /* Red     | 27/06/15 | Add SetPosition                                      */
+/*         |          | Fix the update function                              */
+/*         |          | Update all function for the new param SDL_Point      */
 /* ========================================================================= */
 
 #include "HUI_Button.h"
@@ -36,6 +38,9 @@ void HUI_Button_Init(HUI_Button *pButton, SDL_Sprite *pSprite, Sint32 x, Sint32 
     SDL_Sprite_GetFrameSize(pSprite, &pButton->rHitbox);
     pButton->rHitbox.x = x;
     pButton->rHitbox.y = y;
+
+    pButton->sPointButton.x = x;
+    pButton->sPointButton.y = y;
 
     pButton->bIsRolledOver = SDL_FALSE;
     pButton->bIsClicked    = SDL_FALSE;
@@ -74,23 +79,21 @@ void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
         {
             pButton->bIsClicked = SDL_FALSE;
         }
-    }
 
-    /* ~~~ Update the frame of the sprite.. ~~~ */
-	if( pButton->bIsRolledOver == SDL_TRUE )
-	{
-		if( pButton->bIsClicked == SDL_TRUE )
-		{
+        /* ~~~ Update the frame of the sprite.. ~~~ */
+        if (pButton->bIsClicked == SDL_TRUE)
+        {
             SDL_Anim_SetFrame(&pButton->sAnim, 2);
-		}
-		else
-		{
-			SDL_Anim_SetFrame(&pButton->sAnim, 1);
-		}
-	}
+        }
+        else
+        {
+            SDL_Anim_SetFrame(&pButton->sAnim, 1);
+        }
+    }
 	else
 	{
 		SDL_Anim_SetFrame(&pButton->sAnim, 0);
+        pButton->bIsClicked = SDL_FALSE; // Happen when the left click is hold outside of the button
 	}
 }
 
@@ -127,11 +130,49 @@ SDL_bool HUI_Button_IsClicked(const HUI_Button *pButton)
 	return pButton->bIsClicked;
 }
 
+/*!
+* \brief  Function to set the position of a button.
+*
+* \param  pButton Pointer to the button.
+* \param  x       Button position on x.
+* \param  y       Button position on y.
+* \return None.
+*/
 void HUI_Button_SetPosition(HUI_Button *pButton, Sint32 x, Sint32 y)
 {
     pButton->rHitbox.x = x;
     pButton->rHitbox.y = y;
+
+    pButton->sPointButton.x = x;
+    pButton->sPointButton.y = y;
     SDL_Anim_SetPosition(&pButton->sAnim, x, y);
 }
 
+
+/*!
+* \brief  Function to get the position of the button.
+*
+* \param  pButton Pointer to the button.
+* \return Position of the button.
+*/
+SDL_Point HUI_Button_GetPosition(HUI_Button *pButton)
+{
+    SDL_Point sPoint;
+
+    sPoint.x = pButton->sPointButton.x;
+    sPoint.y = pButton->sPointButton.y;
+    
+    return sPoint;
+}
+
+/*!
+* \brief  Function to get the size of the hitbox of a button.
+*
+* \param  pButton Pointer to the button.
+* \return Size of the hitbox.
+*/
+SDL_Rect  HUI_Button_GetHitbox(HUI_Button *pButton)
+{
+    return pButton->rHitbox;
+}
 /* ========================================================================= */

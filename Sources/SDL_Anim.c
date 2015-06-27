@@ -166,4 +166,5 @@ void SDL_Anim_DrawEx(SDL_Anim *pAnim, double dAngle, SDL_RendererFlip iFlip)
     SDL_Sprite_DrawEx(pAnim->pSprite, &pAnim->rFrameClip, &pAnim->rFramePos, dAngle, &pAnim->sFrameCenter, iFlip);
 }
 
+
 /* ========================================================================= */
