@@ -10,6 +10,7 @@
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
+/* Red     | 27/06/15 | Add SetPosition                                      */
 /* ========================================================================= */
 
 #ifndef __HUI_BUTTON_H__
@@ -37,6 +38,7 @@
     SDL_bool HUI_Button_IsRolledOver(const HUI_Button *pButton);
     SDL_bool HUI_Button_IsClicked(const HUI_Button *pButton);
 
+    void     HUI_Button_SetPosition(HUI_Button *pButton, Sint32 x, Sint32 y);
 #endif // __HUI_BUTTON_H__
 
 /* ========================================================================= */

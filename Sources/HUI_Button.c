@@ -10,6 +10,7 @@
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
 /* Nyuu    | 09/06/15 | Creation.                                            */
+/* Red     | 27/06/15 | Add SetPosition                                      */
 /* ========================================================================= */
 
 #include "HUI_Button.h"
@@ -124,6 +125,13 @@ SDL_bool HUI_Button_IsRolledOver(const HUI_Button *pButton)
 SDL_bool HUI_Button_IsClicked(const HUI_Button *pButton)
 {
 	return pButton->bIsClicked;
+}
+
+void HUI_Button_SetPosition(HUI_Button *pButton, Sint32 x, Sint32 y)
+{
+    pButton->rHitbox.x = x;
+    pButton->rHitbox.y = y;
+    SDL_Anim_SetPosition(&pButton->sAnim, x, y);
 }
 
 /* ========================================================================= */
