@@ -26,7 +26,6 @@
     {
         Sint32      iMax;               /*!< The maximum value of the scrollbar. */
         Sint32      iMin;               /*!< The minimum value of the scrollbar. */
-        Sint32      iStep;              /*!< The step of the scrollbar. */
         Sint32      iCurrent;           /*!< The current value. */
 
         HUI_Button  sButtonSlider;      /*!< Hitbox of the slider. */
@@ -41,13 +40,12 @@
     void   HUI_Scrollbar_Draw(HUI_Scrollbar *pScrollbar);
     void   HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput);
 
-    void   HUI_Scrollbar_SetValue(HUI_Scrollbar *pScrollbar, Sint32 iMin, Sint32 iMax, Sint32 iStep);
+    void   HUI_Scrollbar_SetParam(HUI_Scrollbar *pScrollbar, Sint32 iMin, Sint32 iMax);
+    void   HUI_Scrollbar_SetValue(HUI_Scrollbar *pScrollbar, Sint32 iValue);
 
     Sint32 HUI_Scrollbar_GetCurrent(const HUI_Scrollbar *pScrollbar);
     Sint32 HUI_Scrollbar_GetMin(const HUI_Scrollbar *pScrollbar);
     Sint32 HUI_Scrollbar_GetMax(const HUI_Scrollbar *pScrollbar);
-    Sint32 HUI_Scrollbar_GetStep(const HUI_Scrollbar *pScrollbar);
-    
 
 #endif // __HUI_SCROLLBAR_H__
 

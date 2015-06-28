@@ -30,8 +30,8 @@
 void HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar, SDL_Sprite *pSpriteSlider, SDL_Rect rHitboxScrollbar, Sint32 iMin, Sint32 iMax)
 {
     pScrollbar->iCurrent = iMin;
-    pScrollbar->iMin = iMin;
-    pScrollbar->iMax = iMax;
+    pScrollbar->iMin     = iMin;
+    pScrollbar->iMax     = iMax;
 
 
     SDL_Anim_Init(&pScrollbar->sAnimScrollbar, pSpriteScrollbar);
@@ -94,7 +94,7 @@ void HUI_Scrollbar_Draw(HUI_Scrollbar *pScrollbar)
 * \brief  Function to update a scrollbar.
 *
 * \param  pScrollbar Pointer to the scrollbar.
-* \param  pInput  Pointer to the inputs.
+* \param  pInput     Pointer to the inputs.
 * \return None.
 */
 void HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput)
@@ -102,7 +102,7 @@ void HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput)
     SDL_Rect  rRectSlider;
     SDL_Point sPointSlider;
     SDL_Point sMidSlider;
-    Uint32    iPercentage = 0;
+    Sint32    iPercentage = 0;
 
     HUI_Button_GetHitbox(&pScrollbar->sButtonSlider, &rRectSlider);
     HUI_Button_GetPosition(&pScrollbar->sButtonSlider, &sPointSlider);
@@ -112,35 +112,57 @@ void HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput)
 
     HUI_Button_Update(&pScrollbar->sButtonSlider, pInput);
 
-    if (HUI_Button_GetState(&pScrollbar->sButtonSlider) == HUI_BUTTON_ACTIVE) // Appuie
+    if (HUI_Button_GetState(&pScrollbar->sButtonSlider) == HUI_BUTTON_ACTIVE)
     {
-        if ((pInput->iMouse.x >= pScrollbar->sPointScrollbar.x) && (pInput->iMouse.x <= (pScrollbar->sPointScrollbar.x + pScrollbar->rHitboxScrollbar.w + sMidSlider.x)))  // Toujours dans la barre de scroll
+        if ((pInput->iMouse.x >= pScrollbar->sPointScrollbar.x + sMidSlider.x) && (pInput->iMouse.x <= (pScrollbar->sPointScrollbar.x + pScrollbar->rHitboxScrollbar.w - sMidSlider.x))) // Above the scrollbar ?
         {
-            if (pInput->iMouse.x - sMidSlider.x < 0) sMidSlider.x = 0; // empecher le curseur d'aller hors de la barre
+            if (pInput->iMouse.x - sMidSlider.x < 0) sMidSlider.x = 0; 
+
             HUI_Button_SetPosition(&pScrollbar->sButtonSlider, pInput->iMouse.x - sMidSlider.x , sPointSlider.y);
 
-            iPercentage = ((sPointSlider.x - pScrollbar->sPointScrollbar.x)*100 / (pScrollbar->sPointScrollbar.x + pScrollbar->rHitboxScrollbar.w - pScrollbar->sPointScrollbar.x));
+            iPercentage = (sPointSlider.x - pScrollbar->sPointScrollbar.x) * 100 / (pScrollbar->rHitboxScrollbar.w - rRectSlider.w);
             pScrollbar->iCurrent = pScrollbar->iMin + (((pScrollbar->iMax - pScrollbar->iMin) * iPercentage) / 100);
-            
+         
         } 
     }
 }
 
+/*!
+* \brief  Function to set the values of a scrollbar.
+*
+* \param  pScrollbar Pointer to the scrollbar.
+* \param  iValue     The value of the slider.
+* \return None.
+*/
+void HUI_Scrollbar_SetValue(HUI_Scrollbar *pScrollbar, Sint32 iValue)
+{
+    SDL_Point sPointSlider;
+    SDL_Rect  rRectSlider;
+
+    if (iValue >= pScrollbar->iMin && iValue <= pScrollbar->iMax)
+    {
+        HUI_Button_GetHitbox(&pScrollbar->sButtonSlider, &rRectSlider);
+
+        sPointSlider.x = (((iValue - pScrollbar->iMin)) * (pScrollbar->rHitboxScrollbar.w - rRectSlider.w));
+        sPointSlider.x = pScrollbar->sPointScrollbar.x +  sPointSlider.x / ((pScrollbar->iMax - pScrollbar->iMin));
+
+        HUI_Button_SetPosition(&pScrollbar->sButtonSlider, sPointSlider.x, pScrollbar->sButtonSlider.sPosition.y);
+        pScrollbar->iCurrent = iValue;
+    }
+}
 
 /*!
-* \brief Function to set the values of a scrollbar.
+* \brief  Function to set the parameter of a scrollbar.
 *
 * \param  pScrollbar Pointer to the scrollbar.
 * \param  iMax       The maximum value of the scrollbar.
 * \param  iMin       The minimum value of the scrollbar.
-* \param  iStep      The step value of the scrollbar.
 * \return None.
 */
-void HUI_Scrollbar_SetValue(HUI_Scrollbar *pScrollbar, Sint32 iMin, Sint32 iMax, Sint32 iStep)
+void HUI_Scrollbar_SetParam(HUI_Scrollbar *pScrollbar, Sint32 iMin, Sint32 iMax)
 {
     pScrollbar->iMin  = iMin;
     pScrollbar->iMax  = iMax;
-    pScrollbar->iStep = iStep;
 }
 
 /*!
@@ -176,15 +198,5 @@ Sint32 HUI_Scrollbar_GetMin(const HUI_Scrollbar *pScrollbar)
     return pScrollbar->iMin;
 }
 
-/*!
-* \brief  Function to get the step value of a scrollbar.
-*
-* \param  pScrollbar  Pointer to the scrollbar.
-* \return The step value of the scrollbar.
-*/
-Sint32 HUI_Scrollbar_GetStep(const HUI_Scrollbar *pScrollbar)
-{
-    return pScrollbar->iStep;
-}
 
 /* ========================================================================= */
