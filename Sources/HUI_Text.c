@@ -20,19 +20,18 @@
 /*!
  * \brief Function to initialize a text.
  *
- * \param pText  Pointer to the text.
- * \param pFont  Pointer to the font to use.
- * \param pColor Pointer to the desired color of the text.
- * \param x      Text position on x.
- * \param y      Text position on y.
+ * \param pText      Pointer to the text.
+ * \param pFont      Pointer to the font to use.
+ * \param pColor     Pointer to the desired color of the text.
+ * \param pPosition  Text position.
  * \return None.
  */
-void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, Sint32 x, Sint32 y)
+void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, SDL_Point *pPosition)
 {
     pText->pFont    = pFont;
     pText->pTexture = NULL;
-    pText->rDest.x  = x;
-    pText->rDest.y  = y;
+    pText->rDest.x  = pPosition->x;
+    pText->rDest.y  = pPosition->y;
     pText->rDest.w  = 0;
     pText->rDest.h  = 0;
     pText->sColor.r = pColor->r;
@@ -110,29 +109,27 @@ void HUI_Text_Draw(HUI_Text* pText)
 /*!
  * \brief Function to move a text to a new location.
  *
- * \param pText Pointer to the text.
- * \param x     New position on x.
- * \param y     New position on y.
+ * \param pText     Pointer to the text.
+ * \param pPosition New position.
  * \return None.
  */
-void HUI_Text_SetPosition(HUI_Text *pText, Sint32 x, Sint32 y)
+void HUI_Text_SetPosition(HUI_Text *pText, SDL_Point *pPosition)
 {
-    pText->rDest.x = x;
-    pText->rDest.y = y;
+    pText->rDest.x = pPosition->x;
+    pText->rDest.y = pPosition->y;
 }
 
 /*!
  * \brief Function to center a text around a point.
  *
- * \param pText Pointer to the text.
- * \param cx    Center position on x.
- * \param cy    Center position on y.
+ * \param pText   Pointer to the text.
+ * \param pCenter Center position.
  * \return None.
  */
-void HUI_Text_Center(HUI_Text *pText, Sint32 cx, Sint32 cy)
+void HUI_Text_Center(HUI_Text *pText, SDL_Point *pCenter)
 {
-    pText->rDest.x = (cx - (pText->rDest.w >> 1));
-    pText->rDest.y = (cy - (pText->rDest.h >> 1));
+    pText->rDest.x = (pCenter->x - (pText->rDest.w >> 1));
+    pText->rDest.y = (pCenter->y - (pText->rDest.h >> 1));
 }
 
 /*!
