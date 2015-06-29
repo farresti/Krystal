@@ -70,6 +70,17 @@ void SDL_Render_Clear(void)
 }
 
 /*!
+ * \brief Function to set the viewport of the renderer.
+ *
+ * \param pViewport Pointer to a rectangle to set the viewport (Can be NULL).
+ * \return None
+ */
+void SDL_Render_SetViewport(const SDL_Rect *pViewport)
+{
+    SDL_RenderSetViewport(SDL_render.pRenderer, pViewport);
+}
+
+/*!
  * \brief Function to draw a texture to the renderer.
  *
  * \param pTexture The texture to draw.
