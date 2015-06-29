@@ -116,8 +116,6 @@ void HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput)
     {
         if ((pInput->iMouse.x >= pScrollbar->sPointScrollbar.x + sMidSlider.x) && (pInput->iMouse.x <= (pScrollbar->sPointScrollbar.x + pScrollbar->rHitboxScrollbar.w - sMidSlider.x))) // Above the scrollbar ?
         {
-            if (pInput->iMouse.x - sMidSlider.x < 0) sMidSlider.x = 0; 
-
             HUI_Button_SetPosition(&pScrollbar->sButtonSlider, pInput->iMouse.x - sMidSlider.x , sPointSlider.y);
 
             iPercentage = (sPointSlider.x - pScrollbar->sPointScrollbar.x) * 100 / (pScrollbar->rHitboxScrollbar.w - rRectSlider.w);

@@ -76,11 +76,7 @@ void HUI_Button_Update(HUI_Button *pButton, const HUI_Input *pInput)
         }
         case HUI_BUTTON_ACTIVE:
         {
-            if ((pInput->bMotionEvent) && (!UTIL_ContainPoint(&pButton->rHitbox, &pInput->iMouse)))
-            {
-                pButton->iState = HUI_BUTTON_INACTIVE;
-            }
-            else if (!pInput->bMouseButtons[SDL_BUTTON_LEFT])
+            if (!pInput->bMouseButtons[SDL_BUTTON_LEFT])
             {
                 pButton->iState = HUI_BUTTON_ROLLED_OVER;
             }
