@@ -44,6 +44,7 @@ void SDL_Precache_Init(void)
 {
     SDL_precache.iNbSprites  = 0;
     SDL_precache.iNbSounds   = 0;
+
     SDL_precache.pArrSprites = NULL;
     SDL_precache.pArrSounds  = NULL;
 }
@@ -56,10 +57,10 @@ void SDL_Precache_Init(void)
  */
 SDL_Sprite *SDL_Precache_Sprite(const char *szSprName)
 {
-    const char *pSprName = NULL;
-    SDL_Sprite *pSprite  = NULL;
-    Uint32      iNumSprite;
-    Uint32      iNewSize;
+    const char *pSprName   = NULL;
+    SDL_Sprite *pSprite    = NULL;
+    Uint32      iNumSprite = 0;
+    Uint32      iNewSize   = 0;
  
     /* Check if the sprite has already been precached */
     for (iNumSprite = 0 ; iNumSprite < SDL_precache.iNbSprites ; ++iNumSprite)
@@ -103,10 +104,10 @@ SDL_Sprite *SDL_Precache_Sprite(const char *szSprName)
  */
 SDL_Sound *SDL_Precache_Sound(const char *szSndName)
 {
-    const char *pSndName = NULL;
-    SDL_Sound  *pSound   = NULL;
-    Uint32      iNumSound;
-    Uint32      iNewSize;
+    const char *pSndName  = NULL;
+    SDL_Sound  *pSound    = NULL;
+    Uint32      iNumSound = 0;
+    Uint32      iNewSize  = 0;
  
     /* Check if the sound has already been precached */
     for (iNumSound = 0 ; iNumSound < SDL_precache.iNbSounds ; ++iNumSound)
@@ -149,8 +150,8 @@ SDL_Sound *SDL_Precache_Sound(const char *szSndName)
  */
 void SDL_Precache_Free(void)
 {
-    Uint32 iNumSprite;
-    Uint32 iNumSound;
+    Uint32 iNumSprite = 0;
+    Uint32 iNumSound  = 0;
     
     if (SDL_precache.pArrSprites)
     {

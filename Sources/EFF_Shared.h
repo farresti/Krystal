@@ -1,27 +1,22 @@
 /* ========================================================================= */
 /*!
- * \file    HUI_If.h
- * \brief   File to interface with the module 'HUI'.
+ * \file    EFF_Shared.h
+ * \brief   File to interface with the 'EFF' includes & constants.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    26 June 2015
+ * \date    28 June 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 26/06/15 | Creation.                                            */
+/* Nyuu    | 28/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __HUI_IF_H__
-#define __HUI_IF_H__
+#ifndef __EFF_SHARED_H__
+#define __EFF_SHARED_H__
 
-    #include "HUI_Button.h"
-    #include "HUI_Input.h"
-    #include "HUI_Scrollbar.h"
-    #include "HUI_Shared.h"
-    #include "HUI_Text.h"
-    #include "HUI_Textbox.h"
-    
-#endif // __HUI_IF_H__
+    #include "ENG_If.h"
+
+#endif // __EFF_SHARED_H__
 
 /* ========================================================================= */
