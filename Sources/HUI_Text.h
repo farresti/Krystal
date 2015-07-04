@@ -36,12 +36,12 @@
         SDL_Color    sColor;   /*!< Color of the text. */
     } HUI_Text;
 
-    void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, Sint32 x, Sint32 y);
+    void HUI_Text_Init(HUI_Text *pText, TTF_Font *pFont, const SDL_Color *pColor, SDL_Point *pPosition);
     void HUI_Text_SetText(HUI_Text *pText, const char *szText, Sint32 iMaxW);
     void HUI_Text_SetColor(HUI_Text *pText, const SDL_Color *pColor);
     void HUI_Text_Draw(HUI_Text* pText);
-    void HUI_Text_SetPosition(HUI_Text *pText, Sint32 x, Sint32 y);
-    void HUI_Text_Center(HUI_Text *pText, Sint32 cx, Sint32 cy);
+    void HUI_Text_SetPosition(HUI_Text *pText, SDL_Point *pPosition);
+    void HUI_Text_Center(HUI_Text *pText, SDL_Point *pCenter);
     void HUI_Text_Free(HUI_Text *pText);
 
 #endif // __HUI_TEXT_H__

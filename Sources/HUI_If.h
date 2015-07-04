@@ -17,11 +17,12 @@
 
     #include "HUI_Button.h"
     #include "HUI_Input.h"
+    #include "HUI_Menu.h"
     #include "HUI_Scrollbar.h"
     #include "HUI_Shared.h"
     #include "HUI_Text.h"
     #include "HUI_Textbox.h"
-    
+
 #endif // __HUI_IF_H__
 
 /* ========================================================================= */
