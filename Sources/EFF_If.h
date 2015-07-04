@@ -15,7 +15,6 @@
 #ifndef __EFF_IF_H__
 #define __EFF_IF_H__
 
-    #include "EFF_Spark.h"
     #include "EFF_Shared.h"
 
 #endif // __EFF_IF_H__

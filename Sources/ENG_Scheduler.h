@@ -15,15 +15,15 @@
 #ifndef __ENG_SCHEDULER_H__
 #define __ENG_SCHEDULER_H__
 
-    #include "ENG_Shared.h"
+    #include "ENG_Decal.h"
+    #include "ENG_Effect.h"
 
-    void ENG_Scheduler_Init(void);
-
+    void ENG_Scheduler_Init     (void);
+    void ENG_Scheduler_AddDecal (ENG_Decal *pDecal);
     void ENG_Scheduler_AddEffect(ENG_Effect *pEffect);
-
-    void ENG_Scheduler_Update(void);
-    void ENG_Scheduler_Draw(void);
-    void ENG_Scheduler_Free(void);
+    void ENG_Scheduler_Update   (void);
+    void ENG_Scheduler_Draw     (void);
+    void ENG_Scheduler_Free     (void);
 
 #endif // __ENG_SCHEDULER_H__
 

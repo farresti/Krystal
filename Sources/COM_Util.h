@@ -45,6 +45,9 @@
     #endif // _DEBUG
     /* --- Memory management :: End --- */
 
+    /*! Macro to compute the size of an array */
+    #define UTIL_ArraySize(arr) (sizeof(arr)/sizeof(arr[0]))
+
     FILE *UTIL_FileOpen(const char *szPath, const char *szMode);
     void  UTIL_FileClose(FILE **ppFile);
 

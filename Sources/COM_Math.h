@@ -23,7 +23,9 @@
     #define COM_Math_Max(x,y) ((x) > (y) ? (x) : (y))
     
     void         COM_Math_Init(void);
-    int          COM_Math_Rand(int iMin, int iMax);
+    char         COM_Math_Rand8(char iMin, char iMax);
+    short        COM_Math_Rand16(short iMin, short iMax);
+    int          COM_Math_Rand32(int iMin, int iMax);
     unsigned int COM_Math_Sqrt32(unsigned int iValue);
 
 #endif // __COM_MATH_H__

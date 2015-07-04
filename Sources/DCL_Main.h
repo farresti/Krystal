@@ -1,27 +1,24 @@
 /* ========================================================================= */
 /*!
- * \file    HUI_If.h
- * \brief   File to interface with the module 'HUI'.
+ * \file    DCL_Main.h
+ * \brief   File to interface with the main 'DCL' functions.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    26 June 2015
+ * \date    04 July 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 26/06/15 | Creation.                                            */
+/* Nyuu    | 04/07/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __HUI_IF_H__
-#define __HUI_IF_H__
+#ifndef __DCL_MAIN_H__
+#define __DCL_MAIN_H__
 
-    #include "HUI_Button.h"
-    #include "HUI_Input.h"
-    #include "HUI_Scrollbar.h"
-    #include "HUI_Shared.h"
-    #include "HUI_Text.h"
-    #include "HUI_Textbox.h"
-    
-#endif // __HUI_IF_H__
+    #include "DCL_Shared.h"
+
+    void DCL_Main_Init(void);
+
+#endif // __DCL_MAIN_H__
 
 /* ========================================================================= */

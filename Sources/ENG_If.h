@@ -15,7 +15,10 @@
 #ifndef __ENG_IF_H__
 #define __ENG_IF_H__
 
+    #include "ENG_Decal.h"
     #include "ENG_Effect.h"
+    #include "ENG_Layer.h"
+    #include "ENG_Linker.h"
     #include "ENG_Scheduler.h"
     #include "ENG_Shared.h"
     #include "ENG_View.h"

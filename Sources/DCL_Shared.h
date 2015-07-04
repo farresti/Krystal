@@ -1,24 +1,22 @@
 /* ========================================================================= */
 /*!
- * \file    EFF_Spark.h
- * \brief   File to interface with the effect 'Spark'.
+ * \file    DCL_Shared.h
+ * \brief   File to interface with the 'DCL' includes & constants.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    28 June 2015
+ * \date    04 July 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 28/06/15 | Creation.                                            */
+/* Nyuu    | 04/07/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __EFF_SPARK_H__
-#define __EFF_SPARK_H__
+#ifndef __DCL_SHARED_H__
+#define __DCL_SHARED_H__
 
-    #include "EFF_Shared.h"
-    
-    void EFF_Spark_Spawn(const SDL_Point *pOrigin);
+    #include "ENG_If.h"
 
-#endif // __EFF_SPARK_H__
+#endif // __DCL_SHARED_H__
 
 /* ========================================================================= */

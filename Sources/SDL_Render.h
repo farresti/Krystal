@@ -25,9 +25,13 @@
     void SDL_Render_SetViewport(const SDL_Rect *pViewport);
     int  SDL_Render_DrawTexture(SDL_Texture *pTexture, const SDL_Rect *pClip, const SDL_Rect *pPos);
     int  SDL_Render_DrawTextureEx(SDL_Texture *pTexture, const SDL_Rect *pClip, const SDL_Rect *pPos, double dAngle, const SDL_Point *pCenter, SDL_RendererFlip iFlip);
+    void SDL_Render_DrawPoint(Sint32 x, Sint32 y, const SDL_Color *pColor);
+    void SDL_Render_DrawPoints(const SDL_Point *arrPoint, Uint32 iNbPoints, const SDL_Color *pColor);
     void SDL_Render_DrawLine(Sint32 x1, Sint32 y1, Sint32 x2, Sint32 y2, const SDL_Color *pColor);
     void SDL_Render_DrawFullRect(const SDL_Rect *pRect, const SDL_Color *pColor);
+    void SDL_Render_DrawFullRects(const SDL_Rect *arrRect, Uint32 iNbRects, const SDL_Color *pColor);
     void SDL_Render_DrawEmptyRect(const SDL_Rect *pRect, const SDL_Color *pColor);
+    void SDL_Render_DrawEmptyRects(const SDL_Rect *arrRect, Uint32 iNbRects, const SDL_Color *pColor);
     void SDL_Render_Present(void);
 
 #endif // __SDL_RENDER_H__

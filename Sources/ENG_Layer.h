@@ -1,27 +1,25 @@
 /* ========================================================================= */
 /*!
- * \file    HUI_If.h
- * \brief   File to interface with the module 'HUI'.
+ * \file    ENG_Layer.h
+ * \brief   File to interface with the layers.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    26 June 2015
+ * \date    03 July 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 26/06/15 | Creation.                                            */
+/* Nyuu    | 03/07/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __HUI_IF_H__
-#define __HUI_IF_H__
+#ifndef __ENG_LAYER_H__
+#define __ENG_LAYER_H__
 
-    #include "HUI_Button.h"
-    #include "HUI_Input.h"
-    #include "HUI_Scrollbar.h"
-    #include "HUI_Shared.h"
-    #include "HUI_Text.h"
-    #include "HUI_Textbox.h"
+    #include "ENG_Shared.h"
     
-#endif // __HUI_IF_H__
+    void   ENG_Layer_Init  (Uint32 iMaxLayer);
+    Uint32 ENG_Layer_GetMax(void);
+
+#endif // __ENG_LAYER_H__
 
 /* ========================================================================= */

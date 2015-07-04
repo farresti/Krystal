@@ -110,6 +110,36 @@ int SDL_Render_DrawTextureEx(SDL_Texture *pTexture, const SDL_Rect *pClip, const
 }
 
 /*!
+ * \brief Function to draw a point on the renderer.
+ *
+ * \param x      Position on x.
+ * \param y      Position on y.
+ * \param pColor Pointer to the color to use.
+ * \return None.
+ */
+void SDL_Render_DrawPoint(Sint32 x, Sint32 y, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, pColor->r, pColor->g, pColor->b, pColor->a);
+    SDL_RenderDrawPoint(SDL_render.pRenderer, x, y);
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, SDL_render.sColor.r, SDL_render.sColor.g, SDL_render.sColor.b, SDL_render.sColor.a);
+}
+
+/*!
+ * \brief Function to draw points on the renderer.
+ *
+ * \param arrPoint  Pointer to an array of points to draw.
+ * \param iNbPoints Number of points to draw.
+ * \param pColor    Pointer to the color to use.
+ * \return None.
+ */
+void SDL_Render_DrawPoints(const SDL_Point *arrPoint, Uint32 iNbPoints, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, pColor->r, pColor->g, pColor->b, pColor->a);
+    SDL_RenderDrawPoints(SDL_render.pRenderer, arrPoint, iNbPoints);
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, SDL_render.sColor.r, SDL_render.sColor.g, SDL_render.sColor.b, SDL_render.sColor.a);
+}
+
+/*!
  * \brief Function to draw a line on the renderer.
  *
  * \param x1     Position on x to start.
@@ -141,6 +171,21 @@ void SDL_Render_DrawFullRect(const SDL_Rect *pRect, const SDL_Color *pColor)
 }
 
 /*!
+ * \brief Function to draw full rectangles on the renderer.
+ *
+ * \param arrRect  Pointer to an array of rectangles to draw.
+ * \param iNbRects Number of rectangles to draw.
+ * \param pColor   Pointer to the color to use.
+ * \return None.
+ */
+void SDL_Render_DrawFullRects(const SDL_Rect *arrRect, Uint32 iNbRects, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, pColor->r, pColor->g, pColor->b, pColor->a);
+    SDL_RenderFillRects(SDL_render.pRenderer, arrRect, iNbRects);
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, SDL_render.sColor.r, SDL_render.sColor.g, SDL_render.sColor.b, SDL_render.sColor.a);
+}
+
+/*!
  * \brief Function to draw a empty rectangle on the renderer.
  *
  * \param pRect    Pointer to the rectangle to draw.
@@ -151,6 +196,21 @@ void SDL_Render_DrawEmptyRect(const SDL_Rect *pRect, const SDL_Color *pColor)
 {
     SDL_SetRenderDrawColor(SDL_render.pRenderer, pColor->r, pColor->g, pColor->b, pColor->a);
     SDL_RenderDrawRect(SDL_render.pRenderer, pRect);
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, SDL_render.sColor.r, SDL_render.sColor.g, SDL_render.sColor.b, SDL_render.sColor.a);
+}
+
+/*!
+ * \brief Function to draw empty rectangles on the renderer.
+ *
+ * \param arrRect  Pointer to an array of rectangles to draw.
+ * \param iNbRects Number of rectangles to draw.
+ * \param pColor   Pointer to the color to use.
+ * \return None.
+ */
+void SDL_Render_DrawEmptyRects(const SDL_Rect *arrRect, Uint32 iNbRects, const SDL_Color *pColor)
+{
+    SDL_SetRenderDrawColor(SDL_render.pRenderer, pColor->r, pColor->g, pColor->b, pColor->a);
+    SDL_RenderDrawRects(SDL_render.pRenderer, arrRect, iNbRects);
     SDL_SetRenderDrawColor(SDL_render.pRenderer, SDL_render.sColor.r, SDL_render.sColor.g, SDL_render.sColor.b, SDL_render.sColor.a);
 }
 

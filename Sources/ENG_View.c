@@ -1,6 +1,6 @@
 /* ========================================================================= */
 /*!
- * \file    ENG_View.h
+ * \file    ENG_View.c
  * \brief   File to handle the view.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0

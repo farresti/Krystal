@@ -12,7 +12,7 @@
 /* Nyuu    | 28/06/15 | Creation.                                            */
 /* ========================================================================= */
 
-#include "ENG_Effect.h"
+#include "ENG_Layer.h"
 #include "ENG_Scheduler.h"
 
 /* ========================================================================= */
@@ -23,7 +23,8 @@
  */
 typedef struct
 {
-    ENG_Effect *pFirst; /*!< Pointer to the first effect. */
+    ENG_Decal  *pFirstDecal;  /*!< Pointer to the first decal. */
+    ENG_Effect *pFirstEffect; /*!< Pointer to the first effect. */
 } ENG_Scheduler;
 
 /*! Global variable to handle the scheduler. */
@@ -38,7 +39,20 @@ static ENG_Scheduler ENG_scheduler;
  */
 void ENG_Scheduler_Init(void)
 {
-    ENG_scheduler.pFirst = NULL;
+    ENG_scheduler.pFirstDecal  = NULL;
+    ENG_scheduler.pFirstEffect = NULL;
+}
+
+/*!
+ * \brief  Function to add a decal to the scheduler.
+ *
+ * \param  pDecal Pointer to an allocated decal.
+ * \return None.
+ */
+void ENG_Scheduler_AddDecal(ENG_Decal *pDecal)
+{
+    pDecal->pNext             = ENG_scheduler.pFirstDecal;
+    ENG_scheduler.pFirstDecal = pDecal;
 }
 
 /*!
@@ -49,8 +63,8 @@ void ENG_Scheduler_Init(void)
  */
 void ENG_Scheduler_AddEffect(ENG_Effect *pEffect)
 {
-    pEffect->pNext       = ENG_scheduler.pFirst;
-    ENG_scheduler.pFirst = pEffect;
+    pEffect->pNext             = ENG_scheduler.pFirstEffect;
+    ENG_scheduler.pFirstEffect = pEffect;
 }
 
 /*!
@@ -60,49 +74,37 @@ void ENG_Scheduler_AddEffect(ENG_Effect *pEffect)
  */
 void ENG_Scheduler_Update(void)
 {
-    ENG_Effect *pLast    = NULL;
-    ENG_Effect *pCurrent = ENG_scheduler.pFirst;
-    Uint32      iTime    = SDL_GetTicks( );
+    ENG_Effect *pLastEffect    = NULL;
+    ENG_Effect *pCurrentEffect = ENG_scheduler.pFirstEffect;
+    Uint32      iTime          = SDL_GetTicks( );
 
-    while (pCurrent)
+    /* ~~~ Update the effects ~~~ */
+    while (pCurrentEffect)
     {
-        /* Think ? */
-        if (pCurrent->iNextThink && pCurrent->iNextThink < iTime)
+        ENG_Effect_Think(pCurrentEffect, iTime);
+
+        /* ~~~ Should be removed ? ~~~ */
+        if (pCurrentEffect->bKillMe)
         {
-            pCurrent->iNextThink = 0;
+            ENG_Effect_Die(pCurrentEffect);
 
-            if (pCurrent->pftThink)
+            if (pLastEffect)
             {
-                pCurrent->pftThink(pCurrent);
-            }
-        }
-
-        /* Die ? */
-        if (pCurrent->bKillMe)
-        {
-            if (pLast)
-            {
-                pLast->pNext = pCurrent->pNext;
-
-                UTIL_Free(pCurrent->pData);
-                UTIL_Free(pCurrent);
-
-                pCurrent = pLast->pNext;
+                pLastEffect->pNext = pCurrentEffect->pNext;
+                ENG_Effect_Free(&pCurrentEffect);
+                pCurrentEffect = pLastEffect->pNext;
             }
             else
             {
-                ENG_scheduler.pFirst = ENG_scheduler.pFirst->pNext;
-
-                UTIL_Free(pCurrent->pData);
-                UTIL_Free(pCurrent);
-
-                pCurrent = ENG_scheduler.pFirst;
+                ENG_scheduler.pFirstEffect = ENG_scheduler.pFirstEffect->pNext;
+                ENG_Effect_Free(&pCurrentEffect);
+                pCurrentEffect = ENG_scheduler.pFirstEffect;
             }
         }
         else
         {
-            pLast    = pCurrent;
-            pCurrent = pCurrent->pNext;
+            pLastEffect    = pCurrentEffect;
+            pCurrentEffect = pCurrentEffect->pNext;
         }
     }
 }
@@ -114,16 +116,30 @@ void ENG_Scheduler_Update(void)
  */
 void ENG_Scheduler_Draw(void)
 {
-    ENG_Effect *pCurrent = ENG_scheduler.pFirst;
+    ENG_Decal  *pCurrentDecal  = NULL;
+    ENG_Effect *pCurrentEffect = NULL;
+    Uint32      iLayer         = 0;
+    Uint32      iMaxLayer      = ENG_Layer_GetMax( );
 
-    while (pCurrent)
+    /* ~~~ Draw for each layer (0 => Ground ; MaxLayer => Sky) ~~~ */
+    for (iLayer = 0 ; iLayer < iMaxLayer ; ++iLayer)
     {
-        if (pCurrent->pftDraw)
+        pCurrentDecal  = ENG_scheduler.pFirstDecal;
+        pCurrentEffect = ENG_scheduler.pFirstEffect;
+
+        /* ~~~ Draw the decals ~~~ */
+        while (pCurrentDecal)
         {
-            pCurrent->pftDraw(pCurrent);
+            ENG_Decal_Draw(pCurrentDecal, iLayer);
+            pCurrentDecal = pCurrentDecal->pNext;
         }
 
-        pCurrent = pCurrent->pNext;
+        /* ~~~ Draw the effects ~~~ */
+        while (pCurrentEffect)
+        {
+            ENG_Effect_Draw(pCurrentEffect, iLayer);
+            pCurrentEffect = pCurrentEffect->pNext;
+        }
     }
 }
 
@@ -134,16 +150,23 @@ void ENG_Scheduler_Draw(void)
  */
 void ENG_Scheduler_Free(void)
 {
-    ENG_Effect *pCurrent = ENG_scheduler.pFirst;
+    ENG_Decal  *pCurrentDecal  = ENG_scheduler.pFirstDecal;
+    ENG_Effect *pCurrentEffect = ENG_scheduler.pFirstEffect;
 
-    while (pCurrent)
+    /* ~~~ Free the decals ~~~ */
+    while (pCurrentDecal)
     {
-        ENG_scheduler.pFirst = ENG_scheduler.pFirst->pNext;
+        ENG_scheduler.pFirstDecal = ENG_scheduler.pFirstDecal->pNext;
+        ENG_Decal_Free(&pCurrentDecal);
+        pCurrentDecal = ENG_scheduler.pFirstDecal;
+    }
 
-        UTIL_Free(pCurrent->pData);
-        UTIL_Free(pCurrent);
-
-        pCurrent = ENG_scheduler.pFirst;
+    /* ~~~ Free the effects ~~~ */
+    while (pCurrentEffect)
+    {
+        ENG_scheduler.pFirstEffect = ENG_scheduler.pFirstEffect->pNext;
+        ENG_Effect_Free(&pCurrentEffect);
+        pCurrentEffect = ENG_scheduler.pFirstEffect;
     }
 }
 

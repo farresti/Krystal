@@ -27,13 +27,37 @@ void COM_Math_Init(void)
 }
 
 /*!
- * \brief Function to get a random number.
+ * \brief Function to get a 8bits random number.
  *
  * \param iMin Minimum random number.
  * \param iMax Maximum random number.
- * \return A random number between a min and a max.
+ * \return A random number between the min and the max (Included).
  */
-int COM_Math_Rand(int iMin, int iMax)
+char COM_Math_Rand8(char iMin, char iMax)
+{
+    return ((rand() % (iMax - iMin + 1)) + iMin);
+}
+
+/*!
+ * \brief Function to get a 16bits random number.
+ *
+ * \param iMin Minimum random number.
+ * \param iMax Maximum random number.
+ * \return A random number between the min and the max (Included).
+ */
+short COM_Math_Rand16(short iMin, short iMax)
+{
+    return ((rand() % (iMax - iMin + 1)) + iMin);
+}
+
+/*!
+ * \brief Function to get a 32bits random number.
+ *
+ * \param iMin Minimum random number.
+ * \param iMax Maximum random number.
+ * \return A random number between the min and the max (Included).
+ */
+int COM_Math_Rand32(int iMin, int iMax)
 {
     return ((rand() % (iMax - iMin + 1)) + iMin);
 }
