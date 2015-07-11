@@ -22,12 +22,11 @@
  * \param  pScrollbar       Pointer to the scrollbar.
  * \param  pSpriteScrollbar Pointer to the sprite used for the scrollbar.
  * \param  pSpriteSlider    Pointer to the sprite used for the slider.
- * \param  rHitboxScrollbar Hitbox of the scrollbar
  * \param  iMin             The minimum value of the scrollbar ( < iMax).
  * \param  iMax             The maximum value of the scrollbar ( > iMin).
  * \return None.
  */
-void HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar, SDL_Sprite *pSpriteSlider, SDL_Rect rHitboxScrollbar, Sint32 iMin, Sint32 iMax)
+void HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar, SDL_Sprite *pSpriteSlider, Sint32 iMin, Sint32 iMax)
 {
     pScrollbar->iCurrent = iMin;
     pScrollbar->iMin     = iMin;
@@ -37,15 +36,14 @@ void HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar,
     SDL_Anim_Init(&pScrollbar->sAnimScrollbar, pSpriteScrollbar);
     SDL_Anim_SetFrame(&pScrollbar->sAnimScrollbar, 0);
 
-    HUI_Button_Init(&pScrollbar->sButtonSlider, pSpriteSlider, rHitboxScrollbar.x, rHitboxScrollbar.y);
+    HUI_Button_Init(&pScrollbar->sButtonSlider, pSpriteSlider, 0, 0);
+    SDL_Sprite_GetFrameSize(pSpriteScrollbar, &pScrollbar->rHitboxScrollbar);
 
-    pScrollbar->rHitboxScrollbar.x = rHitboxScrollbar.x;
-    pScrollbar->rHitboxScrollbar.y = rHitboxScrollbar.y;
-    pScrollbar->rHitboxScrollbar.h = rHitboxScrollbar.h;
-    pScrollbar->rHitboxScrollbar.w = rHitboxScrollbar.w;
+    pScrollbar->rHitboxScrollbar.x = 0;
+    pScrollbar->rHitboxScrollbar.y = 0;
 
-    pScrollbar->sPointScrollbar.x = rHitboxScrollbar.x;
-    pScrollbar->sPointScrollbar.y = rHitboxScrollbar.y;
+    pScrollbar->sPointScrollbar.x = 0;
+    pScrollbar->sPointScrollbar.y = 0;
 }
 
 

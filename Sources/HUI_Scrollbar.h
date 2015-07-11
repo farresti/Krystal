@@ -35,7 +35,7 @@
         SDL_Point   sPointScrollbar;    /*!< Position of the scrollbar. */
     } HUI_Scrollbar;
 
-    void   HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar, SDL_Sprite *pSpriteSlider, SDL_Rect rHitboxScrollbar, Sint32 iMin, Sint32 iMax);
+    void   HUI_Scrollbar_Init(HUI_Scrollbar *pScrollbar, SDL_Sprite *pSpriteScrollbar, SDL_Sprite *pSpriteSlider, Sint32 iMin, Sint32 iMax);
     void   HUI_Scrollbar_SetPosition(HUI_Scrollbar *pScrollbar, Sint32 x, Sint32 y);
     void   HUI_Scrollbar_Draw(HUI_Scrollbar *pScrollbar);
     void   HUI_Scrollbar_Update(HUI_Scrollbar *pScrollbar, const HUI_Input *pInput);
