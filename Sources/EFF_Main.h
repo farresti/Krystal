@@ -17,6 +17,11 @@
 
     #include "EFF_Shared.h"
     
+    typedef enum
+    {
+        EFF_DUMMY = 0,
+    } EFF_Index;
+
     void EFF_Main_Init(void);
 
 #endif // __EFF_MAIN_H__

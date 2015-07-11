@@ -17,6 +17,11 @@
 
     #include "DCL_Shared.h"
 
+    typedef enum
+    {
+        DCL_DUMMY = 0,
+    } DCL_Index;
+
     void DCL_Main_Init(void);
 
 #endif // __DCL_MAIN_H__

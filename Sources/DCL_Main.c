@@ -16,6 +16,28 @@
 
 /* ========================================================================= */
 
+static const ENG_DecalInfo ENG_decalInfo[ ] = 
+{
+    { "dcl_blood1",  "blood25",  0 },
+    { "dcl_blood2",  "blood25",  1 },
+    { "dcl_blood3",  "blood25",  2 },
+    { "dcl_blood4",  "blood25",  3 },
+    { "dcl_blood5",  "blood25",  4 },
+    { "dcl_blood6",  "blood25",  5 },
+    { "dcl_blood7",  "blood25",  6 },
+    { "dcl_blood8",  "blood25",  7 },
+    { "dcl_blood9",  "blood25",  8 },
+    { "dcl_blood10", "blood25",  9 },
+    { "dcl_blood11", "blood25", 10 },
+    { "dcl_blood12", "blood25", 11 },
+    { "dcl_blood13", "blood25", 12 },
+    { "dcl_blood14", "blood25", 13 },
+    { "dcl_blood15", "blood25", 14 },
+    { "dcl_blood16", "blood25", 15 }
+};
+
+/* ========================================================================= */
+
 /*!
  * \brief  Function to init the 'DCL' module.
  *
@@ -23,22 +45,12 @@
  */
 void DCL_Main_Init(void)
 {
-    ENG_Linker_RegisterDecal("DCL_BLOOD_1",  "blood25",  0);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_2",  "blood25",  1);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_3",  "blood25",  2);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_4",  "blood25",  3);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_5",  "blood25",  4);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_6",  "blood25",  5);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_7",  "blood25",  6);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_8",  "blood25",  7);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_9",  "blood25",  8);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_10", "blood25",  9);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_11", "blood25", 10);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_12", "blood25", 11);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_13", "blood25", 12);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_14", "blood25", 13);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_15", "blood25", 14);
-    ENG_Linker_RegisterDecal("DCL_BLOOD_16", "blood25", 15);
+    Uint32 i;
+
+    for (i = 0 ; i < UTIL_ArraySize(ENG_decalInfo) ; ++i)
+    {
+        ENG_Linker_RegisterDecal(&ENG_decalInfo[i]);
+    }
 }
 
 /* ========================================================================= */

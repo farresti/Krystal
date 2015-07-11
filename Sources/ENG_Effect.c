@@ -20,10 +20,10 @@
 /*!
  * \brief  Function to allocate an effect.
  *
- * \param iDataSize Size of the internal data in bytes.
+ * \param  iPrivDataSize Size of the private data in bytes.
  * \return A pointer to the allocated effect, or NULL if error.
  */
-ENG_Effect *ENG_Effect_Alloc(Uint32 iDataSize)
+ENG_Effect *ENG_Effect_Alloc(Uint32 iPrivDataSize)
 {
     ENG_Effect *pEffect = (ENG_Effect *) UTIL_Malloc(sizeof(ENG_Effect));
 
@@ -31,9 +31,9 @@ ENG_Effect *ENG_Effect_Alloc(Uint32 iDataSize)
     {
         memset(pEffect, 0, sizeof(ENG_Effect));
 
-        if (iDataSize)
+        if (iPrivDataSize)
         {
-            pEffect->pPrivData = UTIL_Malloc(iDataSize);
+            pEffect->pPrivData = UTIL_Malloc(iPrivDataSize);
 
             if (pEffect->pPrivData == NULL)
             {
@@ -46,36 +46,10 @@ ENG_Effect *ENG_Effect_Alloc(Uint32 iDataSize)
 }
 
 /*!
- * \brief  Function to set an effect origin.
- *
- * \param  pEffect Pointer to the effect.
- * \param  pOrigin Pointer to an origin.
- * \return None.
- */
-void ENG_Effect_SetOrigin(ENG_Effect *pEffect, const SDL_Point *pOrigin)
-{
-    pEffect->sOrigin.x = pOrigin->x;
-    pEffect->sOrigin.y = pOrigin->y;
-}
-
-/*!
- * \brief  Function to retrieve an effect origin.
- *
- * \param  pEffect Pointer to the effect.
- * \param  pOrigin Pointer to an origin.
- * \return None.
- */
-void ENG_Effect_GetOrigin(const ENG_Effect *pEffect, SDL_Point *pOrigin)
-{
-    pOrigin->x = pEffect->sOrigin.x;
-    pOrigin->y = pEffect->sOrigin.y;
-}
-
-/*!
  * \brief  Function to set an effect layer.
  *
  * \param  pEffect Pointer to the effect.
- * \param  iLayer  Index of a layer.
+ * \param  iLayer  Index of the layer.
  * \return None.
  */
 void ENG_Effect_SetLayer(ENG_Effect *pEffect, const Uint32 iLayer)
@@ -112,7 +86,7 @@ void ENG_Effect_Kill(ENG_Effect *pEffect)
  * \param  pEffect Pointer to the effect.
  * \return A pointer to the effect private data.
  */
-void *ENG_Effect_GetData(ENG_Effect *pEffect)
+void *ENG_Effect_GetPrivData(ENG_Effect *pEffect)
 {
     return pEffect->pPrivData;
 }
@@ -126,7 +100,7 @@ void *ENG_Effect_GetData(ENG_Effect *pEffect)
  */
 void ENG_Effect_SetTable(ENG_Effect *pEffect, const ENG_EffectTable *pTable)
 {
-    memcpy(pEffect->pTable, pTable, sizeof(ENG_EffectTable));
+    pEffect->pTable = pTable;
 }
 
 /*!
@@ -135,11 +109,11 @@ void ENG_Effect_SetTable(ENG_Effect *pEffect, const ENG_EffectTable *pTable)
  * \param  pEffect Pointer to the effect.
  * \return None.
  */
-void ENG_Effect_Spawn(ENG_Effect *pEffect)
+void ENG_Effect_Spawn(ENG_Effect *pEffect, const SDL_Point *pOrigin)
 {
     if (pEffect->pTable->pftSpawn)
     {
-        pEffect->pTable->pftSpawn(pEffect);
+        pEffect->pTable->pftSpawn(pEffect, pOrigin);
     }
 }
 
@@ -174,8 +148,6 @@ void ENG_Effect_Draw(ENG_Effect *pEffect, const Uint32 iLayer)
 {
     if (pEffect->pTable->pftDraw && pEffect->iLayer == iLayer)
     {
-        ENG_View_ConvOrigin(&pEffect->sOrigin, &pEffect->sPosition);
-
         pEffect->pTable->pftDraw(pEffect);
     }
 }

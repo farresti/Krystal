@@ -16,52 +16,34 @@
 
 /* ========================================================================= */
 
-typedef struct
+static void EFF_Test_Spawn(ENG_Effect *pTest, const SDL_Point *pOrigin)
 {
-    int a;
-    int b;
-    int c;
-} EFF_TestData;
-
-/* ========================================================================= */
-
-static void EFF_Test_Spawn(ENG_Effect *pTest)
-{
-    EFF_TestData *pTestData = (EFF_TestData *) ENG_Effect_GetData(pTest);
-    pTestData->a = 0;
-}
-
-static void EFF_Test_Think(ENG_Effect *pTest)
-{
-    EFF_TestData *pTestData = (EFF_TestData *) ENG_Effect_GetData(pTest);
-    pTestData->a = 0;
-}
-
-static void EFF_Test_Draw(ENG_Effect *pTest)
-{
-    EFF_TestData *pTestData = (EFF_TestData *) ENG_Effect_GetData(pTest);
-    pTestData->a = 0;
-}
-
-static void EFF_Test_Die(ENG_Effect *pTest)
-{
-    EFF_TestData *pTestData = (EFF_TestData *) ENG_Effect_GetData(pTest);
-    pTestData->a = 0;
+    (void) pOrigin;
+    ENG_Effect_Kill(pTest);
 }
 
 /* ========================================================================= */
 
-ENG_EffectTable Eff_TestTable = 
+static const ENG_EffectTable Eff_TestTable = 
 {
     EFF_Test_Spawn,
-    EFF_Test_Think,
-    EFF_Test_Draw,
-    EFF_Test_Die
+    NULL,
+    NULL,
+    NULL
 };
+
+static const ENG_EffectInfo Eff_TestInfo = 
+{
+    "eff_test",
+    0,
+    &Eff_TestTable
+};
+
+/* ========================================================================= */
 
 void EFF_Test_Register(void)
 {
-    ENG_Linker_RegisterEffect( "test", sizeof(EFF_TestData), &Eff_TestTable);
+    ENG_Linker_RegisterEffect(&Eff_TestInfo);
 }
 
 /* ========================================================================= */
