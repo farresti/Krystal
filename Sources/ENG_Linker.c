@@ -23,9 +23,8 @@
  */
 typedef struct
 {
-    const char *szName;  /*!< Pointer to the decal name. */
-    SDL_Sprite *pSprite; /*!< Pointer to the decal sprite. */
-    Uint32      iFrame;  /*!< Index of the sprite frame. */
+    const ENG_DecalInfo *pInfo;   /*!< Pointer to the decal info. */
+    SDL_Sprite          *pSprite; /*!< Pointer to the decal sprite. */
 } ENG_DecalLink;
 
 /*!
@@ -34,9 +33,7 @@ typedef struct
  */
 typedef struct
 {
-    const char      *szName;    /*!< Pointer to the effect name. */
-    Uint32           iDataSize; /*!< Size of the effect private data. */
-    ENG_EffectTable *pTable;    /*!< Pointer to the effect functions table. */
+    const ENG_EffectInfo *pInfo; /*!< Pointer to the effect info. */
 } ENG_EffectLink;
 
 /*!
@@ -74,18 +71,16 @@ void ENG_Linker_Init(void)
 /*!
  * \brief  Function to register a decal in the linker.
  *
- * \param  szName    Pointer to the decal name.
- * \param  szSprName Pointer to the sprite name.
- * \param  iFrame    Index of the sprite frame.
+ * \param  pDclInfo Pointer to the decal info.
  * \return None.
  */
-void ENG_Linker_RegisterDecal(const char *szName, const char *szSprName, const Uint32 iFrame)
+void ENG_Linker_RegisterDecal(const ENG_DecalInfo * const pDclInfo)
 {
     ENG_DecalLink *pDecalLink = NULL;
     SDL_Sprite    *pSprite    = NULL;
     Uint32         iNewSize   = 0;
 
-    pSprite = SDL_Precache_Sprite(szSprName);
+    pSprite = SDL_Precache_Sprite(pDclInfo->szSprName);
 
     if (pSprite)
     {
@@ -94,14 +89,11 @@ void ENG_Linker_RegisterDecal(const char *szName, const char *szSprName, const U
 
         if (ENG_linker.pArrDecals)
         {
-            pDecalLink = &(ENG_linker.pArrDecals[ENG_linker.iNbDecals]);
-
-            pDecalLink->szName  = szName;
+            pDecalLink          = &(ENG_linker.pArrDecals[ENG_linker.iNbDecals]);
+            pDecalLink->pInfo   = pDclInfo;
             pDecalLink->pSprite = pSprite;
-            pDecalLink->iFrame  = iFrame;
 
-            COM_Log_Print(COM_LOG_INFO, "Register decal: \"%s\".", szName);
-
+            COM_Log_Print(COM_LOG_INFO, "Register decal: \"%s\".", pDclInfo->szName);
             ENG_linker.iNbDecals++;
         }
     }
@@ -110,12 +102,10 @@ void ENG_Linker_RegisterDecal(const char *szName, const char *szSprName, const U
 /*!
  * \brief  Function to register an effect in the linker.
  *
- * \param  szName    Pointer to the effect name.
- * \param  iDataSize Size of the effect private data.
- * \param  pTable    Pointer to the effect functions table.
+ * \param  pEffInfo Pointer to the effect info.
  * \return None.
  */
-void ENG_Linker_RegisterEffect(const char *szName, const Uint32 iDataSize, const ENG_EffectTable *pTable)
+void ENG_Linker_RegisterEffect(const ENG_EffectInfo * const pEffInfo)
 {
     ENG_EffectLink *pEffectLink = NULL;
     Uint32          iNewSize    = 0;
@@ -125,14 +115,10 @@ void ENG_Linker_RegisterEffect(const char *szName, const Uint32 iDataSize, const
 
     if (ENG_linker.pArrDecals)
     {
-        pEffectLink = &(ENG_linker.pArrEffects[ENG_linker.iNbEffects]);
+        pEffectLink        = &(ENG_linker.pArrEffects[ENG_linker.iNbEffects]);
+        pEffectLink->pInfo = pEffInfo;
 
-        pEffectLink->szName    = szName;
-        pEffectLink->iDataSize = iDataSize;
-        memcpy(pEffectLink->pTable, pTable, sizeof(ENG_EffectTable));
-
-        COM_Log_Print(COM_LOG_INFO, "Register effect: \"%s\".", szName);
-
+        COM_Log_Print(COM_LOG_INFO, "Register effect: \"%s\".", pEffInfo->szName);
         ENG_linker.iNbEffects++;
     }
 }
@@ -161,7 +147,7 @@ ENG_Decal *ENG_Linker_SpawnDecal(Uint32 iDclIdx, const SDL_Point *pOrigin, const
             ENG_Decal_SetOrigin(pDecal, pOrigin);
             ENG_Decal_SetLayer (pDecal, iLayer);
             ENG_Decal_SetSprite(pDecal, pDecalLink->pSprite);
-            ENG_Decal_SetFrame (pDecal, pDecalLink->iFrame);
+            ENG_Decal_SetFrame (pDecal, pDecalLink->pInfo->iFrame);
 
             ENG_Scheduler_AddDecal(pDecal);
         }
@@ -182,26 +168,21 @@ ENG_Decal *ENG_Linker_SpawnDecal(Uint32 iDclIdx, const SDL_Point *pOrigin, const
  * \param  iLayer  Index of the effect layer.
  * \return A pointer to the allocated effect, or NULL if error.
  */
-ENG_Effect *ENG_Linker_SpawnEffect(Uint32 iEffIdx, const SDL_Point *pOrigin, const Uint32 iLayer, ...)
+ENG_Effect *ENG_Linker_SpawnEffect(Uint32 iEffIdx, const SDL_Point *pOrigin, const Uint32 iLayer)
 {
     ENG_EffectLink *pEffectLink = NULL;
     ENG_Effect     *pEffect     = NULL;
-    va_list         ap;
 
     if (iEffIdx < ENG_linker.iNbEffects)
     {
         pEffectLink = &(ENG_linker.pArrEffects[iEffIdx]);
-        pEffect     = ENG_Effect_Alloc(pEffectLink->iDataSize);
+        pEffect     = ENG_Effect_Alloc(pEffectLink->pInfo->iPrivDataSize);
 
         if (pEffect)
         {
-            ENG_Effect_SetOrigin(pEffect, pOrigin);
             ENG_Effect_SetLayer (pEffect, iLayer);
-            ENG_Effect_SetTable (pEffect, pEffectLink->pTable);
-
-            va_start(ap, iLayer);
-            ENG_Effect_Spawn(pEffect, ap);
-            va_end(ap);
+            ENG_Effect_SetTable (pEffect, pEffectLink->pInfo->pTable);
+            ENG_Effect_Spawn    (pEffect, pOrigin);
 
             ENG_Scheduler_AddEffect(pEffect);
         }

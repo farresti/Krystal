@@ -29,7 +29,6 @@
         SDL_Point   sOrigin;   /*!< Origin of the decal. */
         SDL_Point   sPosition; /*!< Position of the decal. */
         Uint32      iLayer;    /*!< Layer to draw the decal. */
-
         SDL_Sprite *pSprite;   /*!< Pointer to the sprite to draw. */
         Uint32      iFrame;    /*!< Frame of the sprite to draw. */
 
