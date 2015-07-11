@@ -186,7 +186,6 @@ ENG_Effect *ENG_Linker_SpawnEffect(Uint32 iEffIdx, const SDL_Point *pOrigin, con
 {
     ENG_EffectLink *pEffectLink = NULL;
     ENG_Effect     *pEffect     = NULL;
-    va_list         ap;
 
     if (iEffIdx < ENG_linker.iNbEffects)
     {
@@ -198,10 +197,7 @@ ENG_Effect *ENG_Linker_SpawnEffect(Uint32 iEffIdx, const SDL_Point *pOrigin, con
             ENG_Effect_SetOrigin(pEffect, pOrigin);
             ENG_Effect_SetLayer (pEffect, iLayer);
             ENG_Effect_SetTable (pEffect, pEffectLink->pTable);
-
-            va_start(ap, iLayer);
-            ENG_Effect_Spawn(pEffect, ap);
-            va_end(ap);
+            ENG_Effect_Spawn    (pEffect);
 
             ENG_Scheduler_AddEffect(pEffect);
         }

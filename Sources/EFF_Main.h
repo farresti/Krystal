@@ -1,23 +1,24 @@
 /* ========================================================================= */
 /*!
- * \file    EFF_If.h
- * \brief   File to interface with the module 'EFF'.
+ * \file    EFF_Main.h
+ * \brief   File to interface with the main 'EFF' functions.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    28 June 2015
+ * \date    04 July 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 28/06/15 | Creation.                                            */
+/* Nyuu    | 04/07/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __EFF_IF_H__
-#define __EFF_IF_H__
+#ifndef __EFF_MAIN_H__
+#define __EFF_MAIN_H__
 
-    #include "EFF_Main.h"
     #include "EFF_Shared.h"
+    
+    void EFF_Main_Init(void);
 
-#endif // __EFF_IF_H__
+#endif // __EFF_MAIN_H__
 
 /* ========================================================================= */

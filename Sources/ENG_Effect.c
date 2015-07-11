@@ -133,14 +133,13 @@ void ENG_Effect_SetTable(ENG_Effect *pEffect, const ENG_EffectTable *pTable)
  * \brief  Function to execute the effect function 'Spawn'.
  *
  * \param  pEffect Pointer to the effect.
- * \param  ap      Variable list arguments.
  * \return None.
  */
-void ENG_Effect_Spawn(ENG_Effect *pEffect, va_list ap)
+void ENG_Effect_Spawn(ENG_Effect *pEffect)
 {
     if (pEffect->pTable->pftSpawn)
     {
-        pEffect->pTable->pftSpawn(pEffect, ap);
+        pEffect->pTable->pftSpawn(pEffect);
     }
 }
 

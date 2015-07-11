@@ -26,10 +26,10 @@
      */
     typedef struct
     {
-        void (*pftSpawn)(ENG_Effect *, va_list); /*!< Function pointer 'Spawn'. */
-        void (*pftThink)(ENG_Effect *);          /*!< Function pointer 'Think'. */
-        void (*pftDraw)(ENG_Effect *);           /*!< Function pointer 'Draw'. */
-        void (*pftDie)(ENG_Effect *);            /*!< Function pointer 'Die'. */
+        void (*pftSpawn)(ENG_Effect *); /*!< Function pointer 'Spawn'. */
+        void (*pftThink)(ENG_Effect *); /*!< Function pointer 'Think'. */
+        void (*pftDraw)(ENG_Effect *);  /*!< Function pointer 'Draw'. */
+        void (*pftDie)(ENG_Effect *);   /*!< Function pointer 'Die'. */
     } ENG_EffectTable;
 
     /*!
@@ -60,7 +60,7 @@
     /* ----- Use ONLY by the scheduler / linker ----- */
     ENG_Effect *ENG_Effect_Alloc       (Uint32 iDataSize);
     void        ENG_Effect_SetTable    (ENG_Effect *pEffect, const ENG_EffectTable *pTable);
-    void        ENG_Effect_Spawn       (ENG_Effect *pEffect, va_list ap);
+    void        ENG_Effect_Spawn       (ENG_Effect *pEffect);
     void        ENG_Effect_Think       (ENG_Effect *pEffect, const Uint32 iTime);
     void        ENG_Effect_Draw        (ENG_Effect *pEffect, const Uint32 iLayer);
     void        ENG_Effect_Die         (ENG_Effect *pEffect);

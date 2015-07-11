@@ -1,23 +1,30 @@
 /* ========================================================================= */
 /*!
- * \file    EFF_If.h
- * \brief   File to interface with the module 'EFF'.
+ * \file    EFF_Main.c
+ * \brief   File to handle the main 'EFF' functions.
  * \author  Nyuu / Orlyn / Red
  * \version 1.0
- * \date    28 June 2015
+ * \date    04 July 2015
  */
 /* ========================================================================= */
 /* Author  | Date     | Comments                                             */
 /* --------+----------+----------------------------------------------------- */
-/* Nyuu    | 28/06/15 | Creation.                                            */
+/* Nyuu    | 04/07/15 | Creation.                                            */
 /* ========================================================================= */
 
-#ifndef __EFF_IF_H__
-#define __EFF_IF_H__
+#include "EFF_Test.h"
+#include "EFF_Main.h"
 
-    #include "EFF_Main.h"
-    #include "EFF_Shared.h"
+/* ========================================================================= */
 
-#endif // __EFF_IF_H__
+/*!
+ * \brief  Function to init the 'EFF' module.
+ *
+ * \return None.
+ */
+void EFF_Main_Init(void)
+{
+    EFF_Test_Register( );
+}
 
 /* ========================================================================= */
