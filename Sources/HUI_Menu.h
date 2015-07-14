@@ -56,7 +56,6 @@
         SDL_bool                   bIsOpaque;       /*!< Flag to set the backgound transparent. */
     }HUI_Menu;
 
-    typedef void(*pLinkFct)(HUI_ID); /*!< Pointer to the function to call on action of the button. */
     typedef void(*pActionFct)(void); /*!< Pointer to the function to call on action of the switch. */
 
     /*!
@@ -70,7 +69,7 @@
         SDL_Sprite     *pSprite;     /*!< Sprite of the button. */
         HUI_Button      sButton;     /*!< Button associated to the link. */
         HUI_ID          iIDLink;     /*!< ID of the menu linked, if necessary. */
-        pLinkFct        pLink;       /*!< Pointer to the function to call on action of the button. */
+        pActionFct      pLink;       /*!< Pointer to the function to call on action of the button. */
 
         HUI_Switch      sSwitch;     /*!< Switch associated to an option. */
         pActionFct      pActionEn;   /*!< Pointer to the function to call on action of the switch. */
@@ -90,8 +89,8 @@
     
 
     /*Buttons functions*/
-    void HUI_Menu_GoForward(HUI_ID iIDLink);
-    void HUI_Menu_GoBack(HUI_ID iIDLink);
+    void HUI_Menu_GoForward(void);
+    void HUI_Menu_GoBack(void);
 
     void     HUI_Menu_Init(void);
     HUI_ID   HUI_Menu_GetID(void);

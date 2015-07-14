@@ -23,6 +23,7 @@ typedef struct
 }HUI_MenuStack;
 
 static HUI_MenuStack HUI_Stack;
+static HUI_ID iNextID;
 static TTF_Font *pFont;
 
 
@@ -49,6 +50,16 @@ static HUI_Menu *HUI_Menu_GetMenu(HUI_ID iID)
         return pMenuMap;
     }
     return NULL;
+}
+
+/*!
+* \brief Function to get the link ID.
+*
+* \return ID for the link of a button.
+*/
+static HUI_ID HUI_Menu_GetNextID(void)
+{
+    return iNextID;
 }
 
 /*!
@@ -228,7 +239,7 @@ static void HUI_MenuTextBox_Free(HUI_Menu *pMenu)
 *     -button only :
 *          char*             szName  Name of the sprite to load for the button
 *          HUI_ID            iIDLink ID of the menu to link
-*          pLinkFct          Function to call when the button is clicked
+*          pActionFct        Function to call when the button is clicked
 * \return None.
 */
 static void HUI_MenuButton_Init(HUI_Menu *pMenu, Uint32 iNbLinks, ...)
@@ -256,7 +267,7 @@ static void HUI_MenuButton_Init(HUI_Menu *pMenu, Uint32 iNbLinks, ...)
                 {
                     pMenu->pArrButtons[i]->pSprite    = SDL_Precache_Sprite(va_arg(list, char*));
                     pMenu->pArrButtons[i]->iIDLink    = va_arg(list, HUI_ID);
-                    pMenu->pArrButtons[i]->pLink      = va_arg(list, pLinkFct);
+                    pMenu->pArrButtons[i]->pLink      = va_arg(list, pActionFct);
                     pMenu->pArrButtons[i]->pActionEn  = NULL;
                     pMenu->pArrButtons[i]->pActionDis = NULL;
                     HUI_Button_Init(&pMenu->pArrButtons[i]->sButton, pMenu->pArrButtons[i]->pSprite,
@@ -322,7 +333,8 @@ static void HUI_MenuButton_Update(HUI_MenuButton *pButton, HUI_Input *pInput)
         {
             if (pButton->pLink)
             {
-                (*pButton->pLink)(pButton->iIDLink);
+                iNextID = pButton->iIDLink;
+                (*pButton->pLink)();
             }
             pButton->sButton.iState = HUI_BUTTON_INACTIVE;
         }
@@ -378,9 +390,9 @@ static void HUI_MenuButton_Draw(HUI_MenuButton *pButton)
 * \param iIDLink    ID of the menu linked by the button.
 * \return None.
 */
-void HUI_Menu_GoForward(HUI_ID iIDLink)
+void HUI_Menu_GoForward(void)
 {
-    HUI_Menu_Load(iIDLink);
+    HUI_Menu_Load(HUI_Menu_GetNextID());
 }
 
 /*!
@@ -389,11 +401,10 @@ void HUI_Menu_GoForward(HUI_ID iIDLink)
 * \param iIDLink    ID of the menu linked by the button.
 * \return None.
 */
-void HUI_Menu_GoBack(HUI_ID iIDLink)
+void HUI_Menu_GoBack(void)
 {
     HUI_Menu *pMenu = HUI_Menu_GetMenu(HUI_Menu_GetID());
     pMenu->bQuit    = SDL_TRUE;
-    iIDLink         = HUI_MENU_ERROR;
 }
 
 /* ========================================================================= */
