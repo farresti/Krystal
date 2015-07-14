@@ -22,7 +22,7 @@ typedef struct
     Uint32    iIndex;
 }HUI_MenuStack;
 
-static HUI_MenuStack HUI_Stack;
+static HUI_MenuStack HUI_stack;
 static HUI_ID iNextID;
 static TTF_Font *pFont;
 
@@ -272,6 +272,7 @@ static void HUI_MenuButton_Init(HUI_Menu *pMenu, Uint32 iNbLinks, ...)
                     pMenu->pArrButtons[i]->pActionDis = NULL;
                     HUI_Button_Init(&pMenu->pArrButtons[i]->sButton, pMenu->pArrButtons[i]->pSprite,
                         x, y);
+                    pMenu->pArrButtons[i]->iLastButtonState = HUI_Button_GetState(&pMenu->pArrButtons[i]->sButton);
                 }
                 else if (pMenu->pArrButtons[i]->eType == HUI_MENU_SWITCH)
                 {
@@ -285,7 +286,7 @@ static void HUI_MenuButton_Init(HUI_Menu *pMenu, Uint32 iNbLinks, ...)
                     pMenu->pArrButtons[i]->iIDLink    = 0;
                     pMenu->pArrButtons[i]->pLink      = NULL;
                     HUI_Switch_Init(&pMenu->pArrButtons[i]->sSwitch, x, y, iState, bTrans, pColor);
-                    pMenu->pArrButtons[i]->iLastState = HUI_Switch_GetState(&pMenu->pArrButtons[i]->sSwitch);
+                    pMenu->pArrButtons[i]->iLastSwitchState = HUI_Switch_GetState(&pMenu->pArrButtons[i]->sSwitch);
                 }
             }
         }
@@ -323,13 +324,15 @@ static void HUI_MenuButton_Free(HUI_Menu *pMenu)
 */
 static void HUI_MenuButton_Update(HUI_MenuButton *pButton, HUI_Input *pInput)
 {
-    HUI_ButtonState stateButton = HUI_Button_GetState(&pButton->sButton);
+    HUI_SwitchState iState;
     switch (pButton->eType)
     {
     case HUI_MENU_BUTTON:
+        pButton->iLastButtonState = HUI_Button_GetState(&pButton->sButton);
         HUI_Button_Update(&pButton->sButton, pInput);
-        if (HUI_Button_GetState(&pButton->sButton) != stateButton && 
-            stateButton == HUI_BUTTON_ACTIVE)
+
+        if (HUI_Button_GetState(&pButton->sButton) != pButton->iLastButtonState &&
+            pButton->iLastButtonState == HUI_BUTTON_ACTIVE)
         {
             if (pButton->pLink)
             {
@@ -341,23 +344,25 @@ static void HUI_MenuButton_Update(HUI_MenuButton *pButton, HUI_Input *pInput)
         break;
     case HUI_MENU_SWITCH :
         HUI_Switch_Update(&pButton->sSwitch, pInput);
-        if (HUI_Switch_GetState(&pButton->sSwitch) != pButton->iLastState)
+        iState = HUI_Switch_GetState(&pButton->sSwitch);
+
+        if (iState != pButton->iLastSwitchState)
         {
-            if (HUI_Switch_GetState(&pButton->sSwitch) == HUI_SWITCH_ENABLED)
+            if (iState == HUI_SWITCH_ENABLED)
             {
                 if (pButton->pActionEn)
                 {
                     (*pButton->pActionEn)();
                 }
-                pButton->iLastState = HUI_Switch_GetState(&pButton->sSwitch);
+                pButton->iLastSwitchState = iState;
             } 
-            else if (HUI_Switch_GetState(&pButton->sSwitch) == HUI_SWITCH_DISABLED)
+            else if (iState == HUI_SWITCH_DISABLED)
             { 
                 if (pButton->pActionDis)
                 {
                     (*pButton->pActionDis)();
                 }
-                pButton->iLastState = HUI_Switch_GetState(&pButton->sSwitch);
+                pButton->iLastSwitchState = iState;
             }
         }
         break;
@@ -403,8 +408,12 @@ void HUI_Menu_GoForward(void)
 */
 void HUI_Menu_GoBack(void)
 {
-    HUI_Menu *pMenu = HUI_Menu_GetMenu(HUI_Menu_GetID());
-    pMenu->bQuit    = SDL_TRUE;
+    HUI_Menu *pMenu  = HUI_Menu_GetMenu(HUI_Menu_GetID());
+    if (pMenu)
+    {
+        pMenu->bQuit = SDL_TRUE;
+    }
+   
 }
 
 /* ========================================================================= */
@@ -416,10 +425,14 @@ void HUI_Menu_GoBack(void)
 */
 static void HUI_Menu_InitStack(void)
 {
-    HUI_Stack.iIndex = 0;
-    HUI_Stack.iSize = 1;
-    HUI_Stack.pID = UTIL_Malloc(sizeof(HUI_ID));
-    HUI_Stack.bIsEmpty = SDL_TRUE;
+    HUI_stack.iIndex   = 0;
+    HUI_stack.iSize    = 1;
+    HUI_stack.pID      = UTIL_Malloc(sizeof(HUI_ID));
+    HUI_stack.bIsEmpty = SDL_TRUE;
+    if (HUI_stack.pID == NULL)
+    {
+        COM_Log_Print(COM_LOG_CRITICAL, ">> Not enough memory for the menu stack holder");
+    }
 }
 
 /*!
@@ -430,14 +443,14 @@ static void HUI_Menu_InitStack(void)
 */
 static void HUI_Menu_AddToStack(HUI_ID iID)
 {
-    if (HUI_Stack.iIndex >= HUI_Stack.iSize)
+    if (HUI_stack.iIndex >= HUI_stack.iSize)
     {
-        HUI_Stack.iSize += 1;
-        HUI_Stack.pID = UTIL_Realloc(HUI_Stack.pID, HUI_Stack.iSize * sizeof(HUI_ID));
+        HUI_stack.iSize += 1;
+        HUI_stack.pID = UTIL_Realloc(HUI_stack.pID, HUI_stack.iSize * sizeof(HUI_ID));
     }
-    HUI_Stack.pID[HUI_Stack.iIndex] = iID;
-    HUI_Stack.iIndex += 1;
-    HUI_Stack.bIsEmpty = SDL_FALSE;
+    HUI_stack.pID[HUI_stack.iIndex] = iID;
+    HUI_stack.iIndex += 1;
+    HUI_stack.bIsEmpty = SDL_FALSE;
 }
 
 /*!
@@ -447,14 +460,14 @@ static void HUI_Menu_AddToStack(HUI_ID iID)
 */
 static void HUI_Menu_RemoveFromStack(void)
 {
-    if (HUI_Stack.iIndex)
+    if (HUI_stack.iIndex)
     {
-        HUI_Stack.iIndex -= 1;
-        HUI_Stack.pID[HUI_Stack.iIndex] = HUI_MENU_ERROR;
+        HUI_stack.iIndex -= 1;
+        HUI_stack.pID[HUI_stack.iIndex] = HUI_MENU_ERROR;
     }
     else
     {
-        HUI_Stack.bIsEmpty = SDL_TRUE;
+        HUI_stack.bIsEmpty = SDL_TRUE;
     }
 }
 
@@ -580,9 +593,9 @@ void HUI_Menu_Init(void)
 */
 HUI_ID HUI_Menu_GetID(void)
 {
-    if (!HUI_Stack.bIsEmpty)
+    if (!HUI_stack.bIsEmpty)
     {
-        return HUI_Stack.pID[HUI_Stack.iIndex - 1];
+        return HUI_stack.pID[HUI_stack.iIndex - 1];
     }
     return HUI_MENU_ERROR;
 }
@@ -595,7 +608,7 @@ HUI_ID HUI_Menu_GetID(void)
 */
 SDL_bool HUI_Menu_IsStackEmpty(void)
 {
-    return HUI_Stack.bIsEmpty;
+    return HUI_stack.bIsEmpty;
 }
 
 /*!
@@ -744,18 +757,18 @@ void HUI_Menu_Quit(HUI_Input *pInput)
 void HUI_Menu_EmptyStack(void)
 {
     Uint32    i = 0;
-    Uint32    iSize = HUI_Stack.iSize;
+    Uint32    iSize = HUI_stack.iSize;
     HUI_Menu *pMenu = NULL;
     for (i = 0; i < iSize; ++i)
     {
-        pMenu = HUI_Menu_GetMenu(HUI_Stack.pID[i]);
+        pMenu = HUI_Menu_GetMenu(HUI_stack.pID[i]);
         if (pMenu)
         {
             pMenu->bQuit = SDL_TRUE;
         }        
         HUI_Menu_RemoveFromStack();
     }
-    HUI_Stack.bIsEmpty = SDL_TRUE;
+    HUI_stack.bIsEmpty = SDL_TRUE;
 }
 
 /*!
@@ -779,7 +792,7 @@ void HUI_Menu_Free(void)
             UTIL_Free(pMenu);
         }
     }
-    UTIL_Free(HUI_Stack.pID);
+    UTIL_Free(HUI_stack.pID);
     TTF_CloseFont(pFont);
 }
 

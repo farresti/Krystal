@@ -66,15 +66,16 @@
     {
         HUI_Type        eType;
 
-        SDL_Sprite     *pSprite;     /*!< Sprite of the button. */
-        HUI_Button      sButton;     /*!< Button associated to the link. */
-        HUI_ID          iIDLink;     /*!< ID of the menu linked, if necessary. */
-        pActionFct      pLink;       /*!< Pointer to the function to call on action of the button. */
+        SDL_Sprite     *pSprite;           /*!< Sprite of the button. */
+        HUI_Button      sButton;           /*!< Button associated to the link. */
+        HUI_ID          iIDLink;           /*!< ID of the menu linked, if necessary. */
+        pActionFct      pLink;             /*!< Pointer to the function to call on action of the button. */
+        HUI_ButtonState iLastButtonState;  /*!< Last state of the button. */
 
-        HUI_Switch      sSwitch;     /*!< Switch associated to an option. */
-        pActionFct      pActionEn;   /*!< Pointer to the function to call on action of the switch. */
-        pActionFct      pActionDis;  /*!< Pointer to the function to call on action of the switch. */
-        HUI_SwitchState iLastState;
+        HUI_Switch      sSwitch;           /*!< Switch associated to an option. */
+        pActionFct      pActionEn;         /*!< Pointer to the function to call on action of the switch. */
+        pActionFct      pActionDis;        /*!< Pointer to the function to call on action of the switch. */
+        HUI_SwitchState iLastSwitchState;  /*!< Last state of the switch. */
     }HUI_MenuButton;
 
     /*!
