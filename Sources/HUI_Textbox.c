@@ -491,6 +491,17 @@ void HUI_Textbox_SetColor(HUI_Textbox *pTextBox, SDL_Color *pColor)
 }
 
 /*!
+* \brief Function to get the string inside the box.
+*
+* \param pTextBox Pointer to the textbox.
+* \return pointer to a copy of the string inside the box
+*/
+char *HUI_Textbox_GetText(HUI_Textbox *pTextBox)
+{
+    return UTIL_StrCopy(pTextBox->szText);
+}
+
+/*!
  * \brief Function to free an SDL_Textbox.
  *
  * \param pTextBox Pointer to the textbox.

@@ -126,5 +126,4 @@ Uint32 SDL_Sound_GetGlobalVolume(void)
 {
     return SDL_Sound_volume;
 }
-
 /* ========================================================================= */

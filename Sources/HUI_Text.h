@@ -28,8 +28,8 @@
      * \struct HUI_Text
      * \brief  Structure to handle a text.
      */
-    typedef struct
-    {
+    typedef struct HUI_Text
+    { 
         TTF_Font    *pFont;    /*!< Pointer to the text font. */
         SDL_Texture *pTexture; /*!< Pointer to the text texture. */
         SDL_Rect     rDest;    /*!< Rectangle to position the text. */

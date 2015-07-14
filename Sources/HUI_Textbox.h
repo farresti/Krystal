@@ -28,7 +28,7 @@
      * \struct HUI_Textbox
      * \brief  Structure to handle a text box.
      */
-    typedef struct
+    typedef struct HUI_Textbox
     {
         char        *szText;              /*!< String of the text inside the text box. */
 
@@ -62,6 +62,7 @@
     SDL_bool HUI_Textbox_IsActive(const HUI_Textbox *pTextBox);
     SDL_bool HUI_Textbox_IsFull(const HUI_Textbox *pTextBox);
     void     HUI_Textbox_SetColor(HUI_Textbox *pTextBox, SDL_Color *pColor);
+    char    *HUI_Textbox_GetText(HUI_Textbox *pTextBox);
     void     HUI_Textbox_Free(HUI_Textbox *pTextBox);
 
 #endif // __HUI_TEXTBOX_H__

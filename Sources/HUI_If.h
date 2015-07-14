@@ -21,6 +21,7 @@
     #include "HUI_Scrollbar.h"
     #include "HUI_Shared.h"
     #include "HUI_Text.h"
+    #include "HUI_Switch.h"
     #include "HUI_Textbox.h"
 
 #endif // __HUI_IF_H__
