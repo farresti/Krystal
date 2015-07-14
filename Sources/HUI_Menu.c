@@ -459,6 +459,7 @@ static void HUI_Menu_RemoveFromStack(void)
 }
 
 /* ========================================================================= */
+
 /*!
 * \brief Function to init the pause menu.
 *
@@ -550,7 +551,7 @@ static void HUI_Menu_InitMap(void)
         pFont, &color, 200, 10, "Menu Map");
 
     pMenuMap->bQuit     = SDL_FALSE;
-    pMenuMap->bIsOpaque = SDL_TRUE;
+    pMenuMap->bIsOpaque = SDL_FALSE;
 }
 
 /* ========================================================================= */
@@ -748,7 +749,10 @@ void HUI_Menu_EmptyStack(void)
     for (i = 0; i < iSize; ++i)
     {
         pMenu = HUI_Menu_GetMenu(HUI_Stack.pID[i]);
-        pMenu->bQuit = SDL_TRUE;
+        if (pMenu)
+        {
+            pMenu->bQuit = SDL_TRUE;
+        }        
         HUI_Menu_RemoveFromStack();
     }
     HUI_Stack.bIsEmpty = SDL_TRUE;
